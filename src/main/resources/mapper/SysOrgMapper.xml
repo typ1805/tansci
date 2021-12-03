@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tansci.mapper.SysOrgMapper">
+
+    <select id="getOrgChildrens" parameterType="integer" resultType="com.tansci.domain.SysOrg">
+        WITH RECURSIVE t AS (
+            SELECT * FROM sys_org WHERE id = #{id}
+            union ALL
+            SELECT sys_org.* FROM sys_org, t
+            WHERE sys_org.parent_id = t.id
+        )
+        SELECT t.* FROM t ORDER BY id
+    </select>
+
+</mapper>
