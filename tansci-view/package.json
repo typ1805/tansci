@@ -7,6 +7,7 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "@element-plus/icons": "0.0.11",
     "element-plus": "^1.2.0-beta.5",
     "nprogress": "^0.2.0",
     "vue": "^3.2.16",

@@ -21,7 +21,7 @@
 		}
 	}
 </script>
-<style lang="less" scoped="scoped">
+<style lang="less" scoped>
 	.home {
 		padding: 0.2rem;
 		height: calc(100vh - 200px);
