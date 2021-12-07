@@ -21,7 +21,7 @@
 		}
 	}
 </script>
-<style lang="sess" scoped="scoped">
+<style lang="less" scoped="scoped">
 	.home {
 		padding: 0.2rem;
 		height: calc(100vh - 200px);

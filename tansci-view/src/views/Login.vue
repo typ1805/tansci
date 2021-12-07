@@ -24,15 +24,10 @@
 <script>
 	import {onBeforeMount,reactive,ref,toRefs,unref} from "vue"
 	import {useRouter} from 'vue-router'
-	import {useStore} from 'vuex'
-	import {login} from '@/api/systemApi'
-	import {ElMessage} from "element-plus"
 	export default {
 		setup() {
 			const router = useRouter()
-			const store = useStore()
 			const validateForm = ref(null)
-			const verifyRef = ref(null)
 			const state = reactive({
 				login: {
 					height: '',
@@ -77,10 +72,7 @@
 				if (!form) return;
 				await form.validate();
 
-				
 				// 登录成功后设置token到vuex中
-				store.commit('setToken', res.result.token);
-				store.commit('setUser', res.result);
 				router.push({
 					path: 'home'
 				});
@@ -96,7 +88,7 @@
 	}
 </script>
 
-<style lang="sess">
+<style lang="less">
 	.login {
 		display: flex;
 		flex-wrap: wrap;
