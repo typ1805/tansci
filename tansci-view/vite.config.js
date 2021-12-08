@@ -8,5 +8,6 @@ export default defineConfig({
       "~/": `${path.resolve(__dirname, "src")}/`,
     },
   },
+
   plugins: [vue()]
 })
