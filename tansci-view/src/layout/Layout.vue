@@ -142,9 +142,9 @@
             background: var(--bg4);
             overflow-y: auto;
             overflow-x: hidden;
-            .el-menu{
+            /deep/ .el-menu{
                 border: none;
-                .el-menu-item,.el-sub-menu__title{
+                .el-menu-item, .el-sub-menu__title{
                     height: 40px;
                     line-height: 40px;
                 }

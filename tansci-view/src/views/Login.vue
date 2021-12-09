@@ -24,6 +24,7 @@
 	import {onBeforeMount,reactive,ref,toRefs,unref} from "vue"
 	import {useRouter} from 'vue-router'
 	import {useStore} from 'vuex'
+	import {login} from '../api/systemApi'
 	export default {
 		setup() {
 			const store = useStore()
@@ -49,11 +50,15 @@
 				await form.validate();
 
 				// 登录成功后设置token到vuex中
-				store.commit('setToken', 'dsfgdfv13546dsfghdf5h44gfhdh4');
-				store.commit('setUser', {username:state.loginForm.username,nickname:state.loginForm.username});
-				router.push({
-					path: 'home'
-				});
+				login(state.loginForm).then(res=>{
+					if(res){
+						store.commit('setToken', res.result.token);
+						store.commit('setUser', res.result);
+						router.push({
+							path: 'home'
+						});
+					}
+				})
 			}
 
 			return {
@@ -64,7 +69,6 @@
 		}
 	}
 </script>
-
 <style lang="less">
 	.login {
 		display: flex;
