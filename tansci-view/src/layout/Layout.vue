@@ -24,7 +24,12 @@
             </el-aside>
             <el-main :style="defaultHeight">
                 <div class="main-view">
-                    <router-view/>
+                    <el-card class="main-view-tag" shadow="always">
+                        <el-tag closable effect="dark">首页</el-tag>
+                    </el-card>
+                    <el-card class="main-view-content" shadow="always">
+                        <router-view/>
+                    </el-card>
                 </div>
             </el-main>
         </el-container>
@@ -127,14 +132,14 @@
             display: flex;
             justify-content: space-between;
             line-height: 45px;
-            background: #2F9688;
+            background: var(--color);
             color: #fff;
             padding: 0 1rem;
         }
         .el-aside{
             height: 100%;
             transition: all .5s;
-            background: #0f1423;
+            background: var(--bg4);
             overflow-y: auto;
             overflow-x: hidden;
             .el-menu{
@@ -144,10 +149,10 @@
                     line-height: 40px;
                 }
                 .el-sub-menu__title:hover{
-                    background: #0f1423 !important;
+                    background: var(--bg4) !important;
                 }
                 .el-menu-item:hover{
-                    background: #0f1423 !important;
+                    background: var(--bg4) !important;
                 }
             }
         }
@@ -163,7 +168,17 @@
             width: 0px;
         }
         .main-view{
-            padding: 0.3rem;
+            .main-view-tag{
+                /deep/.el-card__body{
+                    padding: 0.3rem 0.4rem;
+                }
+            }
+            .main-view-content{
+                margin: 0.3rem;
+                /deep/.el-card__body{
+                    padding: 0.4rem 1rem;
+                }
+            }
         }
     }
 </style>

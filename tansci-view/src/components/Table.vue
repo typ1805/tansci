@@ -46,7 +46,6 @@
     export default {
         props: {
             loading: Boolean,
-            height: Number,
             page: Object,
             column: Array,
             operation: Object,
@@ -55,7 +54,7 @@
         setup(props,context) {
             const parent = {...context}
             const data = reactive({
-                tableHeight: window.innerHeight-260,
+                tableHeight: window.innerHeight-180,
                 onAdd: (row) =>{
                     parent.emit('onAdd',row)
                 },
@@ -103,5 +102,4 @@
     }
 </script>
 <style lang="less">
-    @import '../assets/style/common.less';
 </style>

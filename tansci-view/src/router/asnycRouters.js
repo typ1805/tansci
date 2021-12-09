@@ -1,5 +1,4 @@
 // 动态路由菜单  JustTwo
-import Home from '../views/Home.vue'
 import Layout from '../layout/Layout.vue'
 
 const asnycRouters = [
@@ -15,7 +14,7 @@ const asnycRouters = [
             name: "home",
             icon: "el-icon-s-home",
             meta: { title: "首页" },
-            component: Home
+            component: () => import('../views/Home.vue')
         }]
     },
     {
@@ -31,7 +30,7 @@ const asnycRouters = [
                 name: "menu",
                 icon: "el-icon-menu",
                 meta: { title: "菜单管理" },
-                component: Home
+                component: () => import('../views/system/Menu.vue')
             },
             {
                 path: "/role",

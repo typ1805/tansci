@@ -9,5 +9,15 @@ export default defineConfig({
     },
   },
 
-  plugins: [vue()]
+  plugins: [vue()],
+
+  css: {
+    preprocessorOptions: {
+      less: {
+        javascriptEnabled: true,
+        additionalData: `@import "${path.resolve(__dirname, 'src/assets/css/common.less')}";`
+      }
+    }
+  }
+
 })
