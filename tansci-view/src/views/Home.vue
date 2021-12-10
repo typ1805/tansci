@@ -1,25 +1,19 @@
 <template>
 	<div class="home">
-		首页 
+		首页 {{username}}
 	</div>
 </template>
-
-<script>
+<script setup>
 	import {onMounted,reactive,toRefs} from 'vue'
-	export default {
-		setup() {
-			const state = reactive({
-				username: '小平',
-			})
+	const state = reactive({
+		username: '小平',
+	})
 
-			onMounted(() => {
+	const {username} = toRefs(state)
 
-			});
-			return {
-				...toRefs(state),
-			}
-		}
-	}
+	onMounted(() => {
+		console.log("首页")
+	})
 </script>
 <style lang="less" scoped>
 	.home {

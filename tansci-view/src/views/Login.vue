@@ -1,5 +1,5 @@
 <template>
-	<div class="login" :style="login">
+	<div class="login" :style="loginStyle">
 		<el-card shadow="always" style="padding:5rem;">
 			<div class="login-main">
 				<div class="login-logo">
@@ -11,23 +11,15 @@
 						<el-form-item prop="username" :rules="[
 								{required: true,message: '请输入用户名',trigger: 'blur'},
 								{pattern: /^[a-zA-Z]\w{4,17}$/,message: '用户名式有误，请重新输入',trigger: 'blur'}]">
-							<el-input v-model="loginForm.username" :prefix-icon="Avatar" placeholder="请输入用户名称" style="width:100%">
-								<template #prefix>
-									<el-icon :size="20" style="padding-top:6px;"><Avatar/></el-icon>
-								</template>
-							</el-input>
+							<el-input v-model="state.loginForm.username" :prefix-icon="Avatar" placeholder="请输入用户名称" style="width:100%"></el-input>
 						</el-form-item>
 						<el-form-item prop="password" :rules="[
 								{required: true,message: '请输入密码',trigger: 'blur'},
 								{pattern: /^[a-zA-Z]\w{5,17}$/,message: '密码格式有误，请重新输入',trigger: 'blur'}]">
-							<el-input type="password" v-model="loginForm.password" :prefix-icon="Lock" show-password placeholder="请输入密码" style="width:100%">
-								<template #prefix>
-									<el-icon :size="20" style="padding-top:6px;"><Lock/></el-icon>
-								</template>
-							</el-input>
+							<el-input type="password" v-model="loginForm.password" :prefix-icon="Lock" show-password placeholder="请输入密码" style="width:100%"></el-input>
 						</el-form-item>
 						<el-form-item>
-							<el-checkbox v-model="keepPassword" label="记住密码"></el-checkbox>
+							<el-checkbox v-model="loginForm.keepPassword" label="记住密码"></el-checkbox>
 						</el-form-item>
 						<el-form-item>
 							<el-button type="primary" round @click="submit" style="width:100%">登录</el-button>
@@ -38,64 +30,55 @@
 		</el-card>
 	</div>
 </template>
-<script>
+<script setup>
 	import {onBeforeMount,reactive,ref,toRefs,unref} from "vue"
 	import {Avatar,Lock} from "@element-plus/icons"
-	import {ElMessage} from "element-plus"
 	import {useRouter} from 'vue-router'
 	import {useStore} from 'vuex'
 	import {login} from '../api/systemApi'
-	export default {
-		components:{
-			Avatar,Lock,
+
+	const store = useStore()
+	const router = useRouter()
+	let loginRuleForm = ref(null) 
+	const state = reactive({
+		loginStyle: {
+			height: '',
 		},
-		setup() {
-			const store = useStore()
-			const router = useRouter()
-			const loginRuleForm = ref(null)
-			const state = reactive({
-				login: {
-					height: '',
-				},
-				loginForm: {
-					username: '',
-					password: '',
-				},
-				keepPassword: null,
-			})
+		loginForm: {
+			username: '',
+			password: '',
+			keepPassword: null,
+		},
+	})
 
-			onBeforeMount(() => {
-				state.login.height = (document.body.clientHeight || document.documentElement.clientHeight) + "px"
-			})
+	const {loginStyle,loginForm} = toRefs(state)
 
-			const submit = async () => {
-				const form = unref(loginRuleForm)
-				if (!form) return;
-				await form.validate();
+	onBeforeMount(() => {
+		state.loginStyle.height = (document.body.clientHeight || document.documentElement.clientHeight) + "px"
+	})
 
-				// if(state.loginForm.code <= 0){
-				// 	ElMessage.warning('请拖动滑块进行验证！')
-				// 	return false;
-				// }
+	const submit = async () => {
+		const form = unref(loginRuleForm)
+		if (!form) return;
+		await form.validate();
 
-				// 登录成功后设置token到vuex中
-				login(state.loginForm).then(res=>{
-					if(res){
-						store.commit('setToken', res.result.token);
-						store.commit('setUser', res.result);
-						router.push({
-							path: 'home'
-						});
-					}
-				})
+		console.log(state.loginForm)
+
+		// if(state.loginForm.code <= 0){
+		// 	ElMessage.warning('请拖动滑块进行验证！')
+		// 	return false;
+		// }
+
+		// 登录成功后设置token到vuex中
+		login(state.loginForm).then(res=>{
+			if(res){
+				store.commit('setToken', res.result.token);
+				store.commit('setUser', res.result);
+				router.push({
+					path: 'home'
+				});
 			}
-
-			return {
-				...toRefs(state),
-				loginRuleForm,
-				submit,
-			}
-		}
+		})
 	}
 </script>
 <style lang="less" scoped="scoped">

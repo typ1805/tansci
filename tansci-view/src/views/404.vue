@@ -4,61 +4,42 @@
         <div class="text">找不到您要查找的页面，请与<a href="#">我们联系</a>以报告此问题。</div>
         <div class="text team">—— Tansci</div>
         <div>
-            <el-button :icon="search" round @click="goBack">
-                <el-icon style="vertical-align: middle;"><Back /></el-icon>
-                <span style="vertical-align: middle;">返回</span>
-            </el-button>
-            <el-button type="danger" :icon="Back" round @click="goHome">
-                <el-icon style="vertical-align: middle;"><HomeFilled /></el-icon>
-                <span style="vertical-align: middle;">首页</span>
-            </el-button>
+            <el-button :icon="Back" round @click="goBack">返回</el-button>
+            <el-button type="danger" :icon="HomeFilled" round @click="goHome">首页</el-button>
         </div>
     </div>
 </template>
-
-<script>
+<script setup>
     import {onBeforeMount, onMounted, reactive, toRefs} from "vue"
     import {Back,HomeFilled} from "@element-plus/icons"
     import {useRouter} from "vue-router"
-    export default {
-        components: {
-			Back,
-            HomeFilled
-		},
-        setup() {
-            const router = useRouter()
-            const state = reactive({
-                defaultHeight: {
-                    height: ''
-                }
-            })
 
-            onBeforeMount(() => {
-                state.defaultHeight.height = document.body.clientHeight + "px"
-            })
-
-            onMounted(() => {
-                window.onresize = () => {
-                    return (() => {
-                        state.defaultHeight.height = window.innerHeight + "px";
-                    })()
-                }
-            })
-
-            const goBack = () => {
-                router.go(-1)
-            }
-
-            const goHome = () => {
-                router.push({path: 'home'})
-            }
-
-            return {
-                ...toRefs(state),
-                goBack,
-                goHome,
-            }
+    const router = useRouter()
+    const state = reactive({
+        defaultHeight: {
+            height: ''
         }
+    })
+    const {defaultHeight} = toRefs(state)
+
+    onBeforeMount(() => {
+        state.defaultHeight.height = document.body.clientHeight + "px"
+    })
+
+    onMounted(() => {
+        window.onresize = () => {
+            return (() => {
+                state.defaultHeight.height = window.innerHeight + "px";
+            })()
+        }
+    })
+
+    const goBack = () => {
+        router.go(-1)
+    }
+
+    const goHome = () => {
+        router.push({path: 'home'})
     }
 </script>
 

@@ -36,91 +36,81 @@
         <el-backtop target=".el-main"></el-backtop>
     </el-container>
 </template>
-<script>
-    import {onMounted, onBeforeMount, reactive, toRefs} from 'vue'
+<script setup>
+    import {onBeforeMount, onMounted, reactive, ref, toRefs} from 'vue'
     import {ElMessageBox} from 'element-plus'
     import {useRouter} from 'vue-router'
     import Submenu from "../components/Submenu.vue"
     import {useStore} from "vuex"
     import {timeFormate} from '../utils/utils'
-    export default {
-        components:{
-            Submenu
+
+    const router = useRouter()
+    const store = useStore()
+    const username = store.getters.getUser.nickname?store.getters.getUser.nickname:'管理员';
+    const nowTimes = ref('');
+    const state = reactive({
+        isCollapse: false,
+        asideWidth: '190px',
+        defaultHeight: {
+            height: ''
         },
-        setup() {
-            const router = useRouter()
-            const store = useStore()
-            const state = reactive({
-                isCollapse: false,
-                asideWidth: '190px',
-                defaultHeight: {
-                    height: ''
-                },
-                routers: [],
-                menuTags: [],
-                username: store.getters.getUser.nickname,
-                nowTimes: '',
-            })
+        routers: [],
+        menuTags: [],
+    })
 
-            onMounted(()=>{
-                window.onresize = () => {
-                    return (() => {
-                        state.defaultHeight.height = window.innerHeight + "px";
-                    })()
-                }
-                onNowTimes();
-            })
+    const {
+        isCollapse,
+        asideWidth,
+        defaultHeight,
+        routers,
+        menuTags,
+    } = toRefs(state)
 
-            onBeforeMount(() => {
-                state.defaultHeight.height = (document.body.clientHeight || document.documentElement.clientHeight) + "px";
-                
-                // TODO
-                let _routers = router.options.routes.filter(v=>v.type === 1)
-                state.routers = _routers;
-                console.log(state.routers)
-            })
+    onBeforeMount(() => {
+        state.defaultHeight.height = (document.body.clientHeight || document.documentElement.clientHeight) + "px";
+        
+        // TODO
+        let _routers = router.options.routes.filter(v=>v.type === 1)
+        state.routers = _routers;
+        console.log(state.routers)
+    })
 
-            const onCollapse = () => {
-                if (state.isCollapse) {
-                    state.asideWidth = '190px'
-                    state.isCollapse = false
-                } else {
-                    state.isCollapse = true
-                    state.asideWidth = '64px'
-                }
-            }
+    onMounted(()=>{
+        onNowTimes()
+    })
 
-            const onLogout = () =>{
-                ElMessageBox.confirm('您确定要退出吗？', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    // logout({}).then(res=>{
-                    //     if(res){
-                            store.commit('delToken')
-                            store.commit('delUser')
-                            router.push({path: 'login'})
-                    //     }
-                    // });
-                }).catch(e=>{
-                    console.log(e)
-                })
-            }
-
-            const onNowTimes = () =>{
-                setInterval(()=>{
-                    state.nowTimes = timeFormate(new Date());
-                },1000);
-            }
-
-            return {
-                ...toRefs(state),
-                onCollapse,
-                onLogout,
-                onNowTimes
-            }
+    const onCollapse = () => {
+        if (state.isCollapse) {
+            state.asideWidth = '190px'
+            state.isCollapse = false
+        } else {
+            state.isCollapse = true
+            state.asideWidth = '64px'
         }
+    }
+
+    const onLogout = () =>{
+        ElMessageBox.confirm('您确定要退出吗？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            // logout({}).then(res=>{
+            //     if(res){
+                    store.commit('delToken')
+                    store.commit('delUser')
+                    router.push({path: 'login'})
+            //     }
+            // });
+        }).catch(e=>{
+            console.log(e)
+        })
+    }
+
+    const onNowTimes = () =>{
+        setInterval(()=>{
+            nowTimes.value = timeFormate(new Date());
+        },1000);
     }
 </script>
 <style lang="less" scoped>

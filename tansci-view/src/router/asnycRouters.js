@@ -37,42 +37,42 @@ const asnycRouters = [
                 name: "role",
                 icon: "el-icon-menu",
                 meta: { title: "角色管理" },
-                component: () => Home
+                component: () => import('../views/Home.vue')
             },
             {
                 path: "/org",
                 name: "org",
                 icon: "el-icon-help",
                 meta: { title: "组织管理" },
-                component: () => Home
+                component: () => import('../views/Home.vue')
             },
             {
                 path: "/user",
                 name: "user",
                 icon: "el-icon-s-data",
                 meta: { title: "用户列表" },
-                component: () => Home
+                component: () => import('../views/Home.vue')
             },
             {
                 path: "/dicInfo",
                 name: "dicInfo",
                 icon: "el-icon-coin",
                 meta: { title: "字典列表" },
-                component: () => Home
+                component: () => import('../views/Home.vue')
             },
             {
                 path: "/password",
                 name: "password",
                 icon: "el-icon-unlock",
                 meta: { title: "修改密码" },
-                component: () => Home
+                component: () => import('../views/Home.vue')
             },
             {
                 path: "/log",
                 name: "log",
                 icon: "el-icon-unlock",
                 meta: { title: "操作日志" },
-                component: () => Home
+                component: () => import('../views/Home.vue')
             }
         ]
     },
