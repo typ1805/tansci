@@ -40,66 +40,32 @@
         </div>
     </div>
 </template>
+<script setup>
+    import {defineProps, reactive, toRefs} from 'vue'
+    
+    defineProps({
+        loading: Boolean,
+        page: Object,
+        column: Array,
+        operation: Object,
+        data: Array,
+    })
 
-<script>
-    import {reactive, toRefs} from 'vue'
-    export default {
-        props: {
-            loading: Boolean,
-            page: Object,
-            column: Array,
-            operation: Object,
-            data: Array,
-        },
-        setup(props,context) {
-            const parent = {...context}
-            const data = reactive({
-                tableHeight: window.innerHeight-180,
-                onAdd: (row) =>{
-                    parent.emit('onAdd',row)
-                },
-                onDetail: (row) =>{
-                    parent.emit('onDetail',row)
-                },
-                onUpper: (row)=>{
-                    parent.emit('onUpper',row)
-                },
-                onDown: (row)=>{
-                    parent.emit('onDown',row)
-                },
-                onEdit: (row) =>{
-                    parent.emit('onEdit',row)
-                },
-                onDelete: (row) =>{
-                    parent.emit('onDelete',row)
-                },
-                onSizeChange: (val) =>{
-                    parent.emit('onSizeChange',val)
-                },
-                onCurrentChange: (val) =>{
-                    parent.emit('onCurrentChange',val)
-                },
-                onSelectionChange: (val) =>{
-                    parent.emit('onSelectionChange',val)
-                },
-                onRole: (row) =>{
-                    parent.emit('onRole',row)
-                },
-                cellStyle: function(e){
-                    let obj = {};
-                    parent.emit('setCellColor',e,(color = {}) =>{
-                        obj = color;
-                    });
-                    obj.padding = 0;
-                    return obj;
-                }
-            });
-            
-            return {
-                ...toRefs(data)
-            }
+    defineEmits([
+        'onAdd','onDetail','onUpper','onDown','onEdit','onDelete','onRole',
+        'onSizeChange','onCurrentChange','onSelectionChange','setCellColor'
+    ])
+
+    const state = reactive({
+        tableHeight: window.innerHeight-180,
+        color: {},
+        cellStyle: function(e){
+            color.padding = 0;
+            return color;
         }
-    }
+    })
+
+    const {tableHeight,color,cellStyle} = toRefs(state)
 </script>
 <style lang="less">
 </style>
