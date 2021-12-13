@@ -19,19 +19,19 @@
                 </template>
                 <el-table-column v-if="operation" fixed="right" label="操作" align="center" width="220">
                     <template #default="scope">
-                        <el-button v-if="operation.add" type="text" @click="onAdd(scope.row)" style="color: var(--add)">添加</el-button>
-                        <el-button v-if="operation.detail" type="text" @click="onDetail(scope.row)" style="color: var(--query)">查看</el-button>
-                        <el-button v-if="operation.upper && (scope.row['status'] == 0 || scope.row['status'] == 2)" type="text" @click="onUpper(scope.row)" style="color: var(--upper)">上架</el-button>
-                        <el-button v-if="operation.down && scope.row['status'] == 1" type="text" @click="onDown(scope.row)" style="color: var(--down)">下架</el-button>
-                        <el-button v-if="operation.edit" type="text" @click="onEdit(scope.row)" style="color: var(--edit)">编辑</el-button>
-                        <el-button v-if="operation.del" type="text" @click="onDelete(scope.row)" style="color: var(--delete)">删除</el-button>
-                        <el-button v-if="operation.role" type="text" @click="onRole(scope.row)" style="color: var(--role)">权限</el-button>
+                        <el-button v-if="operation.add" type="text" @click="$emit('onAdd', scope.row)" style="color: var(--add)">添加</el-button>
+                        <el-button v-if="operation.detail" type="text" @click="$emit('onDetail', scope.row)" style="color: var(--query)">查看</el-button>
+                        <el-button v-if="operation.upper && (scope.row['status'] == 0 || scope.row['status'] == 2)" type="text" @click="$emit('onUpper', scope.row)" style="color: var(--upper)">上架</el-button>
+                        <el-button v-if="operation.down && scope.row['status'] == 1" type="text" @click="$emit('onDown', scope.row)" style="color: var(--down)">下架</el-button>
+                        <el-button v-if="operation.edit" type="text" @click="$emit('onEdit', scope.row)" style="color: var(--edit)">编辑</el-button>
+                        <el-button v-if="operation.del" type="text" @click="$emit('onDelete', scope.row)" style="color: var(--delete)">删除</el-button>
+                        <el-button v-if="operation.role" type="text" @click="$emit('onRole', scope.row)" style="color: var(--role)">权限</el-button>
                     </template>
                 </el-table-column>
             </el-table>
         </div>
         <div class="pagination-wrap" v-if="page">
-            <el-pagination @size-change="onSizeChange" @current-change="onCurrentChange"
+            <el-pagination @size-change="$emit('onSizeChange')" @current-change="$emit('onCurrentChange')"
             layout="total, sizes, prev, pager, next, jumper"
             :current-page="page.current"
             :page-sizes="[10, 20, 50, 100]"
@@ -51,21 +51,25 @@
         data: Array,
     })
 
-    defineEmits([
+    const emit = defineEmits([
         'onAdd','onDetail','onUpper','onDown','onEdit','onDelete','onRole',
         'onSizeChange','onCurrentChange','onSelectionChange','setCellColor'
     ])
 
     const state = reactive({
         tableHeight: window.innerHeight-180,
-        color: {},
         cellStyle: function(e){
-            color.padding = 0;
-            return color;
+            let obj = {};
+            emit('setCellColor', e, (color = {}) =>{
+                console.log(e, color)
+                obj = color;
+            });
+            obj.padding = 0;
+            return obj;
         }
     })
 
-    const {tableHeight,color,cellStyle} = toRefs(state)
+    const {tableHeight,cellStyle} = toRefs(state)
 </script>
 <style lang="less">
 </style>
