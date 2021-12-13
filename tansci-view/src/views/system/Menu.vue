@@ -1,6 +1,6 @@
 <template>
     <div class="menu">
-		<Table :data="tableData" :column="tableTitle" :operation="operation" :page="page" :loading="loading"
+		<Table :data="tableData" :column="tableTitle" :operation="operation" :page="page" :loading="loading" :tableHeight="tableHeight"
             @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange" @setCellColor="setCellColor"
             @onAdd="onAdd">
 		</Table>
@@ -23,11 +23,14 @@
             size: 10,
             total: 0,
         },
+        tableHeight: window.innerHeight-180,
         tableTitle: [
             {prop:'name',label:'名称',align:'left'},
-            {prop:'chineseName',label:'中文名称'},
+            {prop:'chineseName',label:'中文名称',type:'tag',option:{effect:'dark',type:'danger',size:'mini'}},
             {prop:'englishName',label:'英文名称'},
-            {prop:'status',alias:'statusName',label:'状态'},
+            {prop:'status',alias:'statusName',label:'状态',type:'switch',option:{
+                activeColor:'#13ce66',activeText:'否',inactiveColor:'#ff4949',inactiveText:'是'}
+            },
             {prop:'type',alias:'typeName',label:'类型'},
             {prop:'path',label:'路由'},
             {prop:'sort',label:'排序'},
@@ -37,7 +40,7 @@
         tableData:[],
     })
 
-    const {loading,operation,page,tableTitle,tableData} = toRefs(state)
+    const {loading,operation,page,tableHeight,tableTitle,tableData} = toRefs(state)
 
 
     onMounted(()=>{

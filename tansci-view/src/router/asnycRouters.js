@@ -71,8 +71,8 @@ const asnycRouters = [
                 path: "/log",
                 name: "log",
                 icon: "el-icon-unlock",
-                meta: { title: "操作日志" },
-                component: () => import('../views/Home.vue')
+                meta: { title: "日志管理" },
+                component: () => import('../views/system/Log.vue')
             }
         ]
     },
