@@ -35,7 +35,7 @@
 <style>
   :root{
     /* 颜色 */
-    --color: #2F9688;
+    --theme: #2F9688;
 
     /* 背景色 */
     --bg1: #fff0e5;

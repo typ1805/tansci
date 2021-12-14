@@ -6,14 +6,13 @@
         <div class="text">如果您需要，您可以随时与<a href="#">我们联系</a>，否则我们将很快恢复在线！</div>
         <div class="text team">—— Tansci</div>
         <div>
-            <el-button :icon="Back" round @click="goBack">返回</el-button>
-            <el-button type="danger" :icon="HomeFilled" round @click="goHome">首页</el-button>
+            <el-button icon="Back" round @click="goBack">返回</el-button>
+            <el-button type="danger" icon="HomeFilled" round @click="goHome">首页</el-button>
         </div>
     </div>
 </template>
 <script setup>
     import {onBeforeMount, onMounted, reactive, toRefs} from "vue"
-    import {Back,HomeFilled} from "@element-plus/icons"
     import {useRouter} from "vue-router"
 
     const router = useRouter()

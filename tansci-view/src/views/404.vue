@@ -4,14 +4,13 @@
         <div class="text">找不到您要查找的页面，请与<a href="#">我们联系</a>以报告此问题。</div>
         <div class="text team">—— Tansci</div>
         <div>
-            <el-button :icon="Back" round @click="goBack">返回</el-button>
-            <el-button type="danger" :icon="HomeFilled" round @click="goHome">首页</el-button>
+            <el-button icon="Back" round @click="goBack">返回</el-button>
+            <el-button type="danger" icon="HomeFilled" round @click="goHome">首页</el-button>
         </div>
     </div>
 </template>
 <script setup>
     import {onBeforeMount, onMounted, reactive, toRefs} from "vue"
-    import {Back,HomeFilled} from "@element-plus/icons"
     import {useRouter} from "vue-router"
 
     const router = useRouter()

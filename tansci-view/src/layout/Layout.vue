@@ -2,7 +2,13 @@
     <el-container class="layout-container">
         <el-header height="45">
             <div class="header">
-                <div @click="onCollapse">Tansci 系统</div>
+                <div>
+                    <span style="vertical-align: middle;">{{logo}}</span>
+                    <el-icon @click="onCollapse" color="#FFF" :size="20" style="vertical-align: middle;padding-left:0.4rem;cursor:pointer;">
+                        <fold v-if="isCollapse"/>
+                        <expand  v-else="isCollapse"/>
+                    </el-icon>
+                </div>
                 <div>
                     <span>{{username}} 欢迎您！</span>
                     <span style="padding-right: 1rem;">{{nowTimes}}</span>
@@ -49,6 +55,7 @@
     const username = store.getters.getUser.nickname?store.getters.getUser.nickname:'管理员';
     const nowTimes = ref('');
     const state = reactive({
+        logo: 'Tansci 系统',
         isCollapse: false,
         asideWidth: '190px',
         defaultHeight: {
@@ -59,6 +66,7 @@
     })
 
     const {
+        logo,
         isCollapse,
         asideWidth,
         defaultHeight,
@@ -81,9 +89,11 @@
 
     const onCollapse = () => {
         if (state.isCollapse) {
+            state.logo = 'Tansci 系统'
             state.asideWidth = '190px'
             state.isCollapse = false
         } else {
+            state.logo = 'Tansci'
             state.isCollapse = true
             state.asideWidth = '64px'
         }
@@ -122,7 +132,7 @@
             display: flex;
             justify-content: space-between;
             line-height: 45px;
-            background: var(--color);
+            background: var(--theme);
             color: #fff;
             padding: 0 1rem;
         }

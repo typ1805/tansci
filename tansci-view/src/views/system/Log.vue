@@ -2,13 +2,19 @@
     <div class="log">
         <el-tabs v-model="activeName" @tab-click="onHandleClick">
             <el-tab-pane label="操作日志" name="info">
-                <Table :data="tableData" :column="tableInfoTitle" :operation="operation" :page="page" :loading="loading" :tableHeight="tableHeight"
-                    @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange" @onDetail="onDetail">
+                <Table :data="tableData" :column="tableInfoTitle" :operation="true" :page="page" :loading="loading" :tableHeight="tableHeight"
+                    @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange">
+                    <template #column="scope">
+                        <el-button @click="onDetail(scope.row)" type="text">详情</el-button>
+                    </template>
                 </Table>
             </el-tab-pane>
             <el-tab-pane label="异常日志" name="error">
-                <Table :data="tableData" :column="tableErrorTitle" :operation="operation" :page="page" :loading="loading" :tableHeight="tableHeight"
-                    @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange" @onDetail="onDetail">
+                <Table :data="tableData" :column="tableErrorTitle" :operation="true" :page="page" :loading="loading" :tableHeight="tableHeight"
+                    @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange">
+                    <template #column="scope">
+                        <el-button @click="onDetail(scope.row)" type="text">详情</el-button>
+                    </template>
                 </Table>
             </el-tab-pane>
         </el-tabs>
@@ -71,9 +77,6 @@
     const state = reactive({
         activeName: 'info',
         loading: false,
-        operation: {
-            detail: true
-        },
         page: {
             current: 1,
             size: 20,

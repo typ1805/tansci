@@ -11,12 +11,12 @@
 						<el-form-item prop="username" :rules="[
 								{required: true,message: '请输入用户名',trigger: 'blur'},
 								{pattern: /^[a-zA-Z]\w{4,17}$/,message: '用户名式有误，请重新输入',trigger: 'blur'}]">
-							<el-input v-model="state.loginForm.username" :prefix-icon="Avatar" placeholder="请输入用户名称" style="width:100%"></el-input>
+							<el-input v-model="state.loginForm.username" prefix-icon="Avatar" placeholder="请输入用户名称" style="width:100%"></el-input>
 						</el-form-item>
 						<el-form-item prop="password" :rules="[
 								{required: true,message: '请输入密码',trigger: 'blur'},
 								{pattern: /^[a-zA-Z]\w{5,17}$/,message: '密码格式有误，请重新输入',trigger: 'blur'}]">
-							<el-input type="password" v-model="loginForm.password" :prefix-icon="Lock" show-password placeholder="请输入密码" style="width:100%"></el-input>
+							<el-input type="password" v-model="loginForm.password" prefix-icon="Lock" show-password placeholder="请输入密码" style="width:100%"></el-input>
 						</el-form-item>
 						<el-form-item>
 							<el-checkbox v-model="loginForm.keepPassword" label="记住密码"></el-checkbox>
@@ -32,7 +32,6 @@
 </template>
 <script setup>
 	import {onBeforeMount,reactive,ref,toRefs,unref} from "vue"
-	import {Avatar,Lock} from "@element-plus/icons"
 	import {useRouter} from 'vue-router'
 	import {useStore} from 'vuex'
 	import {login} from '../api/systemApi'

@@ -3,6 +3,7 @@ import App from './App.vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/theme-chalk/index.css'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
+import * as ElIcons from '@element-plus/icons'
 import router from './router'
 import store from './store'
 
@@ -13,4 +14,9 @@ app.use(ElementPlus, {
     locale: zhCn,
     size: "small"
 })
+// 统一导入el-icon图标
+for(let icon in ElIcons){
+    app.component(icon,ElIcons[icon])
+}
+
 app.mount('#app')
