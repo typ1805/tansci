@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -122,6 +123,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             result = WrapMapper.error(Enums.AUTH_NONEXISTENT.getKey(), Enums.AUTH_NONEXISTENT.getValue());
         } else if (failed instanceof BadCredentialsException) {
             result = WrapMapper.error(Enums.AUTH_NO_TOKEN.getKey(), Enums.AUTH_NO_TOKEN.getValue());
+        } else if (failed instanceof InternalAuthenticationServiceException) {
+            String message = failed.getMessage() != null ? failed.getMessage() : Wrapper.ERROR_MESSAGE;
+            result = WrapMapper.error(Enums.AUTH_NO_ACCESS.getKey(), message);
         }
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");

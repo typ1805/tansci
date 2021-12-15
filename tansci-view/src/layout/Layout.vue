@@ -80,7 +80,6 @@
         // TODO
         let _routers = router.options.routes.filter(v=>v.type === 1)
         state.routers = _routers;
-        console.log(state.routers)
     })
 
     onMounted(()=>{

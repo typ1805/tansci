@@ -61,15 +61,17 @@
 		if (!form) return;
 		await form.validate();
 
-		console.log(state.loginForm)
-
 		// if(state.loginForm.code <= 0){
 		// 	ElMessage.warning('请拖动滑块进行验证！')
 		// 	return false;
 		// }
 
 		// 登录成功后设置token到vuex中
-		login(state.loginForm).then(res=>{
+		let param = {
+			username: state.loginForm.username,
+			password: state.loginForm.password
+		}
+		login(param).then(res=>{
 			if(res){
 				store.commit('setToken', res.result.token);
 				store.commit('setUser', res.result);

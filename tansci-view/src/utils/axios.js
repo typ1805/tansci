@@ -31,7 +31,8 @@ axios.interceptors.response.use(res => {
         return res;
     } else {
         if (res.data.code != 200) {
-            if (res.data.message) ElMessage.error(res.data.message)
+            NProgress.done();
+            ElMessage.error(res.data.message)
             if (res.data.code == 403 || res.data.code == 401) router.push({path: '/login'})
             return Promise.reject(res.data)
         }
