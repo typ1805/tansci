@@ -2,19 +2,13 @@
     <div class="log">
         <el-tabs v-model="activeName" @tab-click="onHandleClick">
             <el-tab-pane label="操作日志" name="info">
-                <Table :data="tableData" :column="tableInfoTitle" :operation="true" :page="page" :loading="loading" :tableHeight="tableHeight"
-                    @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange">
-                    <template #column="scope">
-                        <el-button @click="onDetail(scope.row)" type="text">详情</el-button>
-                    </template>
+                <Table :data="tableData" :column="tableInfoTitle" :page="page" :loading="loading" :tableHeight="tableHeight"
+                    @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange" @onButtonClick="onDetail">
                 </Table>
             </el-tab-pane>
             <el-tab-pane label="异常日志" name="error">
-                <Table :data="tableData" :column="tableErrorTitle" :operation="true" :page="page" :loading="loading" :tableHeight="tableHeight"
-                    @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange">
-                    <template #column="scope">
-                        <el-button @click="onDetail(scope)" type="text">详情</el-button>
-                    </template>
+                <Table :data="tableData" :column="tableErrorTitle" :page="page" :loading="loading" :tableHeight="tableHeight"
+                    @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange" @onButtonClick="onDetail">
                 </Table>
             </el-tab-pane>
         </el-tabs>
@@ -84,7 +78,7 @@
         },
         tableHeight: window.innerHeight-240,
         tableInfoTitle: [
-            {prop:'module',label:'功能模块'},
+            {prop:'module',label:'功能模块',type:'button',option:{size:'mini'}},
             {prop:'type',label:'操作类型'},
             {prop:'message',label:'操作描述'},
             {prop:'takeUpTime',label:'耗时（ms）'},
@@ -96,7 +90,7 @@
             {prop:'createTime',label:'创建时间'},
         ],
         tableErrorTitle: [
-            {prop:'name',label:'异常名称'},
+            {prop:'name',label:'异常名称',type:'button',option:{size:'mini'}},
             {prop:'message',label:'异常信息',tooltip:false},
             {prop:'userName',label:'操作者'},
             {prop:'method',label:'操作方法'},
@@ -158,7 +152,7 @@
     }
 
     const onDetail = (val) =>{
-        state.detail = val.column.row;
+        state.detail = val;
         state.detailVisible = true;
     }
 </script>

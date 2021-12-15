@@ -19,7 +19,7 @@ axios.interceptors.request.use(function (config) {
 })
 
 axios.interceptors.response.use(res => {
-    if (res.data == null) {
+    if (!res) {
         ElMessage.error("服务器异常，请稍后再试！")
         return Promise.reject(res)
     }
