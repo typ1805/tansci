@@ -7,6 +7,7 @@ import com.tansci.domain.LogInfo;
 import com.tansci.service.LogErrorInfoService;
 import com.tansci.service.LogInfoService;
 import com.tansci.utils.IPUtils;
+import com.tansci.utils.SecurityUserUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -126,8 +127,8 @@ public class LogAspect {
             logInfo.setMethod(className + "." + method.getName()); // 请求的方法名
             logInfo.setReqParam(JSON.toJSONString(converMap(request.getParameterMap()))); // 请求参数
             logInfo.setResParam(JSON.toJSONString(keys)); // 返回结果
-//            logInfo.setUserId(SecurityUserUtils.getUser().getId()); // 请求用户ID
-//            logInfo.setUserName(SecurityUserUtils.getUser().getUsername()); // 请求用户名称
+            logInfo.setUserId(SecurityUserUtils.getUser().getId()); // 请求用户ID
+            logInfo.setUserName(SecurityUserUtils.getUser().getUsername()); // 请求用户名称
             logInfo.setIp(IPUtils.getIpAddress(request)); // 请求IP
             logInfo.setUri(request.getRequestURI()); // 请求URI
             logInfo.setCreateTime(LocalDateTime.now()); // 创建时间
@@ -173,8 +174,8 @@ public class LogAspect {
                             .method(className + "." + method.getName()) // 请求方法名
                             .name(e.getClass().getName()) // 异常名称
                             .message(stackTraceToString(e.getClass().getName(), e.getMessage(), e.getStackTrace())) // 异常信息
-//                            .userId(SecurityUserUtils.getUser().getId()) // 操作员ID
-//                            .userName(SecurityUserUtils.getUser().getUsername()) // 操作员名称
+                            .userId(SecurityUserUtils.getUser().getId()) // 操作员ID
+                            .userName(SecurityUserUtils.getUser().getUsername()) // 操作员名称
                             .uri(request.getRequestURI()) // 操作URI
                             .ip(IPUtils.getIpAddress(request)) // 操作员IP
                             .version(version) // 版本号

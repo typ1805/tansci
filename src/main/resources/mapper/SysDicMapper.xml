@@ -4,13 +4,10 @@
 <mapper namespace="com.tansci.mapper.SysDicMapper">
 
     <select id="getDicChildrens" parameterType="integer" resultType="com.tansci.domain.SysDic">
-        WITH RECURSIVE t AS (
-            SELECT * FROM sys_dic WHERE id = #{id}
-            union ALL
-            SELECT sys_dic.* FROM sys_dic, t
-            WHERE sys_dic.parent_id = t.id
-        )
-        SELECT t.* FROM t ORDER BY id
+        SELECT * FROM (
+            SELECT t1.*,IF(FIND_IN_SET(parent_id, @pids) > 0, @pids := CONCAT(@pids, ',', id), '0') AS ischild
+            FROM (SELECT * FROM sys_dic ORDER BY id ASC) t1,(SELECT @pids := #{id}) t2
+        ) t3 WHERE ischild != '0'
     </select>
 
 </mapper>

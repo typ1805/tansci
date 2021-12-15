@@ -13,7 +13,7 @@
                 <Table :data="tableData" :column="tableErrorTitle" :operation="true" :page="page" :loading="loading" :tableHeight="tableHeight"
                     @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange">
                     <template #column="scope">
-                        <el-button @click="onDetail(scope.row)" type="text">详情</el-button>
+                        <el-button @click="onDetail(scope)" type="text">详情</el-button>
                     </template>
                 </Table>
             </el-tab-pane>
@@ -114,7 +114,7 @@
     } = toRefs(state)
 
     onMounted(()=>{
-        // onLogPage();
+        onLogPage();
     })
 
     const onHandleClick = (tab, event) =>{
@@ -157,8 +157,8 @@
         onLogPage();
     }
 
-    const onDetail = (row) =>{
-        state.detail = row;
+    const onDetail = (val) =>{
+        state.detail = val.column.row;
         state.detailVisible = true;
     }
 </script>

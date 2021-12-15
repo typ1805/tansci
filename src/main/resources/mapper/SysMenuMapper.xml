@@ -31,19 +31,10 @@
     </select>
 
     <select id="getMenuChildrens" parameterType="integer" resultType="com.tansci.domain.SysMenu">
-        WITH RECURSIVE t AS (
-            SELECT *
-            FROM sys_menu
-            WHERE id = #{id}
-            union ALL
-            SELECT sys_menu.*
-            FROM sys_menu,
-                 t
-            WHERE sys_menu.parent_id = t.id
-        )
-        SELECT t.*
-        FROM t
-        ORDER BY id
+        SELECT * FROM (
+            SELECT t1.*,IF(FIND_IN_SET(parent_id, @pids) > 0, @pids := CONCAT(@pids, ',', id), '0') AS ischild
+            FROM (SELECT * FROM sys_menu ORDER BY id ASC) t1,(SELECT @pids := #{id}) t2
+        ) t3 WHERE ischild != '0'
     </select>
 
 </mapper>

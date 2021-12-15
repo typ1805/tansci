@@ -14,6 +14,7 @@ import com.tansci.service.SysDicService;
 import com.tansci.service.SysMenuRoleService;
 import com.tansci.service.SysMenuService;
 import com.tansci.service.SysUserRoleService;
+import com.tansci.utils.SecurityUserUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,7 +69,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     @Override
     public List<SysMenu> list(SysMenu sysMenu) {
         if (Objects.nonNull(sysMenu.getType()) && 1 == sysMenu.getType()) {
-            SysUserRole role = sysUserRoleService.getOne(Wrappers.<SysUserRole>lambdaQuery().eq(SysUserRole::getUserId, 0));
+            SysUserRole role = sysUserRoleService.getOne(Wrappers.<SysUserRole>lambdaQuery().eq(SysUserRole::getUserId, SecurityUserUtils.getUser().getId()));
             sysMenu.setRoleId(role.getRoleId());
         }
         List<SysMenu> list = this.baseMapper.list(sysMenu);
@@ -131,7 +132,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
             return sysMenuRoleService.save(
                     SysMenuRole.builder()
                             .menuId(sysMenu.getId())
-                            .roleId(0)
+                            .roleId(Integer.parseInt(SecurityUserUtils.getUser().getRole()))
                             .build()
             );
         }
@@ -143,6 +144,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         List<SysMenu> menuList = this.baseMapper.getMenuChildrens(id);
         if (Objects.nonNull(menuList) && menuList.size() > 0) {
             List<Integer> ids = menuList.stream().map(SysMenu::getId).collect(Collectors.toList());
+            ids.add(id);
             // 删除菜单
             this.baseMapper.deleteBatchIds(ids);
             // 删除权限

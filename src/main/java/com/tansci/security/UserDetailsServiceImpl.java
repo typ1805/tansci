@@ -3,13 +3,14 @@ package com.tansci.security;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.tansci.common.exception.BusinessException;
 import com.tansci.domain.SysUser;
+import com.tansci.domain.SysUserRole;
+import com.tansci.service.SysUserRoleService;
 import com.tansci.service.SysUserService;
 import com.tansci.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -28,6 +29,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private SysUserService sysUserService;
 
+    @Autowired
+    private SysUserRoleService sysUserRoleService;
+
     @Override
     public UserDetails loadUserByUsername(String username) {
         SysUser user = sysUserService.getOne(Wrappers.<SysUser>lambdaQuery().eq(SysUser::getUsername, username));
@@ -36,10 +40,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
 
         // 获取角色
-//            SysUserRole role = sysUserRoleService.getOne(Wrappers.<SysUserRole>lambdaQuery().eq(SysUserRole::getUserId, user.getId()));
-//            if (Objects.nonNull(role)) {
-        user.setRole("1");
-//            }
+        SysUserRole role = sysUserRoleService.getOne(Wrappers.<SysUserRole>lambdaQuery().eq(SysUserRole::getUserId, user.getId()));
+        if (Objects.isNull(role) || Objects.isNull(role.getRoleId())) {
+            throw new BusinessException("暂无登录权限，请联系管理员！");
+        }
+        user.setRole(String.valueOf(role.getRoleId()));
         return new SecurityUtils(user);
     }
 
