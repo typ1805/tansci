@@ -3,44 +3,6 @@
 
 <mapper namespace="com.tansci.mapper.SysRoleMapper">
 
-    <select id="page" resultType="com.tansci.domain.SysRole" parameterType="com.tansci.domain.SysRole">
-        select DISTINCT r.* from sys_role r
-        inner join sys_user_role ur on r.id = ur.role_id
-        <where>
-            <if test="role.userIds != null and role.userIds.size > 0">
-                AND ur.user_id in
-                <foreach item="item" collection="role.userIds" separator="," open="(" close=")">
-                    #{item}
-                </foreach>
-            </if>
-            <if test="role.name != null and role.name != ''">
-                AND r.name = #{role.name}
-            </if>
-        </where>
-    </select>
-
-    <select id="list" resultType="com.tansci.domain.SysRole" parameterType="com.tansci.domain.SysRole">
-        select DISTINCT r.* from sys_role r
-        inner join sys_user_role ur on r.id = ur.role_id
-        <where>
-            <if test="role.userIds != null and role.userIds.size > 0">
-                AND ur.user_id in
-                <foreach item="item" collection="role.userIds" separator="," open="(" close=")">
-                    #{item}
-                </foreach>
-            </if>
-            <if test="role.status != null">
-                AND r.status = #{role.status}
-            </if>
-            <if test="role.type != null">
-                AND r.type = #{role.type}
-            </if>
-            <if test="role.name != null and role.name != ''">
-                AND r.name = #{role.name}
-            </if>
-        </where>
-    </select>
-
     <select id="menuRoleList" parameterType="com.tansci.domain.SysMenuRole" resultType="com.tansci.domain.vo.SysMenuRoleVo">
         SELECT m.id,m.name,m.chinese_name,m.parent_id,m.sort,mr.role_id,mr.menu_id
         FROM sys_menu m

@@ -1,7 +1,5 @@
 package com.tansci.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tansci.common.WrapMapper;
 import com.tansci.common.Wrapper;
 import com.tansci.common.annotation.Log;
@@ -30,12 +28,6 @@ public class SysOrgController {
 
     @Autowired
     private SysOrgService sysOrgService;
-
-    @Log(modul = "组织-分页列表", type = Constants.SELECT, desc = "分页列表")
-    @GetMapping("/page")
-    public Wrapper<IPage<SysOrg>> page(Page page, SysOrg sysOrg) {
-        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysOrgService.page(page, sysOrg));
-    }
 
     @Log(modul = "组织-列表", type = Constants.SELECT, desc = "列表")
     @GetMapping("/list")

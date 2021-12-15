@@ -1,7 +1,5 @@
 package com.tansci.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.tansci.domain.SysOrg;
 
@@ -16,8 +14,6 @@ import java.util.List;
  * @editNote：
  */
 public interface SysOrgService extends IService<SysOrg> {
-
-    IPage<SysOrg> page(Page page, SysOrg sysOrg);
 
     List<SysOrg> list(SysOrg sysOrg);
 

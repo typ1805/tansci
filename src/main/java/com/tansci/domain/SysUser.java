@@ -78,17 +78,23 @@ public class SysUser {
     private String delFlagName;
 
     // 更新时间
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone="GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private LocalDateTime updateTime;
 
     // 创建时间
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone="GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private LocalDateTime createTime;
 
     // 备注
     private String remarks;
 
     @TableField(exist = false)
-    private String role;
+    private Integer role;
+
+    @TableField(exist = false)
+    private Integer orgId;
+
+    @TableField(exist = false)
+    private List<Integer> orgIds;
 
 }

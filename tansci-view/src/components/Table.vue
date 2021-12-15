@@ -127,7 +127,7 @@
             emit('setCellColor', e, (color = {}) =>{
                 obj = color;
             });
-            obj.padding = 0;
+            obj.padding = '2px';
             return obj;
         }
     })

@@ -44,6 +44,9 @@ public class SysRole {
     @TableField(exist = false)
     private String statusName;
 
+    // 创建人
+    private String creator;
+
     // 更新时间
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone="GMT+8")
     private LocalDateTime updateTime;

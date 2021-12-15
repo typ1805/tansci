@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @ClassName： SecurityUtils.java
@@ -29,6 +30,10 @@ public class SecurityUtils implements UserDetails {
 
     private Integer type;
 
+    private Integer orgId;
+
+    private List<Integer> orgIds;
+
     private Collection<? extends GrantedAuthority> authorities;
 
     public SecurityUtils() {
@@ -40,7 +45,9 @@ public class SecurityUtils implements UserDetails {
         this.nickname = user.getNickname();
         this.password = user.getPassword();
         this.type = user.getType();
-        this.authorities = Collections.singleton(new SimpleGrantedAuthority(user.getRole()));
+        this.orgId = user.getOrgId();
+        this.orgIds = user.getOrgIds();
+        this.authorities = Collections.singleton(new SimpleGrantedAuthority(user.getRole().toString()));
     }
 
     @Override

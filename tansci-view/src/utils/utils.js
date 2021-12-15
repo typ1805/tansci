@@ -57,6 +57,26 @@ export function timeFormate(timeStamp) {
 }
 
 /**
+ * 毫秒转 dd:HH:mm:sss
+ */
+export function formatDuring(val) {
+    let secondTime = parseInt(val) //将传入的秒的值转化为Number
+    let min = 0 // 初始化分
+    let h = 0 // 初始化小时
+    let result = ''
+    if (secondTime > 60) { //如果秒数大于60，将秒数转换成整数
+        min = parseInt(secondTime / 60) //获取分钟，除以60取整数，得到整数分钟
+        secondTime = parseInt(secondTime % 60) //获取秒数，秒数取佘，得到整数秒数
+        if (min > 60) { //如果分钟大于60，将分钟转换成小时
+            h = parseInt(min / 60) //获取小时，获取分钟除以60，得到整数小时
+            min = parseInt(min % 60) //获取小时后取佘的分，获取分钟除以60取佘的分
+        }
+    }
+    result = `${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')}:${secondTime.toString().padStart(2,'0')}`
+    return result;
+}
+
+/**
  * 判断：早上好,上午好,下午好,傍晚好,晚上好
  * @param {*} timeStamp 
  * @returns 
@@ -148,23 +168,18 @@ export function getTreeIds(data = [], arr = []) {
 }
 
 /**
- * 毫秒转 dd:HH:mm:sss
+ * 获取菜单树，获取选中Id的集合
  */
-export function formatDuring(val) {
-    let secondTime = parseInt(val) //将传入的秒的值转化为Number
-    let min = 0 // 初始化分
-    let h = 0 // 初始化小时
-    let result = ''
-    if (secondTime > 60) { //如果秒数大于60，将秒数转换成整数
-        min = parseInt(secondTime / 60) //获取分钟，除以60取整数，得到整数分钟
-        secondTime = parseInt(secondTime % 60) //获取秒数，秒数取佘，得到整数秒数
-        if (min > 60) { //如果分钟大于60，将分钟转换成小时
-            h = parseInt(min / 60) //获取小时，获取分钟除以60，得到整数小时
-            min = parseInt(min % 60) //获取小时后取佘的分，获取分钟除以60取佘的分
+export function getCheckTreeIds(data = [], arr = []) {
+    for (let item of data) {
+        if (item.menuId) {
+            arr.push(item.id);
+        }
+        if (item.children && item.children.length) {
+            getCheckTreeIds(item.children, arr);
         }
     }
-    result = `${h.toString().padStart(2,'0')}:${min.toString().padStart(2,'0')}:${secondTime.toString().padStart(2,'0')}`
-    return result;
+    return arr;
 }
 
 /**
@@ -192,28 +207,4 @@ export function getUuid() {
 export function numberDormat(num) {
     return (num + '').replace(/(\d{1,3})(?=(\d{3})+(?:$|\.))/g, '$1,');
 }
-/**
- * 时间格式化
- * @param {} fmt 
- * @param {*} date 
- * @returns 
- */
-const dateFormatFun = (fmt, date) => {
-    let ret;
-    const opt = {
-        "Y+": date.getFullYear().toString(), // 年
-        "m+": (date.getMonth() + 1).toString(), // 月
-        "d+": date.getDate().toString(), // 日
-        "H+": date.getHours().toString(), // 时
-        "M+": date.getMinutes().toString(), // 分
-        "S+": date.getSeconds().toString() // 秒
-            // 有其他格式化字符需求可以继续添加，必须转化成字符串
-    };
-    for (let k in opt) {
-        ret = new RegExp("(" + k + ")").exec(fmt);
-        if (ret) {
-            fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
-        };
-    };
-    return fmt;
-}
+

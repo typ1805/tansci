@@ -1,24 +1,35 @@
 package com.tansci.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tansci.common.constant.Constants;
 import com.tansci.common.exception.BusinessException;
+import com.tansci.domain.SysOrg;
 import com.tansci.domain.SysUser;
+import com.tansci.domain.SysUserOrg;
+import com.tansci.domain.SysUserRole;
 import com.tansci.domain.dto.SysUserDto;
 import com.tansci.mapper.SysUserMapper;
+import com.tansci.service.SysOrgService;
+import com.tansci.service.SysUserOrgService;
+import com.tansci.service.SysUserRoleService;
 import com.tansci.service.SysUserService;
+import com.tansci.utils.SecurityUserUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @path：com.tansci.service.impl.SysUserServiceImpl.java
@@ -33,16 +44,79 @@ import java.util.Objects;
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private SysUserOrgService sysUserOrgService;
+    @Autowired
+    private SysUserRoleService sysUserRoleService;
+    @Autowired
+    private SysOrgService sysOrgService;
 
     @Override
     public IPage<SysUser> page(Page page, SysUserDto dto) {
-
-        return this.baseMapper.selectPage(page, Wrappers.lambdaQuery());
+        LambdaQueryWrapper queryWrapper = null;
+        if (Objects.equals(0, SecurityUserUtils.getUser().getType())) {
+            queryWrapper = Wrappers.<SysUser>lambdaQuery()
+                    .eq(SysUser::getDelFlag, 0)
+                    .like(Objects.nonNull(dto.getNickname()), SysUser::getNickname, dto.getNickname())
+                    .orderByDesc(SysUser::getCreateTime, SysUser::getUpdateTime);
+        } else {
+            queryWrapper = Wrappers.<SysUser>lambdaQuery()
+                    .eq(SysUser::getDelFlag, 0)
+                    .in(SysUser::getOrgId, SecurityUserUtils.getUser().getOrgIds())
+                    .like(Objects.nonNull(dto.getNickname()), SysUser::getNickname, dto.getNickname())
+                    .orderByDesc(SysUser::getCreateTime, SysUser::getUpdateTime);
+        }
+        return this.baseMapper.selectPage(page, queryWrapper);
     }
 
     @Override
     public List<SysUser> list(SysUserDto dto) {
-        return this.baseMapper.selectList(Wrappers.lambdaQuery());
+        LambdaQueryWrapper queryWrapper = null;
+        if (Objects.equals(0, SecurityUserUtils.getUser().getType())) {
+            queryWrapper = Wrappers.<SysUser>lambdaQuery()
+                    .eq(SysUser::getDelFlag, 0)
+                    .like(Objects.nonNull(dto.getNickname()), SysUser::getNickname, dto.getNickname())
+                    .orderByDesc(SysUser::getCreateTime, SysUser::getUpdateTime);
+        } else {
+            queryWrapper = Wrappers.<SysUser>lambdaQuery()
+                    .eq(SysUser::getDelFlag, 0)
+                    .in(SysUser::getOrgId, SecurityUserUtils.getUser().getOrgIds())
+                    .like(Objects.nonNull(dto.getNickname()), SysUser::getNickname, dto.getNickname())
+                    .orderByDesc(SysUser::getCreateTime, SysUser::getUpdateTime);
+        }
+        return this.baseMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public SysUser login(String username) {
+        SysUser user = this.baseMapper.selectOne(Wrappers.<SysUser>lambdaQuery().eq(SysUser::getUsername, username));
+        if (Objects.nonNull(user)) {
+            // 获取角色
+            SysUserRole role = sysUserRoleService.getOne(Wrappers.<SysUserRole>lambdaQuery().eq(SysUserRole::getUserId, user.getId()));
+            log.error("====={}=======无权限================", username);
+            if (Objects.isNull(role) || Objects.isNull(role.getRoleId())) {
+                throw new BusinessException("暂无登录权限，请联系管理员！");
+            }
+            user.setRole(role.getRoleId());
+
+            // 获取组织
+            SysUserOrg org = sysUserOrgService.getOne(Wrappers.<SysUserOrg>lambdaQuery().eq(SysUserOrg::getUserId, user.getId()));
+            if (Objects.isNull(org) || Objects.isNull(org.getOrgId())) {
+                log.error("====={}=======无组织================", username);
+                throw new BusinessException("暂无登录权限，请联系管理员！");
+            }
+
+            // 获取组织权限
+            List<SysOrg> orgs = sysOrgService.getOrgChildrens(org.getOrgId());
+            if (Objects.nonNull(orgs) && orgs.size() > 0) {
+                List<Integer> orgIds = orgs.stream().map(SysOrg::getId).collect(Collectors.toList());
+                orgIds.add(org.getOrgId());
+                user.setOrgIds(orgIds);
+            } else {
+                user.setOrgIds(Arrays.asList(org.getOrgId()));
+            }
+        }
+        return user;
     }
 
     /**
@@ -76,7 +150,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         int row = this.baseMapper.insert(user);
         if (row > 0) {
-//            return sysOrgUserService.save(SysOrgUser.builder().userId(user.getId()).orgId(user.getOrgId()).build());
+            return sysUserOrgService.save(SysUserOrg.builder().userId(user.getId()).orgId(user.getOrgId()).build());
         }
         return false;
     }
@@ -87,8 +161,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         user.setUpdateTime(LocalDateTime.now());
         int row = this.baseMapper.updateById(user);
         if (row > 0) {
-//            sysOrgUserService.remove(Wrappers.<SysOrgUser>lambdaQuery().eq(SysOrgUser::getUserId, user.getId()));
-//            return sysOrgUserService.save(SysOrgUser.builder().userId(user.getId()).orgId(user.getOrgId()).build());
+            sysUserOrgService.remove(Wrappers.<SysUserOrg>lambdaQuery().eq(SysUserOrg::getUserId, user.getId()));
+            return sysUserOrgService.save(SysUserOrg.builder().userId(user.getId()).orgId(user.getOrgId()).build());
         }
         return false;
     }
@@ -98,7 +172,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     public boolean del(SysUserDto dto) {
         int row = this.baseMapper.deleteById(dto.getId());
         if (row > 0) {
-//            return sysOrgUserService.remove(Wrappers.<SysOrgUser>lambdaQuery().eq(SysOrgUser::getUserId, dto.getId()));
+            return sysUserOrgService.remove(Wrappers.<SysUserOrg>lambdaQuery().eq(SysUserOrg::getUserId, dto.getId()));
         }
         return false;
     }

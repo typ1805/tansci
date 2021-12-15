@@ -162,6 +162,13 @@
             padding: 0;
             overflow-x: hidden;
             overflow-y: auto;
+            /deep/ .el-dialog__header{
+                background: var(--theme);
+                padding: 10px;
+                .el-dialog__title{
+                    color: #fff;
+                }
+            }
         }
         .el-main::-webkit-scrollbar{
             width: 0px;

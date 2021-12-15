@@ -132,7 +132,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
             return sysMenuRoleService.save(
                     SysMenuRole.builder()
                             .menuId(sysMenu.getId())
-                            .roleId(Integer.parseInt(SecurityUserUtils.getUser().getRole()))
+                            .roleId(SecurityUserUtils.getUser().getRole())
                             .build()
             );
         }

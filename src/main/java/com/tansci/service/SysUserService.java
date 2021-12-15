@@ -30,4 +30,6 @@ public interface SysUserService extends IService<SysUser> {
 
     boolean del(SysUserDto dto);
 
+    SysUser login(String username);
+
 }

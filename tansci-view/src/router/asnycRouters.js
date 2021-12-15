@@ -37,7 +37,7 @@ const asnycRouters = [
                 name: "role",
                 icon: "el-icon-menu",
                 meta: { title: "角色管理" },
-                component: () => import('../views/Home.vue')
+                component: () => import('../views/system/Role.vue')
             },
             {
                 path: "/org",
@@ -58,7 +58,7 @@ const asnycRouters = [
                 name: "dicInfo",
                 icon: "el-icon-coin",
                 meta: { title: "字典列表" },
-                component: () => import('../views/Home.vue')
+                component: () => import('../views/system/DicInfo.vue')
             },
             {
                 path: "/password",

@@ -1,5 +1,6 @@
 package com.tansci.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -10,6 +11,7 @@ import com.tansci.domain.dto.SysRoleDto;
 import com.tansci.domain.vo.SysMenuRoleVo;
 import com.tansci.mapper.SysRoleMapper;
 import com.tansci.service.*;
+import com.tansci.utils.SecurityUserUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,11 +43,29 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     @Autowired
     private SysOrgRoleService sysOrgRoleService;
     @Autowired
-    private SysUserService sysUserService;
+    private SysUserOrgService sysUserOrgService;
 
     @Override
     public IPage<SysRole> page(Page page, SysRole role) {
-        IPage<SysRole> roleIPage = this.baseMapper.page(page, role);
+        LambdaQueryWrapper queryWrapper = null;
+        if (Objects.equals(0, SecurityUserUtils.getUser().getType())) {
+            queryWrapper = Wrappers.<SysRole>lambdaQuery()
+                    .like(Objects.nonNull(role.getName()), SysRole::getName, role.getName())
+                    .orderByDesc(SysRole::getCreateTime, SysRole::getUpdateTime);
+        } else {
+            List<SysUserOrg> orgs = sysUserOrgService.list(Wrappers.<SysUserOrg>lambdaQuery().in(SysUserOrg::getOrgId, SecurityUserUtils.getUser().getOrgIds()));
+            List<String> userIds = new ArrayList<>();
+            if (Objects.nonNull(orgs) && orgs.size() > 0) {
+                userIds = orgs.stream().map(SysUserOrg::getUserId).distinct().collect(Collectors.toList());
+            } else {
+                userIds.add(SecurityUserUtils.getUser().getId());
+            }
+            queryWrapper = Wrappers.<SysRole>lambdaQuery()
+                    .in(SysRole::getCreator, userIds)
+                    .like(Objects.nonNull(role.getName()), SysRole::getName, role.getName())
+                    .orderByDesc(SysRole::getCreateTime, SysRole::getUpdateTime);
+        }
+        IPage<SysRole> roleIPage = this.baseMapper.selectPage(page, queryWrapper);
 
         List<SysDic> statusList = roleIPage.getSize() > 0 ? sysDicService.list(Wrappers.<SysDic>lambdaQuery().eq(SysDic::getGroupName, "role_status")) : new ArrayList<>();
         roleIPage.getRecords().forEach(item -> {
@@ -60,7 +80,25 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
 
     @Override
     public List<SysRole> list(SysRole role) {
-        return this.baseMapper.list(role);
+        LambdaQueryWrapper queryWrapper = null;
+        if (Objects.equals(0, SecurityUserUtils.getUser().getType())) {
+            queryWrapper = Wrappers.<SysRole>lambdaQuery()
+                    .like(Objects.nonNull(role.getName()), SysRole::getName, role.getName())
+                    .orderByDesc(SysRole::getCreateTime, SysRole::getUpdateTime);
+        } else {
+            List<SysUserOrg> orgs = sysUserOrgService.list(Wrappers.<SysUserOrg>lambdaQuery().in(SysUserOrg::getOrgId, SecurityUserUtils.getUser().getOrgIds()));
+            List<String> userIds = new ArrayList<>();
+            if (Objects.nonNull(orgs) && orgs.size() > 0) {
+                userIds = orgs.stream().map(SysUserOrg::getUserId).distinct().collect(Collectors.toList());
+            } else {
+                userIds.add(SecurityUserUtils.getUser().getId());
+            }
+            queryWrapper = Wrappers.<SysRole>lambdaQuery()
+                    .in(SysRole::getCreator, userIds)
+                    .like(Objects.nonNull(role.getName()), SysRole::getName, role.getName())
+                    .orderByDesc(SysRole::getCreateTime, SysRole::getUpdateTime);
+        }
+        return this.baseMapper.selectList(queryWrapper);
     }
 
     @Override

@@ -1,14 +1,14 @@
 package com.tansci.service.impl;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tansci.domain.SysOrg;
 import com.tansci.domain.SysOrgRole;
 import com.tansci.mapper.SysOrgMapper;
 import com.tansci.service.SysOrgRoleService;
 import com.tansci.service.SysOrgService;
+import com.tansci.utils.SecurityUserUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,18 +32,23 @@ public class SysOrgServiceImpl extends ServiceImpl<SysOrgMapper, SysOrg> impleme
     private SysOrgRoleService sysOrgRoleService;
 
     @Override
-    public IPage<SysOrg> page(Page page, SysOrg sysOrg) {
-        return this.baseMapper.selectPage(page,
-                Wrappers.<SysOrg>lambdaQuery()
-                        .eq(SysOrg::getDelFlag, 0)
-                        .like(Objects.nonNull(sysOrg.getName()), SysOrg::getName, sysOrg.getName())
-                        .orderByDesc(SysOrg::getCreateTime)
-        );
-    }
-
-    @Override
     public List<SysOrg> list(SysOrg sysOrg) {
-        List<SysOrg> orgList = this.baseMapper.selectList(Wrappers.lambdaQuery());
+        LambdaQueryWrapper queryWrapper = null;
+        if (Objects.equals(0, SecurityUserUtils.getUser().getType())) {
+            queryWrapper = Wrappers.<SysOrg>lambdaQuery()
+                    .eq(SysOrg::getDelFlag, 0)
+                    .like(Objects.nonNull(sysOrg.getName()), SysOrg::getName, sysOrg.getName())
+                    .orderByDesc(SysOrg::getCreateTime);
+        } else {
+            queryWrapper = Wrappers.<SysOrg>lambdaQuery()
+                    .eq(SysOrg::getDelFlag, 0)
+                    .in(SysOrg::getId, SecurityUserUtils.getUser().getOrgIds())
+                    .like(Objects.nonNull(sysOrg.getName()), SysOrg::getName, sysOrg.getName())
+                    .orderByDesc(SysOrg::getCreateTime);
+
+        }
+        List<SysOrg> orgList = this.baseMapper.selectList(queryWrapper);
+
         List<SysOrg> newOrgList = orgList.stream().filter(item -> item.getParentId() == 0).map(item -> {
             item.setChildren(this.getChildrens(item, orgList));
             return item;

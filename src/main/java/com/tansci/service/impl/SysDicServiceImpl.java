@@ -75,8 +75,11 @@ public class SysDicServiceImpl extends ServiceImpl<SysDicMapper, SysDic> impleme
         List<SysDic> dicList = this.baseMapper.getDicChildrens(id);
         if (Objects.nonNull(dicList) && dicList.size() > 0) {
             List<Integer> ids = dicList.stream().map(SysDic::getId).collect(Collectors.toList());
+            ids.add(id);
             this.baseMapper.deleteBatchIds(ids);
             return true;
+        } else {
+            this.baseMapper.deleteById(id);
         }
         return false;
     }
