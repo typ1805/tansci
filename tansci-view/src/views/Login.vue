@@ -1,6 +1,6 @@
 <template>
 	<div class="login" :style="loginStyle">
-		<el-card shadow="always" style="padding:5rem;">
+		<el-card shadow="always" style="padding:5rem;margin-right: 4rem;">
 			<div class="login-main">
 				<div class="login-logo">
 					<el-image src="./src/assets/image/login-logo.png" style="width: 100%; height:100%"></el-image>
@@ -90,7 +90,7 @@
 		width: 100%;
 		display: flex;
 		flex-wrap: wrap;
-		justify-content: center;
+		justify-content: flex-end;
 		align-items: center;
 		.login-main{
 			display: flex;
