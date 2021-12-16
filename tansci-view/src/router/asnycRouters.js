@@ -44,14 +44,14 @@ const asnycRouters = [
                 name: "org",
                 icon: "el-icon-help",
                 meta: { title: "组织管理" },
-                component: () => import('../views/Home.vue')
+                component: () => import('../views/system/Org.vue')
             },
             {
                 path: "/user",
                 name: "user",
                 icon: "el-icon-s-data",
                 meta: { title: "用户列表" },
-                component: () => import('../views/Home.vue')
+                component: () => import('../views/system/User.vue')
             },
             {
                 path: "/dicInfo",
@@ -59,13 +59,6 @@ const asnycRouters = [
                 icon: "el-icon-coin",
                 meta: { title: "字典列表" },
                 component: () => import('../views/system/DicInfo.vue')
-            },
-            {
-                path: "/password",
-                name: "password",
-                icon: "el-icon-unlock",
-                meta: { title: "修改密码" },
-                component: () => import('../views/Home.vue')
             },
             {
                 path: "/log",

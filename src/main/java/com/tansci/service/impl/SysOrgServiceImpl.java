@@ -12,7 +12,9 @@ import com.tansci.utils.SecurityUserUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -55,7 +57,7 @@ public class SysOrgServiceImpl extends ServiceImpl<SysOrgMapper, SysOrg> impleme
         }).sorted((item1, item2) -> {
             return (item1.getSort() == null ? 0 : item1.getSort()) - (item2.getSort() == null ? 0 : item2.getSort());
         }).collect(Collectors.toList());
-        return newOrgList;
+        return newOrgList.size() > 0 ? newOrgList : orgList;
     }
 
     /**
@@ -78,15 +80,17 @@ public class SysOrgServiceImpl extends ServiceImpl<SysOrgMapper, SysOrg> impleme
         return treeOrg;
     }
 
+    @Transactional
     @Override
     public boolean del(Integer id) {
+        List<Integer> ids = new ArrayList<>();
+        ids.add(id);
         List<SysOrg> orgList = this.baseMapper.getOrgChildrens(id);
         if (Objects.nonNull(orgList) && orgList.size() > 0) {
-            List<Integer> ids = orgList.stream().map(SysOrg::getId).collect(Collectors.toList());
-            this.baseMapper.deleteBatchIds(ids);
-            return sysOrgRoleService.remove(Wrappers.<SysOrgRole>lambdaQuery().in(SysOrgRole::getOrgId, ids));
+            ids.addAll(orgList.stream().map(SysOrg::getId).collect(Collectors.toList()));
         }
-        return false;
+        this.baseMapper.deleteBatchIds(ids);
+        return sysOrgRoleService.remove(Wrappers.<SysOrgRole>lambdaQuery().in(SysOrgRole::getOrgId, ids));
     }
 
     @Override

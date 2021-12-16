@@ -10,6 +10,7 @@ import com.tansci.service.SysDicService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -46,7 +47,7 @@ public class SysDicServiceImpl extends ServiceImpl<SysDicMapper, SysDic> impleme
         }).sorted((item1, item2) -> {
             return (item1.getSort() == null ? 0 : item1.getSort()) - (item2.getSort() == null ? 0 : item2.getSort());
         }).collect(Collectors.toList());
-        return newDicList;
+        return newDicList.size() > 0 ? newDicList : dicList;
     }
 
     /**
@@ -72,15 +73,13 @@ public class SysDicServiceImpl extends ServiceImpl<SysDicMapper, SysDic> impleme
 
     @Override
     public boolean del(Integer id) {
+        List<Integer> ids = new ArrayList<>();
+        ids.add(id);
         List<SysDic> dicList = this.baseMapper.getDicChildrens(id);
         if (Objects.nonNull(dicList) && dicList.size() > 0) {
-            List<Integer> ids = dicList.stream().map(SysDic::getId).collect(Collectors.toList());
-            ids.add(id);
-            this.baseMapper.deleteBatchIds(ids);
-            return true;
-        } else {
-            this.baseMapper.deleteById(id);
+            ids.addAll(dicList.stream().map(SysDic::getId).collect(Collectors.toList()));
         }
-        return false;
+        this.baseMapper.deleteBatchIds(ids);
+        return true;
     }
 }

@@ -6,17 +6,12 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tansci.common.constant.Constants;
+import com.tansci.common.constant.Enums;
 import com.tansci.common.exception.BusinessException;
-import com.tansci.domain.SysOrg;
-import com.tansci.domain.SysUser;
-import com.tansci.domain.SysUserOrg;
-import com.tansci.domain.SysUserRole;
+import com.tansci.domain.*;
 import com.tansci.domain.dto.SysUserDto;
 import com.tansci.mapper.SysUserMapper;
-import com.tansci.service.SysOrgService;
-import com.tansci.service.SysUserOrgService;
-import com.tansci.service.SysUserRoleService;
-import com.tansci.service.SysUserService;
+import com.tansci.service.*;
 import com.tansci.utils.SecurityUserUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -43,30 +36,32 @@ import java.util.stream.Collectors;
 @Service
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
-    private PasswordEncoder passwordEncoder;
     @Autowired
     private SysUserOrgService sysUserOrgService;
     @Autowired
     private SysUserRoleService sysUserRoleService;
     @Autowired
     private SysOrgService sysOrgService;
+    @Autowired
+    private SysDicService sysDicService;
 
     @Override
     public IPage<SysUser> page(Page page, SysUserDto dto) {
-        LambdaQueryWrapper queryWrapper = null;
-        if (Objects.equals(0, SecurityUserUtils.getUser().getType())) {
-            queryWrapper = Wrappers.<SysUser>lambdaQuery()
-                    .eq(SysUser::getDelFlag, 0)
-                    .like(Objects.nonNull(dto.getNickname()), SysUser::getNickname, dto.getNickname())
-                    .orderByDesc(SysUser::getCreateTime, SysUser::getUpdateTime);
-        } else {
-            queryWrapper = Wrappers.<SysUser>lambdaQuery()
-                    .eq(SysUser::getDelFlag, 0)
-                    .in(SysUser::getOrgId, SecurityUserUtils.getUser().getOrgIds())
-                    .like(Objects.nonNull(dto.getNickname()), SysUser::getNickname, dto.getNickname())
-                    .orderByDesc(SysUser::getCreateTime, SysUser::getUpdateTime);
+        if (!Objects.equals(0, SecurityUserUtils.getUser().getType())) {
+            dto.setOrgIds(SecurityUserUtils.getUser().getOrgIds());
         }
-        return this.baseMapper.selectPage(page, queryWrapper);
+        Page<SysUser> sysUserPage = this.baseMapper.page(page, dto);
+
+        List<SysDic> typeList = sysUserPage.getSize() > 0 ? sysDicService.list(Wrappers.<SysDic>lambdaQuery().eq(SysDic::getGroupName, "user_type")) : new ArrayList<>();
+        sysUserPage.getRecords().forEach(item -> {
+            Optional<SysDic> sOptional = typeList.stream().filter(s -> s.getDicValue() == item.getType()).findFirst();
+            if (sOptional.isPresent()) {
+                item.setTypeName(sOptional.get().getDicLabel());
+            }
+            item.setGenderName(Enums.getVlaueByGroup(item.getGender(), "user_gender"));
+            item.setDelFlagName(Enums.getVlaueByGroup(item.getDelFlag(), "del_falg"));
+        });
+        return sysUserPage;
     }
 
     @Override
@@ -97,7 +92,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             if (Objects.isNull(role) || Objects.isNull(role.getRoleId())) {
                 throw new BusinessException("暂无登录权限，请联系管理员！");
             }
-            user.setRole(role.getRoleId());
+            user.setRole(String.valueOf(role.getRoleId()));
 
             // 获取组织
             SysUserOrg org = sysUserOrgService.getOne(Wrappers.<SysUserOrg>lambdaQuery().eq(SysUserOrg::getUserId, user.getId()));
@@ -144,9 +139,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Transactional
     @Override
     public boolean save(SysUser user) {
+        Integer count = this.baseMapper.selectCount(Wrappers.<SysUser>lambdaQuery().eq(SysUser::getUsername, user.getUsername()));
+        if (Objects.nonNull(count) && count > 0) {
+            throw new BusinessException("用户名称已存在！");
+        }
         user.setDelFlag(Constants.NOT_DEL_FALG);
         user.setCreateTime(LocalDateTime.now());
         // 密码加密
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         int row = this.baseMapper.insert(user);
         if (row > 0) {

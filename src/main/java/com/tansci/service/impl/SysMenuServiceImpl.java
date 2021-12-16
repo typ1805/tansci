@@ -132,25 +132,26 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
             return sysMenuRoleService.save(
                     SysMenuRole.builder()
                             .menuId(sysMenu.getId())
-                            .roleId(SecurityUserUtils.getUser().getRole())
+                            .roleId(Integer.parseInt(SecurityUserUtils.getUser().getRole()))
                             .build()
             );
         }
         return false;
     }
 
+    @Transactional
     @Override
     public boolean del(Integer id) {
+        List<Integer> ids = new ArrayList<>();
+        ids.add(id);
         List<SysMenu> menuList = this.baseMapper.getMenuChildrens(id);
         if (Objects.nonNull(menuList) && menuList.size() > 0) {
-            List<Integer> ids = menuList.stream().map(SysMenu::getId).collect(Collectors.toList());
-            ids.add(id);
-            // 删除菜单
-            this.baseMapper.deleteBatchIds(ids);
-            // 删除权限
-            return sysMenuRoleService.remove(Wrappers.<SysMenuRole>lambdaQuery().in(SysMenuRole::getMenuId, ids));
+            ids.addAll(menuList.stream().map(SysMenu::getId).collect(Collectors.toList()));
         }
-        return false;
+        // 删除菜单
+        this.baseMapper.deleteBatchIds(ids);
+        // 删除权限
+        return sysMenuRoleService.remove(Wrappers.<SysMenuRole>lambdaQuery().in(SysMenuRole::getMenuId, ids));
     }
 
 }

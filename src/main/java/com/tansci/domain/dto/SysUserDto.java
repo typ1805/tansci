@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @path：com.kuiper.qms.domain.dto.SysUserDto.java
@@ -35,6 +36,8 @@ public class SysUserDto {
 
     // 旧密码
     private String oldPassword;
+
+    private List<Integer> orgIds;
 
     // 开始时间
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

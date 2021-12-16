@@ -57,8 +57,6 @@ public class SysUser {
 
     // 地址
     private String address;
-    @TableField(exist = false)
-    private String addressName;
 
     // 手机号
     private String phone;
@@ -89,7 +87,7 @@ public class SysUser {
     private String remarks;
 
     @TableField(exist = false)
-    private Integer role;
+    private String role;
 
     @TableField(exist = false)
     private Integer orgId;

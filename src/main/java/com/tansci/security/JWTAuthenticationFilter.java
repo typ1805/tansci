@@ -94,7 +94,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                         .type(user.getType())
                         .orgId(user.getOrgId())
                         .orgIds(user.getOrgIds())
-                        .role(Integer.parseInt(role))
+                        .role(role)
                         .build(), false);
 
         // 创建成功的token, 请求的格式应该是 `Bearer token`

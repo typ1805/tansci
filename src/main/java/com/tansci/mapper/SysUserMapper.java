@@ -1,8 +1,11 @@
 package com.tansci.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tansci.domain.SysUser;
+import com.tansci.domain.dto.SysUserDto;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * @path：com.tansci.mapper.SysUserMapper.java
@@ -15,4 +18,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface SysUserMapper extends BaseMapper<SysUser> {
 
+    Page<SysUser> page(Page page, @Param("dto")SysUserDto dto);
 }
