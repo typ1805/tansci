@@ -67,13 +67,7 @@
             <el-main :style="defaultHeight">
                 <div class="main-view">
                     <el-card class="main-view-tag" shadow="always">
-                        <!-- <MenuTag :size="'small'"></MenuTag> -->
-                        <!-- <el-space>
-                            <el-tag v-for="tag in menuTags" :key="tag" :effect="tag.effect" closable :disable-transitions="false" size="small"
-                                @click="onTag(tag.path)" @close="onTagClose(tag)">
-                                {{tag.name}}
-                            </el-tag>
-                        </el-space> -->
+                        <MenuTag ref="menuTag" :size="'small'"></MenuTag>
                     </el-card>
                     <el-card class="main-view-content" shadow="always">
                         <router-view/>
@@ -89,7 +83,7 @@
     import {ElMessageBox} from 'element-plus'
     import {useRouter} from 'vue-router'
     import Submenu from "../components/Submenu.vue"
-    // import MenuTag from "../components/MenuTag.vue"
+    import MenuTag from "../components/MenuTag.vue"
     import {useStore} from "vuex"
     import {timeFormate} from '../utils/utils.js'
     import {modifyPass,logout} from '../api/systemApi.js'
@@ -99,6 +93,7 @@
     const username = store.getters.getUser.nickname?store.getters.getUser.nickname:'管理员';
     const nowTimes = ref('');
     const validateForm = ref(null)
+    const menuTag = ref(null)
     const state = reactive({
         logo: 'Tansci 系统',
         isCollapse: false,
@@ -107,7 +102,6 @@
             height: ''
         },
         routers: [],
-        // menuTags: [],
         dialogPass: false,
         passForm: {
             oldPassword: '',
@@ -134,19 +128,11 @@
             })()
         }
         onNowTimes();
-
-        console.log(state.routers)
-
-        // if(router.currentRoute.value){
-        //     state.menuTags.push({
-        //         name: router.currentRoute.value.meta.title,
-        //         effect: 'dark',
-        //         path: router.currentRoute.value.path
-        //     })
-        // } else {
-        //     state.menuTags.push({name:'首页',effect:'dark',path:'/home'})
-        // }
     })
+
+    const onSelect = (e) =>{
+        menuTag.value.onSelected(e)
+    }
 
     const onCollapse = () => {
         if (state.isCollapse) {
@@ -159,64 +145,6 @@
             state.asideWidth = '64px'
         }
     }
-
-    // 菜单tag
-    // const onSelect = (index) =>{
-    //     if(state.menuTags.findIndex((val) => val.path == index) === -1){
-    //         state.menuTags.forEach(item=>{
-    //             item.effect = 'plain'
-    //         })
-    //         let i = 0
-    //         router.beforeEach((to) => {
-    //             if(i === 0){
-    //                 state.menuTags.push({
-    //                     name: to.meta.title,
-    //                     effect:'dark',
-    //                     path: index
-    //                 }) 
-    //             }
-    //             i++;
-    //         }) 
-    //     } else{
-    //         state.menuTags.forEach(item=>{
-    //             if(item.path == index){
-    //                 item.effect = 'dark'
-    //             } else {
-    //                 item.effect = 'plain'
-    //             }
-    //         })
-    //     }
-    // }
-    // const onTag = (path) => {
-    //     state.menuTags.forEach(item=>{
-    //         if(item.path == path){
-    //             item.effect = 'dark'
-    //         } else {
-    //             item.effect = 'plain'
-    //         }
-    //     })
-    //     router.push({path: path});
-    // }
-    // const onTagClose = (tag) => {
-    //     if(state.menuTags.length == 1){
-    //         state.menuTags.splice(state.menuTags.indexOf(tag), 1);
-    //         state.menuTags.push({
-    //             name:'首页',
-    //             effect:'dark',
-    //             path:'/home'
-    //         })
-    //         router.push({path: '/home'});
-    //     } else {
-    //         let index = state.menuTags.indexOf(tag);
-    //         if(state.menuTags[index].effect == 'dark'){
-    //             state.menuTags.splice(index, 1);
-    //             state.menuTags[index-1].effect = 'dark';
-    //             router.push({path: state.menuTags[index-1].path});
-    //         } else {
-    //             state.menuTags.splice(index, 1);
-    //         }
-    //     }
-    // }
 
     // 退出
     const onLogout = () =>{

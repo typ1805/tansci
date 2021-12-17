@@ -19,9 +19,7 @@
             default: 'small'
         }
 	})
-    const emit = defineEmits([
-        'onSelect',
-    ])
+
     const state = reactive({
         menuTags: store.getters.getMenus,
         size: prop.size,
@@ -43,7 +41,7 @@
         }
     })
 
-    const onSelect = (index) =>{
+    const onSelected = (index) =>{
         if(state.menuTags.findIndex((val) => val.path == index) === -1){
             state.menuTags.forEach(item=>{
                 item.effect = 'plain'
@@ -101,4 +99,9 @@
             }
         }
     }
+
+    // 父组件调用子组件的方法必须暴露该方法
+    defineExpose({
+        onSelected
+    })
 </script>
