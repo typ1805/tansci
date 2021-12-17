@@ -67,7 +67,7 @@
             </el-table>
         </div>
         <div class="pagination-wrap" v-if="page">
-            <el-pagination @size-change="$emit('onSizeChange')" @current-change="$emit('onCurrentChange')"
+            <el-pagination @size-change="onSizeChange" @current-change="onCurrentChange"
             layout="total, sizes, prev, pager, next, jumper"
             :current-page="page.current"
             :page-sizes="[10, 20, 50, 100]"
@@ -132,6 +132,13 @@
         }
     })
     const {tableHeight,headerCellStyle,cellStyle} = toRefs(state)
+
+    const onSizeChange = (e) =>{
+        emit('onSizeChange', e)
+    }
+    const onCurrentChange = (e) =>{
+        emit('onCurrentChange', e)
+    }
 </script>
 <style lang="less" scoped>
 </style>

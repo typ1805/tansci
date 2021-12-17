@@ -6,13 +6,46 @@
                     <span style="vertical-align: middle;">{{logo}}</span>
                     <el-icon @click="onCollapse" color="#FFF" :size="20" style="vertical-align: middle;padding-left:0.4rem;cursor:pointer;">
                         <fold v-if="isCollapse"/>
-                        <expand  v-else="isCollapse"/>
+                        <expand v-else="isCollapse"/>
                     </el-icon>
                 </div>
                 <div>
-                    <span>{{username}} 欢迎您！</span>
-                    <span style="padding-right: 1rem;">{{nowTimes}}</span>
-                    <el-button @click="onLogout" type="text">退出</el-button>
+                    <span style="padding-right: 2rem;">{{nowTimes}}</span>
+                    <el-dropdown>
+                        <span class="el-dropdown-link" style="color:#fff">
+                            <span style="vertical-align: middle;">{{username}} 欢迎您</span>
+                            <el-icon style="vertical-align: middle;"><arrow-down /></el-icon>
+                        </span>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item @click="onPassword" icon="Lock">修改密码</el-dropdown-item>
+                                <el-dropdown-item @click="onLogout" icon="SwitchButton">退出</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
+                    <el-dialog v-model="dialogPass" title="修改密码" width="35%" :destroy-on-close="true" :show-close="false">
+                        <el-form :model="passForm" :rules="rules" ref="validateForm" status-icon size="small" label-width="100px">
+                            <el-form-item label="原始密码" prop="oldPassword" :rules="[
+                                {required: true, message: '请输入原始密码', trigger: 'blur'},
+                                {pattern: /^[a-zA-Z]\w{5,17}$/, message: '原始密码格式有误，请重新输入', trigger: 'blur'}]">
+                                <el-input class="input-size" type="password" v-model="passForm.oldPassword" prefix-icon="Lock" autocomplete="off" style="width:100%"/>
+                            </el-form-item>
+                            <el-form-item label="新密码" prop="password" :rules="[
+                                {required: true, message: '请输入新密码', trigger: 'blur'},
+                                {pattern: /^[a-zA-Z]\w{5,17}$/, message: '以字母开头，长度在6~18之间，只能包含字母、数字和下划线', trigger: 'blur'}]">
+                                <el-input class="input-size" type="password" v-model="passForm.password" prefix-icon="Lock" autocomplete="off" style="width:100%"/>
+                            </el-form-item>
+                            <el-form-item label="确认密码" prop="rePassword" :rules="[{validator: validatePass, trigger: 'blur'}]">
+                                <el-input class="input-size" type="password" v-model="passForm.rePassword" prefix-icon="Lock" autocomplete="off" style="width:100%"/>
+                            </el-form-item>
+                        </el-form>
+                        <template #footer>
+                            <span class="dialog-footer">
+                                <el-button @click="dialogPass = false">取消</el-button>
+                                <el-button type="primary" @click="onPassSubmit">立即修改</el-button>
+                            </span>
+                        </template>
+                    </el-dialog>
                 </div>
             </div>
         </el-header>
@@ -43,17 +76,19 @@
     </el-container>
 </template>
 <script setup>
-    import {onBeforeMount, onMounted, reactive, ref, toRefs} from 'vue'
+    import {onBeforeMount, onMounted, reactive, ref, unref, toRefs} from 'vue'
     import {ElMessageBox} from 'element-plus'
     import {useRouter} from 'vue-router'
     import Submenu from "../components/Submenu.vue"
     import {useStore} from "vuex"
-    import {timeFormate} from '../utils/utils'
+    import {timeFormate} from '../utils/utils.js'
+    import {modifyPass} from '../api/systemApi.js'
 
     const router = useRouter()
     const store = useStore()
     const username = store.getters.getUser.nickname?store.getters.getUser.nickname:'管理员';
     const nowTimes = ref('');
+    const validateForm = ref(null)
     const state = reactive({
         logo: 'Tansci 系统',
         isCollapse: false,
@@ -63,15 +98,16 @@
         },
         routers: [],
         menuTags: [],
+        dialogPass: false,
+        passForm: {
+            oldPassword: '',
+            password: '',
+            rePassword: ''
+        }
     })
 
     const {
-        logo,
-        isCollapse,
-        asideWidth,
-        defaultHeight,
-        routers,
-        menuTags,
+        logo,isCollapse,asideWidth,defaultHeight,routers,menuTags,dialogPass,passForm,
     } = toRefs(state)
 
     onBeforeMount(() => {
@@ -121,6 +157,45 @@
             nowTimes.value = timeFormate(new Date());
         },1000);
     }
+
+    // 修改密码
+    const onPassword = () =>{
+        state.passForm = {
+            oldPassword: '',
+            password: '',
+            rePassword: ''
+        }
+        state.dialogPass = true;
+    }
+    const validatePass = (rule, value, callback) => {
+        if (value === '') {
+            callback(new Error('请再次输入密码'));
+        } else if (value !== state.passForm.password) {
+            callback(new Error('两次输入密码不一致'))
+        } else {
+            callback()
+        }
+    }
+    const onPassSubmit = async () => {
+        const form = unref(validateForm)
+        if (!form) return;
+        await form.validate();
+        state.passForm.username = store.getters.getUser.username;
+        modifyPass(state.passForm).then(res=>{
+            if(res){
+                ElMessageBox.alert('修改密码成功，需重新登录！', '提示', {
+                    confirmButtonText: '确定',
+                    type: 'warning',
+                    callback: action => {
+                        if ('confirm' == action) {
+                            router.push({path: 'login'});
+                        }
+                    }
+                })
+            }
+        });
+    }
+
 </script>
 <style lang="less" scoped>
     .layout-container{
@@ -134,6 +209,13 @@
             background: var(--theme);
             color: #fff;
             padding: 0 1rem;
+            /deep/ .el-dialog__header{
+                background: var(--theme);
+                padding: 0 10px;
+                .el-dialog__title{
+                    color: #fff;
+                }
+            }
         }
         .el-aside{
             height: 100%;
