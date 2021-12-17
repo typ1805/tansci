@@ -75,7 +75,7 @@
         searchForm:{
             keyword: null,
         },
-        tableHeight: window.innerHeight-120,
+        tableHeight: window.innerHeight-200,
         loading: false,
         tableTitle: [
             {prop:'dicLabel',label:'字典标签',align:'left'},

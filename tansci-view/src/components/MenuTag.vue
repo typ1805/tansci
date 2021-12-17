@@ -105,3 +105,8 @@
         onSelected
     })
 </script>
+<style lang="less" scoped>
+    /deep/ .el-space__item{
+        cursor: pointer;
+    }
+</style>

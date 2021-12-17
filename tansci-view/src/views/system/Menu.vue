@@ -181,6 +181,7 @@
                         message: '添加成功！',
                         type: 'success'
                     });
+                    state.operate = 0;
                     state.addMenuForm = {
                         id: '',
                         parentId:'',
@@ -206,7 +207,7 @@
                         message: '更新成功！',
                         type: 'success'
                     });
-                    onMenuList();
+                    state.operate = 0;
                     state.addMenuForm = {
                         id: '',
                         parentId:'',
@@ -221,6 +222,7 @@
                         requireAuth: 0,
                         keepAlive: 0
                     };
+                    onMenuList();
                 }
             })
         }
