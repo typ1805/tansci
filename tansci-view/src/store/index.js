@@ -28,6 +28,17 @@ export default createStore({
         delUser(state){
             state.user = '';
             sessionStorage.removeItem('user');
+        },
+
+        // 存储菜单
+        setMenus(state, menus) {
+            state.menus = menus;
+            sessionStorage.setItem('menus',menus);
+        },
+        // 清除菜单
+        delMenus(state) {
+            state.menus = [];
+            sessionStorage.removeItem('menus');
         }
     },
     getters: {
@@ -44,6 +55,13 @@ export default createStore({
                 state.user = sessionStorage.getItem('user');
             }
             return state.user;
+        },
+        // 获取菜单方法
+        getMenus(state) {
+            if (!state.menus) {
+                state.menus = sessionStorage.getItem('menus');
+            }
+            return state.menus;
         }
     },
     actions: {},

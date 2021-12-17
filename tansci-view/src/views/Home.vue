@@ -12,7 +12,7 @@
 	const {username} = toRefs(state)
 
 	onMounted(() => {
-		console.log("首页")
+		
 	})
 </script>
 <style lang="less" scoped>

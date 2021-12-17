@@ -51,11 +51,14 @@
         </el-header>
         <el-container>
             <el-aside :style="defaultHeight" :width="asideWidth" style="padding-bottom:4rem;">
-                <el-menu router :default-active="$route.path" :collapse="isCollapse"
+                <el-menu router :default-active="$route.path" :collapse="isCollapse" @select="onSelect"
                     text-color="#fff" active-text-color="#2F9688" background-color="#0f1423">
                     <template v-for="item in routers" :key="item">
-                        <el-menu-item v-if="!item.children || item.children.length == 1" :index="item.path">
-                            <span>{{item.meta.title}}</span>
+                        <el-menu-item v-if="!item.children || item.children.length == 0" :index="item.path">
+                            <el-icon v-if="item.icon" style="vertical-align: middle;">
+                                <component :is="item.icon"></component>
+                            </el-icon>
+                            <span style="vertical-align: middle;">{{item.chineseName}}</span>
                         </el-menu-item>
                         <Submenu v-else :data="item"></Submenu>
                     </template>
@@ -64,7 +67,12 @@
             <el-main :style="defaultHeight">
                 <div class="main-view">
                     <el-card class="main-view-tag" shadow="always">
-                        <el-tag closable effect="dark">首页</el-tag>
+                        <el-space>
+                            <el-tag v-for="tag in menuTags" :key="tag" :effect="tag.effect" closable :disable-transitions="false" size="small"
+                                @click="onTag(tag.path)" @close="onTagClose(tag)">
+                                {{tag.name}}
+                            </el-tag>
+                        </el-space>
                     </el-card>
                     <el-card class="main-view-content" shadow="always">
                         <router-view/>
@@ -82,7 +90,7 @@
     import Submenu from "../components/Submenu.vue"
     import {useStore} from "vuex"
     import {timeFormate} from '../utils/utils.js'
-    import {modifyPass} from '../api/systemApi.js'
+    import {modifyPass,logout} from '../api/systemApi.js'
 
     const router = useRouter()
     const store = useStore()
@@ -113,13 +121,27 @@
     onBeforeMount(() => {
         state.defaultHeight.height = (document.body.clientHeight || document.documentElement.clientHeight) + "px";
         
-        // TODO
-        let _routers = router.options.routes.filter(v=>v.type === 1)
-        state.routers = _routers;
+        // 获取菜单
+        state.routers = store.getters.getMenus;
     })
 
     onMounted(()=>{
-        onNowTimes()
+        window.onresize = () => {
+                    return (() => {
+                state.defaultHeight.height = (document.body.clientHeight || document.documentElement.clientHeight) + "px";
+            })()
+        }
+        onNowTimes();
+
+        if(router.currentRoute.value){
+            state.menuTags.push({
+                name: router.currentRoute.value.meta.title,
+                effect: 'dark',
+                path: router.currentRoute.value.path
+            })
+        } else {
+            state.menuTags.push({name:'首页',effect:'dark',path:'/home'})
+        }
     })
 
     const onCollapse = () => {
@@ -134,24 +156,85 @@
         }
     }
 
+    // 菜单tag
+    const onSelect = (index) =>{
+        if(state.menuTags.findIndex((val) => val.path == index) === -1){
+            state.menuTags.forEach(item=>{
+                item.effect = 'plain'
+            })
+            let i = 0
+            router.beforeEach((to) => {
+                if(i === 0){
+                    state.menuTags.push({
+                        name: to.meta.title,
+                        effect:'dark',
+                        path: index
+                    }) 
+                }
+                i++;
+            }) 
+        } else{
+            state.menuTags.forEach(item=>{
+                if(item.path == index){
+                    item.effect = 'dark'
+                } else {
+                    item.effect = 'plain'
+                }
+            })
+        }
+    }
+    const onTag = (path) => {
+        state.menuTags.forEach(item=>{
+            if(item.path == path){
+                item.effect = 'dark'
+            } else {
+                item.effect = 'plain'
+            }
+        })
+        router.push({path: path});
+    }
+    const onTagClose = (tag) => {
+        if(state.menuTags.length == 1){
+            state.menuTags.splice(state.menuTags.indexOf(tag), 1);
+            state.menuTags.push({
+                name:'首页',
+                effect:'dark',
+                path:'/home'
+            })
+            router.push({path: '/home'});
+        } else {
+            let index = state.menuTags.indexOf(tag);
+            if(state.menuTags[index].effect == 'dark'){
+                state.menuTags.splice(index, 1);
+                state.menuTags[index-1].effect = 'dark';
+                router.push({path: state.menuTags[index-1].path});
+            } else {
+                state.menuTags.splice(index, 1);
+            }
+        }
+    }
+
+    // 退出
     const onLogout = () =>{
         ElMessageBox.confirm('您确定要退出吗？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
         }).then(() => {
-            // logout({}).then(res=>{
-            //     if(res){
+            logout({}).then(res=>{
+                if(res){
                     store.commit('delToken')
                     store.commit('delUser')
+                    store.commit('delMenus')
                     router.push({path: 'login'})
-            //     }
-            // });
+                }
+            });
         }).catch(e=>{
             console.log(e)
         })
     }
 
+    // 当前时间
     const onNowTimes = () =>{
         setInterval(()=>{
             nowTimes.value = timeFormate(new Date());

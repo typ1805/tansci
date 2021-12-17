@@ -34,7 +34,7 @@
 	import {onBeforeMount,reactive,ref,toRefs,unref} from "vue"
 	import {useRouter} from 'vue-router'
 	import {useStore} from 'vuex'
-	import {login} from '../api/systemApi'
+	import {login,menuList} from '../api/systemApi'
 
 	const store = useStore()
 	const router = useRouter()
@@ -71,13 +71,15 @@
 			username: state.loginForm.username,
 			password: state.loginForm.password
 		}
-		login(param).then(res=>{
-			if(res){
-				store.commit('setToken', res.result.token);
-				store.commit('setUser', res.result);
-				router.push({
-					path: 'home'
-				});
+		login(param).then(loginRes=>{
+			if(loginRes){
+				store.commit('setToken', loginRes.result.token);
+				store.commit('setUser', loginRes.result);
+				// 获取菜单
+				menuList({type:1, status: 1}).then(menuRes=>{
+					store.commit('setMenus', menuRes.result);
+					router.push({path: 'home'});
+				})
 			}
 		})
 	}
