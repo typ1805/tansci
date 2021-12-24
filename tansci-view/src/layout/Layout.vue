@@ -3,10 +3,11 @@
         <el-header height="45">
             <div class="header">
                 <div>
-                    <span style="vertical-align: middle;">{{logo}}</span>
-                    <el-icon @click="onCollapse" color="#FFF" :size="20" style="vertical-align: middle;padding-left:0.4rem;cursor:pointer;">
+                    <el-image src="./src/assets/image/logo.png" style="width: 60px; height: 40px; vertical-align: middle;"></el-image>
+                    <span :style="{verticalAlign: 'middle', paddingRight: isCollapse?'':'3.2rem'}">{{logo}}</span>
+                    <el-icon @click="onCollapse" color="#FFF" style="vertical-align: middle;cursor:pointer; font-size:25px;">
                         <fold v-if="isCollapse"/>
-                        <expand v-else="isCollapse"/>
+                        <expand v-else/>
                     </el-icon>
                 </div>
                 <div>
@@ -95,7 +96,7 @@
     const validateForm = ref(null)
     const menuTag = ref(null)
     const state = reactive({
-        logo: 'Tansci 系统',
+        logo: 'TANSCI 系统',
         isCollapse: false,
         asideWidth: '190px',
         defaultHeight: {
@@ -140,7 +141,7 @@
             state.asideWidth = '190px'
             state.isCollapse = false
         } else {
-            state.logo = 'Tansci'
+            state.logo = ''
             state.isCollapse = true
             state.asideWidth = '64px'
         }
@@ -223,7 +224,6 @@
             line-height: 45px;
             background: var(--theme);
             color: #fff;
-            padding: 0 1rem;
             /deep/ .el-dialog__header{
                 background: var(--theme);
                 padding: 0 10px;
