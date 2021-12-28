@@ -6,9 +6,11 @@ TANSCI 系统
 
 TANSCI 基于 SpringBoot + Vue3.2 + Element Plus 的后台管理系统
 
-Gitee:
+基础模块：菜单管理、角色管理、组织管理、用户管理、字典管理、日志管理（操作日志、异常日志）
 
-GitHup: 
+Gitee: [https://gitee.com/typ1805/tansci](https://gitee.com/typ1805/tansci)
+
+GitHub: [https://github.com/typ1805/tansci](https://github.com/typ1805/tansci)
 
 ## 架构
 
