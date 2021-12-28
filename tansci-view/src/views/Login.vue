@@ -1,6 +1,6 @@
 <template>
 	<div class="login" :style="loginStyle">
-		<el-card shadow="always" style="padding:5rem;margin-right: 4rem;">
+		<el-card shadow="always">
 			<div class="login-main">
 				<div class="login-logo">
 					<el-image src="./src/assets/image/login-logo.png" style="width: 100%; height:100%"></el-image>
@@ -25,6 +25,14 @@
 							<el-button type="primary" round @click="submit" style="width:100%">登录</el-button>
 						</el-form-item>
 					</el-form>
+					<el-divider>
+						<el-icon><star-filled /></el-icon>
+					</el-divider>
+					<div class="other-login">
+						<el-button type="success" icon="Message" circle></el-button>
+						<el-button type="warning" icon="Microphone" circle></el-button>
+						<el-button type="danger" icon="Comment" circle></el-button>
+					</div>
 				</div>
 			</div>
 		</el-card>
@@ -86,29 +94,38 @@
 </script>
 <style lang="less" scoped="scoped">
 	.login {
-		background-image: url('../assets/image/login-bg.jpg');
-		background-size: 100% 100%;
+		background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
 		height: 100%;
 		width: 100%;
 		display: flex;
 		flex-wrap: wrap;
-		justify-content: flex-end;
+		justify-content: center;
 		align-items: center;
+		/deep/ .el-card__body{
+			padding: 0;
+		}
 		.login-main{
 			display: flex;
 			flex-wrap: wrap;
 			justify-content: center;
 			.login-logo{
+				background: var(--theme);
 				width: 20rem;
-				padding-right: 5rem;
+				padding: 8rem 5rem;
+				border-top-right-radius: 38px;
+				border-bottom-right-radius: 38px;
 			}
 			.login-form{
 				width: 20rem;
+				padding: 8rem 5rem;
 				.login-form-title{
 					font-size: 18px;
 					font-weight: 700;
 					text-align: center;
 					padding-bottom: 2rem;
+				}
+				.other-login{
+					text-align: center;
 				}
 			}
 		}
