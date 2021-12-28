@@ -63,7 +63,7 @@ GitHub: [https://github.com/typ1805/tansci](https://github.com/typ1805/tansci)
 
 2、QQ群：747200630
 
-3、微信群：
+3、微信群：加扣扣或关注公众号进
 
 4、个人主站：[https://typ1805.gitee.io/](https://typ1805.gitee.io/)
 
