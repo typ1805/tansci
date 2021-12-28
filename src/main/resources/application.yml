@@ -1,0 +1,24 @@
+server:
+  port: 8005
+  servlet:
+    context-path: /tansci/
+
+spring:
+  profiles:
+    active: dev
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# 版本号
+version: 1.1.0
