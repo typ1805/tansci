@@ -3,7 +3,7 @@
 		<el-card shadow="always">
 			<div class="login-main">
 				<div class="login-logo">
-					<el-image src="./src/assets/image/login-logo.png" style="width: 100%; height:100%"></el-image>
+					<el-image src="./src/assets/image/login-logo.png"  style="width: 100%; height:100%"></el-image>
 				</div>
 				<div class="login-form">
 					<el-form :model="loginForm" :rules="rules" ref="loginRuleForm">
@@ -18,7 +18,7 @@
 								{pattern: /^[a-zA-Z]\w{5,17}$/,message: '密码格式有误，请重新输入',trigger: 'blur'}]">
 							<el-input type="password" v-model="loginForm.password" prefix-icon="Lock" show-password placeholder="请输入密码" style="width:100%"></el-input>
 						</el-form-item>
-						<el-form-item prop="verifyStatus" :rules="[{required: true,message: '请拖动滑块进行验证',trigger: 'blur'}]">
+						<el-form-item prop="verifyStatus" :rules="[{required: true,message: '请拖动滑块验证',trigger: 'blur'}]">
 							<SlidingVerify ref="slidingVerify" :status="loginForm.verifyStatus" :successFun="onVerifySuccess" :errorFun="onVerifyError"></SlidingVerify>
 						</el-form-item>
 						<el-form-item>

@@ -100,6 +100,7 @@
     const onRefresh = () =>{
         state.verifyRefresh = false;
         nextTick(()=>{
+            state.rangeStatus = false;
             state.verifyRefresh = true;
         })
     }
