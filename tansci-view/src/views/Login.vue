@@ -3,7 +3,7 @@
 		<el-card shadow="always">
 			<div class="login-main">
 				<div class="login-logo">
-					<el-image src="./src/assets/image/login-logo.png"  style="width: 100%; height:100%"></el-image>
+					<el-image src="./src/assets/image/login-left.png"  style="width: 100%; height: 100%;"></el-image>
 				</div>
 				<div class="login-form">
 					<el-form :model="loginForm" :rules="rules" ref="loginRuleForm">
@@ -106,7 +106,8 @@
 </script>
 <style lang="less" scoped="scoped">
 	.login {
-		background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+		background-image: url('../assets/image/login-bg.svg');
+		background-size: 100% 100%;
 		height: 100%;
 		width: 100%;
 		display: flex;
