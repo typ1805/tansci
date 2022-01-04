@@ -17,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.beans.Transient;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +41,8 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     private SysOrgRoleService sysOrgRoleService;
     @Autowired
     private SysUserOrgService sysUserOrgService;
+    @Autowired
+    private SysMenuService sysMenuService;
 
     @Override
     public IPage<SysRole> page(Page page, SysRole role) {
@@ -103,14 +102,41 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
 
     @Override
     public List<SysMenuRoleVo> menuRoleList(SysMenuRole role) {
-        List<SysMenuRoleVo> roleVos = this.baseMapper.menuRoleList(role);
-        List<SysMenuRoleVo> newRoleVos = roleVos.stream().filter(item -> item.getParentId() == 0).map(item -> {
-            item.setChildren(this.getChildrens(item, roleVos));
-            return item;
-        }).sorted((item1, item2) -> {
-            return (item1.getSort() == null ? 0 : item1.getSort()) - (item2.getSort() == null ? 0 : item2.getSort());
-        }).collect(Collectors.toList());
-        return newRoleVos;
+        List<SysMenuRoleVo> roleVos = new ArrayList<>();
+        if (!Objects.equals(0, SecurityUserUtils.getUser().getType())) {
+            role.setThisRoleId(Integer.parseInt(SecurityUserUtils.getUser().getRole()));
+            roleVos = this.baseMapper.menuRoleList(role);
+
+            if (Objects.nonNull(roleVos)) {
+                // 获取所有菜单的父id
+                List<Integer> parentIds = roleVos.stream().map(SysMenuRoleVo::getParentId).distinct().collect(Collectors.toList());
+                if (Objects.nonNull(parentIds) && parentIds.size() > 0) {
+                    List<SysMenu> parentList = sysMenuService.list(Wrappers.<SysMenu>lambdaQuery().in(SysMenu::getId, parentIds));
+                    List<SysMenuRoleVo> menuRoleVos = new ArrayList<>();
+                    parentList.forEach(item -> {
+                        menuRoleVos.add(
+                                SysMenuRoleVo.builder()
+                                        .id(item.getId())
+                                        .parentId(item.getParentId())
+                                        .name(item.getName())
+                                        .chineseName(item.getChineseName())
+                                        .sort(item.getSort())
+                                        .roleId(null)
+                                        .menuId(null)
+                                        .build()
+                        );
+                    });
+                    roleVos.addAll(menuRoleVos);
+                }
+            }
+        } else {
+            roleVos = this.baseMapper.menuRoleList(role);
+        }
+
+        roleVos = roleVos.stream().distinct().collect(Collectors.toList());
+        Map<Integer, List<SysMenuRoleVo>> map = roleVos.stream().collect(Collectors.groupingBy(SysMenuRoleVo::getParentId, Collectors.toList()));
+        roleVos.stream().forEach(item -> item.setChildren(map.get(item.getId())));
+        return map.get(0);
     }
 
     @Transient
@@ -134,27 +160,6 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     public Boolean orgRoleAdd(SysRoleDto dto) {
         sysOrgRoleService.remove(Wrappers.<SysOrgRole>lambdaUpdate().eq(SysOrgRole::getOrgId, dto.getUserId()));
         return sysOrgRoleService.save(SysOrgRole.builder().roleId(dto.getRoleId()).orgId(dto.getOrgId()).build());
-    }
-
-    /**
-     * @methodName：getChildrens
-     * @description：树结构
-     * @author：tanyp
-     * @dateTime：2021/7/23 22:40
-     * @Params： [menu, list]
-     * @Return： java.util.List<com.tansci.domain.vo.SysMenuRoleVo>
-     * @editNote：
-     */
-    public List<SysMenuRoleVo> getChildrens(SysMenuRoleVo menu, List<SysMenuRoleVo> list) {
-        List<SysMenuRoleVo> treeMenu = list.stream().filter(item -> Objects.equals(item.getParentId(), menu.getId())).map(item -> {
-            // 递归添加子数据
-            List<SysMenuRoleVo> childrens = getChildrens(item, list);
-            item.setChildren(childrens);
-            return item;
-        }).sorted((item1, item2) -> {
-            return (item1.getSort() == null ? 0 : item1.getSort()) - (item2.getSort() == null ? 0 : item2.getSort());
-        }).collect(Collectors.toList());
-        return treeMenu;
     }
 
 }

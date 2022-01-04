@@ -46,7 +46,7 @@
                     <el-col :span="12">
                         <el-form-item prop="type" label="类型" :rules="[{required: true, message: '请选择类型', trigger: 'change'}]">
                             <el-radio-group v-model="userForm.type">
-                                <el-radio v-for="item in userTpeList" :key="item" :label="item.dicValue">{{item.dicLabel}}</el-radio>
+                                <el-radio v-for="item in userTypeList" :key="item" :label="item.dicValue">{{item.dicLabel}}</el-radio>
                             </el-radio-group>
                         </el-form-item>
                     </el-col>
@@ -160,7 +160,7 @@
         userVisible: false,
         userTitle: '添加用户',
         operate: 0,
-        userTpeList:[],
+        userTypeList:[],
         userForm:{
             id:'',
             username:'',
@@ -180,7 +180,7 @@
 
     const {
         searchForm,loading,page,tableHeight,tableTitle,tableData,statusList,
-        roleVisible,roleLoading,roleData,roleId,userId,userVisible,userTitle,operate,userTpeList,userForm,orgData
+        roleVisible,roleLoading,roleData,roleId,userId,userVisible,userTitle,operate,userTypeList,userForm,orgData
     } = toRefs(state)
 
     onMounted(() => {
@@ -220,7 +220,7 @@
     // 组织
     const onOrgList = () =>{
         orgList().then(res=>{
-            state.orgData = treeHandle(res.result);
+            state.orgData = res.result;
         })
     }
 
@@ -342,7 +342,7 @@
         getGroupNameByList({
             groupName:'user_type'
         }).then(res=>{
-            state.userTpeList = res.result;
+            state.userTypeList = res.result;
         });
     }
 

@@ -21,10 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -87,34 +84,9 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         }
 
         list = list.stream().distinct().collect(Collectors.toList());
-        List<SysMenu> finalList = list;
-        List<SysMenu> newMenuList = finalList.stream().filter(item -> item.getParentId() == 0).map(item -> {
-            item.setChildren(this.getChildrens(item, finalList));
-            return item;
-        }).sorted((item1, item2) -> {
-            return (item1.getSort() == null ? 0 : item1.getSort()) - (item2.getSort() == null ? 0 : item2.getSort());
-        }).collect(Collectors.toList());
-        return newMenuList;
-    }
-
-    /**
-     * @MonthName： getChildrens
-     * @Description： 树结构
-     * @Author： tanyp
-     * @Date： 2021/7/20 17:32
-     * @Param： [menu, list]
-     * @return： java.util.List<com.tanersci.domain.SysMenu>
-     **/
-    public List<SysMenu> getChildrens(SysMenu menu, List<SysMenu> list) {
-        List<SysMenu> treeMenu = list.stream().filter(item -> Objects.equals(item.getParentId(), menu.getId())).map(item -> {
-            // 递归添加子数据
-            List<SysMenu> childrens = getChildrens(item, list);
-            item.setChildren(childrens);
-            return item;
-        }).sorted((item1, item2) -> { // 排序
-            return (item1.getSort() == null ? 0 : item1.getSort()) - (item2.getSort() == null ? 0 : item2.getSort());
-        }).collect(Collectors.toList());
-        return treeMenu;
+        Map<Integer, List<SysMenu>> map = list.stream().collect(Collectors.groupingBy(SysMenu::getParentId, Collectors.toList()));
+        list.stream().forEach(item -> item.setChildren(map.get(item.getId())));
+        return map.get(0);
     }
 
     @Transactional
