@@ -16,6 +16,7 @@ import com.tansci.domain.vo.SysMenuRoleVo;
 import com.tansci.service.SysOrgRoleService;
 import com.tansci.service.SysRoleService;
 import com.tansci.service.SysUserRoleService;
+import com.tansci.utils.SecurityUserUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +59,7 @@ public class SysRoleController {
     @PostMapping("/save")
     public Wrapper<Boolean> save(@RequestBody SysRole sysRole) {
         sysRole.setCreateTime(LocalDateTime.now());
+        sysRole.setCreator(SecurityUserUtils.getUser().getId());
         sysRole.setStatus(1);
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysRoleService.save(sysRole));
     }

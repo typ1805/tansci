@@ -1,5 +1,6 @@
 package com.tansci.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,5 +26,9 @@ public class SysMenuRole {
 
     // 菜单id
     private Integer menuId;
+
+    // 当前角色低
+    @TableField(exist = false)
+    private Integer thisRoleId;
 
 }
