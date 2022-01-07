@@ -15,36 +15,36 @@
                 <el-form-item label="菜单名称" prop="name" :rules="[
                     {required: true, message: '名称不能为空', trigger: 'blur'},
                     {pattern: /^[A-Za-z0-9]+$/, message: '必须是字母', trigger: 'blur'}]">
-                    <el-input v-model="addMenuForm.name" placeholder="请输入名称" size="small" style="width:50%"></el-input>
+                    <el-input v-model="addMenuForm.name" placeholder="请输入名称" style="width:50%"></el-input>
                 </el-form-item>
                 <el-form-item label="菜单类型" prop="type" :rules="[{required: true, message: '请选择类型', trigger: 'change'}]">
-                    <el-select v-model="addMenuForm.type" placeholder="请选菜单类型" size="small" style="width:50%">
+                    <el-select v-model="addMenuForm.type" placeholder="请选菜单类型" style="width:50%">
                         <el-option label="按钮" :value="0"></el-option>
                         <el-option label="菜单" :value="1"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="菜单路由" prop="path" :rules="[{required: true, message: '路由不能为空', trigger: 'blur'}]">
-                    <el-input v-model="addMenuForm.path" placeholder="请输入路由" size="small" style="width:50%"></el-input>
+                    <el-input v-model="addMenuForm.path" placeholder="请输入路由" style="width:50%"></el-input>
                 </el-form-item>
                 <el-form-item label="菜单组件" prop="component" :rules="[{required: true, message: '请选择组件', trigger: 'blur'}]">
-                    <el-select v-model="addMenuForm.component" placeholder="请选菜单组件" size="small" style="width:50%">
+                    <el-select v-model="addMenuForm.component" placeholder="请选菜单组件" style="width:50%">
                         <el-option label="菜单组件" value="Layout"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="中文名称" prop="chineseName" :rules="[
                     {required: true, message: '中文名称不能为空', trigger: 'blur'},
                     {pattern: /^[\u4e00-\u9fa5]{0,}$/, message: '必须是汉字', trigger: 'blur'}]">
-                    <el-input v-model="addMenuForm.chineseName" placeholder="请输入中文名称" size="small" style="width:50%"></el-input>
+                    <el-input v-model="addMenuForm.chineseName" placeholder="请输入中文名称" style="width:50%"></el-input>
                 </el-form-item>
                 <el-form-item label="英文名称" prop="englishName">
-                    <el-input v-model="addMenuForm.englishName" placeholder="请输入英文名称" autocomplete="off" size="small" style="width:50%"></el-input>
+                    <el-input v-model="addMenuForm.englishName" placeholder="请输入英文名称" autocomplete="off" style="width:50%"></el-input>
                 </el-form-item>
                 <el-form-item label="菜单图标" prop="icon" :rules="[{required: true, message: '菜单图标不能为空', trigger: 'blur'}]">
-                    <el-input v-model="addMenuForm.icon" @click="onFormIcon" readonly suffix-icon="Platform" size="small" style="width:50%"></el-input>
+                    <el-input v-model="addMenuForm.icon" @click="onFormIcon" readonly suffix-icon="Platform" style="width:50%"></el-input>
                     <Icon :iconVisible="iconVisible" @onIcon="onIcon"/>
                 </el-form-item>
                 <el-form-item label="菜单顺序" prop="sort" :rules="[{required: true, message: '菜单顺序不能为空', trigger: 'blur'}]">
-                    <el-input-number v-model="addMenuForm.sort" :min="0" :max="999" size="small" style="width:50%"></el-input-number>
+                    <el-input-number v-model="addMenuForm.sort" :min="0" :max="999" style="width:50%"></el-input-number>
                 </el-form-item>
                 <el-form-item label="权限访问" prop="requireAuth">
                     <el-switch v-model="addMenuForm.requireAuth" :active-value="1" :inactive-value="0" active-color="#13ce66" inactive-color="#ff4949" active-text="需要访问权限" inactive-text="不需要访问权限"></el-switch>
@@ -53,7 +53,7 @@
                     <el-switch v-model="addMenuForm.keepAlive" :active-value="1" :inactive-value="0" active-color="#13ce66" inactive-color="#ff4949" active-text="切换不激活" inactive-text="切换保持激活"></el-switch>
                 </el-form-item>
                 <el-form-item v-show="operate != 0 && operate != 3">
-                    <el-button type="primary" @click="onAddMenu" size="small">提交</el-button>
+                    <el-button type="primary" @click="onAddMenu">提交</el-button>
                 </el-form-item>
             </el-form>
         </el-card>

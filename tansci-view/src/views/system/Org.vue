@@ -2,7 +2,7 @@
     <div class="org">
         <Table :data="tableData" :column="tableTitle" :operation="true" :tableHeight="tableHeight" :page="false" :loading="loading">
             <template #search>
-                <div><el-input @change="onSearch" v-model="searchForm.name" placeholder="请输入名称筛选" size="small"></el-input></div>
+                <div><el-input @change="onSearch" v-model="searchForm.name" placeholder="请输入名称筛选"></el-input></div>
             </template>
             <template #column="scope">
                 <el-button @click="onAdd(scope)" type="text" style="color:var(--add)">添加</el-button>
@@ -16,22 +16,22 @@
                 <el-row :gutter="20">
                     <el-col>
                         <el-form-item label="组织名称" prop="name" :rules="[{required: true, message: '组织名不能为空', trigger: 'blur'}]">
-                            <el-input v-model="addForm.name" placeholder="请输入组织名称" size="small" style="width:100%"></el-input>
+                            <el-input v-model="addForm.name" placeholder="请输入组织名称" style="width:100%"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
                 <el-row :gutter="20">
                     <el-col>
                         <el-form-item label="排序" prop="sort" :rules="[{required: true, message: '排序不能为空', trigger: 'blur'}]">
-                            <el-input-number v-model="addForm.sort" :min="0" :max="999" size="small" style="width:100%"></el-input-number>
+                            <el-input-number v-model="addForm.sort" :min="0" :max="999" style="width:100%"></el-input-number>
                         </el-form-item>
                     </el-col>
                 </el-row>
             </el-form>
             <template #footer>
                 <span class="dialog-footer">
-                <el-button @click="addVisible = false" size="small">取 消</el-button>
-                <el-button type="primary" @click="onAddOrg" size="small">确 定</el-button>
+                <el-button @click="addVisible = false">取 消</el-button>
+                <el-button type="primary" @click="onAddOrg">确 定</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -41,8 +41,8 @@
             </el-select>
             <template #footer>
                 <span class="dialog-footer">
-                <el-button @click="roleVisible = false" size="small">取消</el-button>
-                <el-button type="primary" @click="onAddOrgRole" :loading="roleLoading" size="small">确定</el-button>
+                <el-button @click="roleVisible = false">取消</el-button>
+                <el-button type="primary" @click="onAddOrgRole" :loading="roleLoading">确定</el-button>
                 </span>
             </template>
         </el-dialog>

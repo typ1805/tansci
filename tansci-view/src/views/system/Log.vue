@@ -13,14 +13,14 @@
             </el-tab-pane>
         </el-tabs>
         <el-dialog v-model="detailVisible" title="日志详情" :show-close="false" width="60%">
-            <el-descriptions v-if="activeName == 'info'" :column="3" size="small" border>
+            <el-descriptions v-if="activeName == 'info'" :column="3" border>
                 <el-descriptions-item label-align="right" label="功能模块">{{detail.module}}</el-descriptions-item>
                 <el-descriptions-item label-align="right" label="操作类型">
-                    <el-tag v-if="detail.type == 'SELECT'" size="small">{{detail.type}}</el-tag>
-                    <el-tag v-else-if="detail.type == 'INSERT'" type="success" size="small">{{detail.type}}</el-tag>
-                    <el-tag v-else-if="detail.type == 'UPDATE'" type="warning" size="small">{{detail.type}}</el-tag>
-                    <el-tag v-else-if="detail.type == 'DELETE'" type="danger" size="small">{{detail.type}}</el-tag>
-                    <el-tag v-else type="info" size="small">{{detail.type}}</el-tag>
+                    <el-tag v-if="detail.type == 'SELECT'">{{detail.type}}</el-tag>
+                    <el-tag v-else-if="detail.type == 'INSERT'" type="success">{{detail.type}}</el-tag>
+                    <el-tag v-else-if="detail.type == 'UPDATE'" type="warning">{{detail.type}}</el-tag>
+                    <el-tag v-else-if="detail.type == 'DELETE'" type="danger">{{detail.type}}</el-tag>
+                    <el-tag v-else type="info">{{detail.type}}</el-tag>
                 </el-descriptions-item>
                 <el-descriptions-item label-align="right" label="操作描述">{{detail.message}}</el-descriptions-item>
                 <el-descriptions-item label-align="right" label="耗时">
@@ -30,7 +30,7 @@
                 <el-descriptions-item label-align="right" label="请求URL">{{detail.uri}}</el-descriptions-item>
                 <el-descriptions-item label-align="right" label="请求IP">{{detail.ip}}</el-descriptions-item>
                 <el-descriptions-item label-align="right" label="版本号">
-                    <el-tag size="small">{{detail.version}}</el-tag>
+                    <el-tag>{{detail.version}}</el-tag>
                 </el-descriptions-item>
                 <el-descriptions-item label-align="right" label="创建时间">{{detail.createTime}}</el-descriptions-item>
                 <el-descriptions-item label-align="right" :span="3" label="操作方法">{{detail.method}}</el-descriptions-item>
@@ -41,7 +41,7 @@
                     <div class="detail-text scroll-div">{{detail.resParam}}</div>
                 </el-descriptions-item>
             </el-descriptions>
-            <el-descriptions v-if="activeName == 'error'" :column="3" size="small" border>
+            <el-descriptions v-if="activeName == 'error'" :column="3" border>
                 <el-descriptions-item label-align="right" label="异常名称">
                     <span style="color:red;">{{detail.name}}</span>
                 </el-descriptions-item>
@@ -49,7 +49,7 @@
                 <el-descriptions-item label-align="right" label="请求URL">{{detail.uri}}</el-descriptions-item>
                 <el-descriptions-item label-align="right" label="请求IP">{{detail.ip}}</el-descriptions-item>
                 <el-descriptions-item label-align="right" label="版本号">
-                    <el-tag size="small">{{detail.version}}</el-tag>
+                    <el-tag>{{detail.version}}</el-tag>
                 </el-descriptions-item>
                 <el-descriptions-item label-align="right" label="异常时间">{{detail.createTime}}</el-descriptions-item>
                 <el-descriptions-item label-align="right" :span="3" label="操作方法">{{detail.method}}</el-descriptions-item>

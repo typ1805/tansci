@@ -12,7 +12,7 @@ app.use(router)
 app.use(store)
 app.use(ElementPlus, {
     locale: zhCn,
-    size: "small"
+    size: "default"
 })
 // 统一导入el-icon图标
 for(let icon in ElIcons){
