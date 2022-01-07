@@ -3,9 +3,9 @@
         <Table :data="tableData" :column="tableTitle" :operation="true" :tableHeight="tableHeight" :page="page" :loading="loading"
             @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange" @setCellColor="setCellColor">
             <template #search>
-                <div><el-button type="primary" @click="onAddUser" size="small">添加用户</el-button></div>
-                <div><el-input v-model="searchForm.nickname" placeholder="请输入用户名称" size="small"></el-input></div>
-                <div><el-button @click="onRefresh" icon="RefreshRight" size="small" circle></el-button></div>
+                <div><el-button type="primary" @click="onAddUser">添加用户</el-button></div>
+                <div><el-input v-model="searchForm.nickname" placeholder="请输入用户名称"></el-input></div>
+                <div><el-button @click="onRefresh" icon="RefreshRight" circle></el-button></div>
                 <div><el-button @click="onSearch" type="primary" icon="Search">查询</el-button></div>
             </template>
             <template #column="scope">
@@ -20,13 +20,13 @@
             </el-select>
             <template #footer>
                 <span class="dialog-footer">
-                <el-button @click="roleVisible = false" size="small">取消</el-button>
-                <el-button type="primary" @click="onAddUserRole" :loading="roleLoading" size="small">确定</el-button>
+                <el-button @click="roleVisible = false">取消</el-button>
+                <el-button type="primary" @click="onAddUserRole" :loading="roleLoading">确定</el-button>
                 </span>
             </template>
         </el-dialog>
         <el-dialog :title="userTitle" v-model="userVisible" :show-close="false">
-            <el-form :model="userForm" :rules="rules" ref="userRuleForm" status-icon size="small" label-width="100px">
+            <el-form :model="userForm" :rules="rules" ref="userRuleForm" status-icon label-width="100px">
                 <el-row :gutter="20">
                     <el-col :span="12">
                         <el-form-item prop="username" label="用户名" :rules="[
@@ -109,8 +109,8 @@
             </el-form>
             <template #footer>
                 <span class="dialog-footer">
-                <el-button @click="userVisible = false" size="small">取消</el-button>
-                <el-button type="primary" @click="onSubmit" size="small">提交</el-button>
+                <el-button @click="userVisible = false">取消</el-button>
+                <el-button type="primary" @click="onSubmit">提交</el-button>
                 </span>
             </template>
         </el-dialog>

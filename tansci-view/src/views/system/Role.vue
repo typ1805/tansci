@@ -4,7 +4,7 @@
             @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange" 
             @onSwitchChange="onSwitchChange">
             <template #search>
-                <div><el-button type="primary" @click="addRoleVisible = true" size="small">添加角色</el-button></div>
+                <div><el-button type="primary" @click="addRoleVisible = true">添加角色</el-button></div>
             </template>
             <template #column="scope">
                 <el-button @click="onEdit(scope)" type="text" style="color:var(--edit)">编辑</el-button>
@@ -15,10 +15,10 @@
         <el-dialog :title="title" v-model="addRoleVisible" width="30%" :show-close="false">
             <el-form :model="addRoleForm" :rules="rules" ref="addRoleRuleForm" label-position="right" label-width="100px">
                 <el-form-item label="角色名称" prop="name" :rules="[{required: true, message: '角色名称不能为空', trigger: 'blur'}]">
-                    <el-input v-model="addRoleForm.name" placeholder="请输入角色名称" size="small" style="width:90%"></el-input>
+                    <el-input v-model="addRoleForm.name" placeholder="请输入角色名称" style="width:90%"></el-input>
                 </el-form-item>
                 <el-form-item label="角色类型" prop="type" :rules="[{required: true, message: '请选择角色类型', trigger: 'change'}]">
-                    <el-select v-model="addRoleForm.type" placeholder="请选角色类型" size="small" style="width:90%">
+                    <el-select v-model="addRoleForm.type" placeholder="请选角色类型" style="width:90%">
                         <el-option label="平台角色" :value="0"></el-option>
                         <el-option label="非平台角色" :value="1"></el-option>
                     </el-select>
@@ -26,8 +26,8 @@
             </el-form>
             <template #footer>
                 <span class="dialog-footer">
-                <el-button @click="addRoleVisible = false" size="small">取消</el-button>
-                <el-button type="primary" @click="onAddRole" size="small">确定</el-button>
+                <el-button @click="addRoleVisible = false">取消</el-button>
+                <el-button type="primary" @click="onAddRole">确定</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -38,8 +38,8 @@
             </el-tree>
             <template #footer>
                 <span class="dialog-footer">
-                <el-button @click="roleVisible = false" size="small">取消</el-button>
-                <el-button type="primary" @click="onAddMenuRole" :loading="roleLoading" size="small">确定</el-button>
+                <el-button @click="roleVisible = false">取消</el-button>
+                <el-button type="primary" @click="onAddMenuRole" :loading="roleLoading">确定</el-button>
                 </span>
             </template>
         </el-dialog>

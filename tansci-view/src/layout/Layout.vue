@@ -25,7 +25,7 @@
                         </template>
                     </el-dropdown>
                     <el-dialog v-model="dialogPass" title="修改密码" width="35%" :destroy-on-close="true" :show-close="false">
-                        <el-form :model="passForm" :rules="rules" ref="validateForm" status-icon size="small" label-width="100px">
+                        <el-form :model="passForm" :rules="rules" ref="validateForm" status-icon label-width="100px">
                             <el-form-item label="原始密码" prop="oldPassword" :rules="[
                                 {required: true, message: '请输入原始密码', trigger: 'blur'},
                                 {pattern: /^[a-zA-Z]\w{5,17}$/, message: '原始密码格式有误，请重新输入', trigger: 'blur'}]">
@@ -68,7 +68,7 @@
             <el-main :style="defaultHeight">
                 <div class="main-view">
                     <el-card class="main-view-tag" shadow="always">
-                        <MenuTag ref="menuTag" :size="'small'"></MenuTag>
+                        <MenuTag ref="menuTag" :size="'default'"></MenuTag>
                     </el-card>
                     <el-card class="main-view-content" shadow="always">
                         <router-view/>

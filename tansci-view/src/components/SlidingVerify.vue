@@ -111,6 +111,7 @@
 </script>
 <style scoped lang="less">
     .sliding-verify{
+        width: 100%;
         .slider{
             background-color: #EBEEF5;
             position: relative;
