@@ -3,18 +3,18 @@
         <el-header height="45">
             <div class="header">
                 <div>
-                    <el-image src="./src/assets/image/logo.png" style="width: 60px; height: 40px; vertical-align: middle;"></el-image>
+                    <el-image @click="onCollapse" src="./src/assets/image/logo.png" style="width: 60px; height: 40px; cursor:pointer; vertical-align: middle;"></el-image>
                     <span :style="{verticalAlign: 'middle', paddingRight: isCollapse?'':'3.2rem'}">{{logo}}</span>
-                    <el-icon @click="onCollapse" color="#FFF" style="vertical-align: middle;cursor:pointer; font-size:25px;">
+                    <!-- <el-icon @click="onCollapse" color="var(--theme)" style="vertical-align: middle;cursor:pointer; font-size:25px;">
                         <fold v-if="isCollapse"/>
                         <expand v-else/>
-                    </el-icon>
+                    </el-icon> -->
                 </div>
-                <div>
+                <div style="padding-right:0.4rem;">
                     <span style="padding-right: 2rem;">{{nowTimes}}</span>
                     <el-dropdown>
-                        <span class="el-dropdown-link" style="color:#fff">
-                            <span style="vertical-align: middle;">{{username}} 欢迎您</span>
+                        <span class="el-dropdown-link" style="color:var(--theme);">
+                            <span style="cursor:pointer;vertical-align: middle;">{{username}} 欢迎您</span>
                             <el-icon style="vertical-align: middle;"><arrow-down /></el-icon>
                         </span>
                         <template #dropdown>
@@ -53,7 +53,7 @@
         <el-container>
             <el-aside :style="defaultHeight" :width="asideWidth" style="padding-bottom:4rem;">
                 <el-menu router :default-active="$route.path" :collapse="isCollapse" @select="onSelect"
-                    text-color="#fff" active-text-color="#2F9688" background-color="#0f1423">
+                    text-color="#242e42" active-text-color="#2F9688" background-color="var(--bg1)">
                     <template v-for="item in routers" :key="item">
                         <el-menu-item v-if="!item.children || item.children.length == 0" :index="item.path">
                             <el-icon v-if="item.icon" style="vertical-align: middle;">
@@ -222,20 +222,24 @@
             display: flex;
             justify-content: space-between;
             line-height: 45px;
-            background: var(--theme);
-            color: #fff;
+            // background: var(--theme);
+            background: var(--bg1);
+            border-bottom: 3px solid #DCDFE6;
+            color: var(--theme);
+            
             /deep/ .el-dialog__header{
                 background: var(--theme);
                 padding: 0 10px;
                 .el-dialog__title{
-                    color: #fff;
+                    color: var(--theme);
                 }
             }
         }
+
         .el-aside{
             height: 100%;
             transition: all .5s;
-            background: var(--bg4);
+            background: var(--bg1);
             overflow-y: auto;
             overflow-x: hidden;
             /deep/ .el-menu{
@@ -245,10 +249,10 @@
                     line-height: 40px;
                 }
                 .el-sub-menu__title:hover{
-                    background: var(--bg4) !important;
+                    background: var(--bg1) !important;
                 }
                 .el-menu-item:hover{
-                    background: var(--bg4) !important;
+                    background: var(--bg1) !important;
                 }
             }
         }
@@ -259,6 +263,7 @@
             padding: 0;
             overflow-x: hidden;
             overflow-y: auto;
+            background: var(--bg1);
             /deep/ .el-dialog__header{
                 background: var(--theme);
                 padding: 10px;
@@ -272,14 +277,15 @@
         }
         .main-view{
             .main-view-tag{
+                margin: 0.2rem;
                 /deep/.el-card__body{
                     padding: 0.3rem 0.4rem;
                 }
             }
             .main-view-content{
-                margin: 0.3rem;
+                margin: 0.2rem;
                 /deep/.el-card__body{
-                    padding: 0.4rem 1rem;
+                    padding: 0.6rem;
                 }
             }
         }

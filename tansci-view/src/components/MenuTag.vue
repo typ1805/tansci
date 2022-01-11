@@ -109,4 +109,7 @@
     /deep/ .el-space__item{
         cursor: pointer;
     }
+    /deep/ .el-tag--plain, .el-tag--dark{
+        border: 1px solid var(--theme);
+    }
 </style>

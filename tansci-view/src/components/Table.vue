@@ -106,7 +106,7 @@
         },
         headerCellStyle: {
             type: Object,
-            default:{color:'#606266',fontWeight: 700,background:'var(--bg3)'}
+            default:{color:'#606266',fontWeight: 700,background:'var(--bg1)'}
         },
         data: {
             type: Array,
