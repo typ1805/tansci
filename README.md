@@ -69,7 +69,19 @@ GitHub: [https://github.com/typ1805/tansci](https://github.com/typ1805/tansci)
 
 5、个人公众号：
 
-![欢迎关注](./sql/gzh.jpg)
+![欢迎关注](./docs/gzh.jpg)
+
+## 项目预览
+
+![登录](./docs/login.png)
+
+![首页](./docs/home.png)
+
+![菜单](./docs/menu.png)
+
+![日志](./docs/log.png)
+
+![日志详情](./docs/log-details.png)
 
 ## 示例组件
 
