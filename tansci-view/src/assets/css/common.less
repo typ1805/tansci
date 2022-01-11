@@ -1,12 +1,12 @@
 // 修改主题
 :root{
-    --el-color-primary: #2F9688 !important;
+    --el-color-primary: #242e42 !important;
 }
 .el-tag--dark{
-    --el-tag-bg-color: #2F9688 !important;
+    --el-tag-bg-color: #242e42 !important;
 }
 .el-tag--plain{
-    --el-tag-text-color: #2F9688 !important;
+    --el-tag-text-color: #242e42 !important;
 }
 
 // 公共样式
@@ -17,7 +17,7 @@
     .search-wrap{
         display: flex;
         flex-wrap: wrap;
-        background: var(--bg3);
+        background: var(--bg1);
     }
 
     .search-wrap>div{
@@ -44,6 +44,22 @@
         padding-bottom: 0.2rem;
         text-align: right;
     }
+}
+
+/**
+ * el-table 滚动条样式
+ */
+/deep/ .el-table__body-wrapper::-webkit-scrollbar {
+    width: 5px;
+    height: 1px;
+}
+/deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+    background-color: #909399;
+    border-radius: 5px;
+}
+/deep/ .el-table__body-wrapper::-webkit-scrollbar-track {
+    border-radius: 5px;
+    background: #ededed;
 }
 
 /**
