@@ -1,51 +1,53 @@
 <template>
     <div class="org">
-        <Table :data="tableData" :column="tableTitle" :operation="true" :tableHeight="tableHeight" :page="false" :loading="loading">
-            <template #search>
-                <div><el-input @change="onSearch" v-model="searchForm.name" placeholder="请输入名称筛选"></el-input></div>
-            </template>
-            <template #column="scope">
-                <el-button @click="onAdd(scope)" type="text" style="color:var(--add)">添加</el-button>
-                <el-button @click="onEdit(scope)" type="text" style="color:var(--edit)">编辑</el-button>
-                <el-button @click="onRole(scope)" type="text" style="color:var(--role)">权限</el-button>
-                <el-button @click="onDelete(scope)" type="text" style="color:var(--delete)">删除</el-button>
-            </template>
-        </Table>
-        <el-dialog title="新增组织" v-model="addVisible" :show-close="false" width="30%">
-            <el-form :model="addForm" :rules="rules" ref="addRuleForm" label-position="right" label-width="100px">
-                <el-row :gutter="20">
-                    <el-col>
-                        <el-form-item label="组织名称" prop="name" :rules="[{required: true, message: '组织名不能为空', trigger: 'blur'}]">
-                            <el-input v-model="addForm.name" placeholder="请输入组织名称" style="width:100%"></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row :gutter="20">
-                    <el-col>
-                        <el-form-item label="排序" prop="sort" :rules="[{required: true, message: '排序不能为空', trigger: 'blur'}]">
-                            <el-input-number v-model="addForm.sort" :min="0" :max="999" style="width:100%"></el-input-number>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-            </el-form>
-            <template #footer>
-                <span class="dialog-footer">
-                <el-button @click="addVisible = false">取 消</el-button>
-                <el-button type="primary" @click="onAddOrg">确 定</el-button>
-                </span>
-            </template>
-        </el-dialog>
-        <el-dialog title="分配权限" v-model="roleVisible" width="30%" :show-close="false">
-            <el-select v-model="roleId" placeholder="请选择角色" style="width: 100%">
-                <el-option v-for="item in roleData" :key="item.id" :label="item.name" :value="item.id"></el-option>
-            </el-select>
-            <template #footer>
-                <span class="dialog-footer">
-                <el-button @click="roleVisible = false">取消</el-button>
-                <el-button type="primary" @click="onAddOrgRole" :loading="roleLoading">确定</el-button>
-                </span>
-            </template>
-        </el-dialog>
+        <el-card>
+            <Table :data="tableData" :column="tableTitle" :operation="true" :page="false" :loading="loading">
+                <template #search>
+                    <div><el-input @change="onSearch" v-model="searchForm.name" placeholder="请输入名称筛选"></el-input></div>
+                </template>
+                <template #column="scope">
+                    <el-button @click="onAdd(scope)" type="text" style="color:var(--add)">添加</el-button>
+                    <el-button @click="onEdit(scope)" type="text" style="color:var(--edit)">编辑</el-button>
+                    <el-button @click="onRole(scope)" type="text" style="color:var(--role)">权限</el-button>
+                    <el-button @click="onDelete(scope)" type="text" style="color:var(--delete)">删除</el-button>
+                </template>
+            </Table>
+            <el-dialog title="新增组织" v-model="addVisible" :show-close="false" width="30%">
+                <el-form :model="addForm" :rules="rules" ref="addRuleForm" label-position="right" label-width="100px">
+                    <el-row :gutter="20">
+                        <el-col>
+                            <el-form-item label="组织名称" prop="name" :rules="[{required: true, message: '组织名不能为空', trigger: 'blur'}]">
+                                <el-input v-model="addForm.name" placeholder="请输入组织名称" style="width:100%"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col>
+                            <el-form-item label="排序" prop="sort" :rules="[{required: true, message: '排序不能为空', trigger: 'blur'}]">
+                                <el-input-number v-model="addForm.sort" :min="0" :max="999" style="width:100%"></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                </el-form>
+                <template #footer>
+                    <span class="dialog-footer">
+                    <el-button @click="addVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="onAddOrg">确 定</el-button>
+                    </span>
+                </template>
+            </el-dialog>
+            <el-dialog title="分配权限" v-model="roleVisible" width="30%" :show-close="false">
+                <el-select v-model="roleId" placeholder="请选择角色" style="width: 100%">
+                    <el-option v-for="item in roleData" :key="item.id" :label="item.name" :value="item.id"></el-option>
+                </el-select>
+                <template #footer>
+                    <span class="dialog-footer">
+                    <el-button @click="roleVisible = false">取消</el-button>
+                    <el-button type="primary" @click="onAddOrgRole" :loading="roleLoading">确定</el-button>
+                    </span>
+                </template>
+            </el-dialog>
+        </el-card>
     </div>
 </template>
 <script setup>
@@ -60,7 +62,6 @@
             name: null,
         },
         loading: false,
-        tableHeight: window.innerHeight-240,
         tableTitle: [
             {prop:'name',label:'组织名称',align:'left'},
             // {prop:'parentId',label:'父组织ID'},

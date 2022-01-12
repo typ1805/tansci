@@ -4,7 +4,7 @@
             <slot name="search"></slot>
         </div>
         <div class="table-wrap">
-            <el-table :data="data" border stripe size="mini" :height="tableHeight" row-key="id" :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+            <el-table :data="data" border stripe size="mini" :height="tableHeight" :max-height="maxHeight" row-key="id" :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
                 v-loading="loading" :header-cell-style="headerCellStyle" :cell-style="cellStyle" 
                 @selection-change="onSelectionChange" style="width: 100%;">
                 <template v-for="item in column" :key="item">
@@ -102,7 +102,7 @@
         }, 
         tableHeight: {
             type: Number,
-            default: 520
+            default: null
         },
         headerCellStyle: {
             type: Object,
@@ -120,6 +120,7 @@
     ])
 
     const state = reactive({
+        maxHeight: window.innerHeight - 280,
         tableHeight: prop.tableHeight,
         headerCellStyle: prop.headerCellStyle,
         cellStyle: function(e){
@@ -131,7 +132,7 @@
             return obj;
         }
     })
-    const {tableHeight,headerCellStyle,cellStyle} = toRefs(state)
+    const {maxHeight,tableHeight,headerCellStyle,cellStyle} = toRefs(state)
 
     const onSizeChange = (e) =>{
         emit('onSizeChange', e)

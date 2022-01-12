@@ -1,17 +1,16 @@
 <template>
     <el-container class="layout-container">
-        <el-header height="45">
+        <el-header height="60">
             <div class="header">
-                <div>
-                    <el-image @click="onCollapse" src="./src/assets/image/logo.png" style="width: 60px; height: 40px; cursor:pointer; vertical-align: middle;"></el-image>
-                    <span :style="{verticalAlign: 'middle', paddingRight: isCollapse?'':'3.2rem'}">{{logo}}</span>
-                    <!-- <el-icon @click="onCollapse" color="var(--theme)" style="vertical-align: middle;cursor:pointer; font-size:25px;">
-                        <fold v-if="isCollapse"/>
-                        <expand v-else/>
-                    </el-icon> -->
+                <div style="padding-left: 2rem;">
+                    <el-button @click="onCollapse" type="text" :icon="isCollapse?'Grid':'Menu'" >菜单折叠</el-button>
+                    <el-button type="text" icon="HomeFilled">工作台</el-button>
                 </div>
                 <div style="padding-right:0.4rem;">
-                    <span style="padding-right: 2rem;">{{nowTimes}}</span>
+                    <el-icon :size="16" color="#55bc8a" style="vertical-align: middle;padding-right:0.2rem;">
+                        <Timer/>
+                    </el-icon>
+                    <span style="padding-right: 2rem;vertical-align: middle;">{{nowTimes}}</span>
                     <el-dropdown>
                         <span class="el-dropdown-link" style="color:var(--theme);">
                             <span style="cursor:pointer;vertical-align: middle;">{{username}} 欢迎您</span>
@@ -52,6 +51,12 @@
         </el-header>
         <el-container>
             <el-aside :style="defaultHeight" :width="asideWidth" style="padding-bottom:4rem;">
+                <el-card v-show="!isCollapse" shadow="always">
+                    <div>
+                        <el-icon :size="26" style="vertical-align: middle;"><OfficeBuilding/></el-icon>
+                        <span style="vertical-align: middle;padding-left:1rem;">TANSCI</span>
+                    </div>
+                </el-card>
                 <el-menu router :default-active="$route.path" :collapse="isCollapse" @select="onSelect"
                     text-color="#242e42" active-text-color="#2F9688" background-color="var(--bg1)">
                     <template v-for="item in routers" :key="item">
@@ -70,9 +75,7 @@
                     <el-card class="main-view-tag" shadow="always">
                         <MenuTag ref="menuTag" :size="'default'"></MenuTag>
                     </el-card>
-                    <el-card class="main-view-content" shadow="always">
-                        <router-view/>
-                    </el-card>
+                    <router-view class="main-view-content"/>
                 </div>
             </el-main>
         </el-container>
@@ -96,9 +99,8 @@
     const validateForm = ref(null)
     const menuTag = ref(null)
     const state = reactive({
-        logo: 'TANSCI 系统',
         isCollapse: false,
-        asideWidth: '190px',
+        asideWidth: '240px',
         defaultHeight: {
             height: ''
         },
@@ -137,11 +139,9 @@
 
     const onCollapse = () => {
         if (state.isCollapse) {
-            state.logo = 'Tansci 系统'
-            state.asideWidth = '190px'
+            state.asideWidth = '240px'
             state.isCollapse = false
         } else {
-            state.logo = ''
             state.isCollapse = true
             state.asideWidth = '64px'
         }
@@ -221,11 +221,12 @@
         .header{
             display: flex;
             justify-content: space-between;
-            line-height: 45px;
-            // background: var(--theme);
-            background: var(--bg1);
-            border-bottom: 3px solid #DCDFE6;
+            line-height: 60px;
             color: var(--theme);
+            background: var(--bg1);
+            border:1px transparent solid;
+            border-image:linear-gradient(to right,var(--bg1),#DCDFE6,var(--bg1)) 1 10;
+            box-shadow: 0 4px 8px 0 rgba(36,46,66,.06)!important;
             
             /deep/ .el-dialog__header{
                 background: var(--theme);
@@ -255,6 +256,14 @@
                     background: var(--bg1) !important;
                 }
             }
+            /deep/ .el-card{
+                margin: 0.4rem 0.6rem;
+                background-color: var(--theme);
+                color:#fff;
+                .el-card__body{
+                    padding: 1rem 2rem;
+                }
+            }
         }
         .el-aside::-webkit-scrollbar{
             width: 0px;
@@ -277,16 +286,13 @@
         }
         .main-view{
             .main-view-tag{
-                margin: 0.2rem;
+                margin: 0.4rem;
                 /deep/.el-card__body{
                     padding: 0.3rem 0.4rem;
                 }
             }
             .main-view-content{
-                margin: 0.2rem;
-                /deep/.el-card__body{
-                    padding: 0.6rem;
-                }
+                margin: 0.4rem;
             }
         }
     }

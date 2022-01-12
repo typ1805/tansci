@@ -1,25 +1,27 @@
 <template>
 	<div class="home">
-		<div class="home-header">
-			<div class="home-header-greetings">
-				<div class="greetings-text">您好 {{username}} ！祝您新的一天工作愉快。</div>
-				<div class="greetings-weather">今天阴天，-8~10° 较冷，注意加衣</div>
-			</div>
-			<div class="home-header-todo">
-				<div v-for="todo in todoList" :key="todo">
-					<div class="todo-title">
-						<el-icon :color="todo.color" style="vertical-align: middle;">
-							<component :is="todo.icon"></component>
-						</el-icon>
-						<span style="vertical-align: middle;">{{todo.name}}</span>
+		<el-card :shadow="shadow">
+			<div class="home-header">
+				<div class="home-header-greetings">
+					<div class="greetings-text">您好 {{username}} ！祝您新的一天工作愉快。</div>
+					<div class="greetings-weather">今天阴天，-8~10° 较冷，注意加衣</div>
+				</div>
+				<div class="home-header-todo">
+					<div v-for="todo in todoList" :key="todo">
+						<div class="todo-title">
+							<el-icon :color="todo.color" style="vertical-align: middle;">
+								<component :is="todo.icon"></component>
+							</el-icon>
+							<span style="vertical-align: middle;">{{todo.name}}</span>
+						</div>
+						<div class="todo-num">{{todo.untreated}}/{{todo.total}}</div>
 					</div>
-					<div class="todo-num">{{todo.untreated}}/{{todo.total}}</div>
 				</div>
 			</div>
-		</div>
+		</el-card>
 		<div class="home-main">
 			<div class="home-main-card">
-				<el-card v-for="card in cards" :key="card" :shadow="shadow" :style="{flex: 1, padding: '2rem 0', margin: '0 0.2rem', background:card.bgColor}">
+				<el-card v-for="(card,index) in cards" :key="index" :shadow="shadow" :style="{flex: 1, padding: '2rem 0', marginLeft: index==0?'0':'0.3rem'}">
 					<div class="main-card-value">
 						<el-icon :color="card.color" style="vertical-align: middle;">
 							<component :is="card.icon"></component>
@@ -32,10 +34,14 @@
 			</div>
 			<div class="home-main-chart">
 				<div class="chart-left">
-					<div id="myColumnar" style="height:500px;"></div>
+					<el-card :shadow="shadow">
+						<div id="myColumnar" style="height:500px;"></div>
+					</el-card>
 				</div>
 				<div class="chart-right">
-					<div id="myPie" style="height:500px;"></div>
+					<el-card :shadow="shadow">
+						<div id="myPie" style="height:500px;"></div>
+					</el-card>
 				</div>
 			</div>
 		</div>
@@ -49,7 +55,7 @@
 	const store = useStore()
 	const state = reactive({
 		username: store.getters.getUser.nickname?store.getters.getUser.nickname:'管理员',
-		shadow: 'never',
+		shadow: 'always',
 		todoList: [],
 		cards: [],
 	})
@@ -76,12 +82,12 @@
 
 	const onCards = () =>{
 		state.cards = [
-			{name:'待确定指标一',total:1542,ratio:98,icon:'AddLocation',color:'#006000',bgColor:'#F2F6FC'},
-			{name:'待确定指标二',total:542,ratio:88,icon:'Coin',color:'#f56c6c',bgColor:'#F2F6FC'},
-			{name:'待确定指标三',total:8562,ratio:86,icon:'Collection',color:'#0084ff',bgColor:'#F2F6FC'},
-			{name:'待确定指标四',total:1458,ratio:54,icon:'HelpFilled',color:'#63ba4d',bgColor:'#F2F6FC'},
-			{name:'待确定指标无',total:2561,ratio:90,icon:'Histogram',color:'#67C23A',bgColor:'#F2F6FC'},
-			{name:'待确定指标六',total:5782,ratio:87,icon:'Microphone',color:'#E6A23C',bgColor:'#F2F6FC'},
+			{name:'待确定指标一',total:1542,ratio:98,icon:'AddLocation',color:'#006000'},
+			{name:'待确定指标二',total:542,ratio:88,icon:'Coin',color:'#f56c6c'},
+			{name:'待确定指标三',total:8562,ratio:86,icon:'Collection',color:'#0084ff'},
+			{name:'待确定指标四',total:1458,ratio:54,icon:'HelpFilled',color:'#63ba4d'},
+			{name:'待确定指标无',total:2561,ratio:90,icon:'Histogram',color:'#67C23A'},
+			{name:'待确定指标六',total:5782,ratio:87,icon:'Microphone',color:'#E6A23C'},
 		]
 	}
 
@@ -185,13 +191,10 @@
 </script>
 <style lang="less" scoped>
 	.home {
-		.el-card{
-			margin-bottom: 0.3rem;
-		}
 		.home-header{
 			display: flex;
 			justify-content: space-between;
-			padding: 2rem 4rem;
+			padding: 1rem 4rem;
 			.home-header-greetings{
 				.greetings-text{
 					font-size: 18px;
@@ -228,7 +231,7 @@
 				flex-wrap: wrap;
 				justify-content: space-between;
 				text-align: center;
-				padding: 2rem 0;
+				padding: 0.3rem 0;
 				.main-card-value{
 					font-size: 20px;
 					font-weight: 700;
@@ -251,9 +254,11 @@
 				justify-content: space-between;
 				.chart-left{
 					width: 70%;
+					padding-right: 0.3rem;
 				}
 				.chart-right{
 					width: 30%;
+					padding-right: 0.3rem;
 				}
 			}
 		}
