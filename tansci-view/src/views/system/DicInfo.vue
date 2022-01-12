@@ -1,67 +1,69 @@
 <template>
     <div class="dic">
-        <Table :data="tableData" :column="tableTitle" :operation="true" :page="false" :loading="loading" :tableHeight="tableHeight">
-            <template #search>
-                <div><el-input @change="onSearch" v-model="searchForm.keyword" placeholder="请输入关键字筛选"></el-input></div>
-            </template>
-            <template #column="scope">
-                <el-button @click="onAdd(scope)" type="text" style="color:var(--add)">添加</el-button>
-                <el-button @click="onEdit(scope)" type="text" style="color:var(--edit)">编辑</el-button>
-                <el-button @click="onDelete(scope)" type="text" style="color:var(--delete)">删除</el-button>
-            </template>
-        </Table>
-        <el-dialog title="新增字典" v-model="addVisible" :show-close="false">
-            <el-form :model="addForm" :rules="rules" ref="addRuleForm" label-position="right" label-width="100px">
-                <el-row :gutter="20">
-                    <el-col :span="12">
-                        <el-form-item label="分组名" prop="groupName" :rules="[{required: true, message: '分组名不能为空', trigger: 'blur'}]">
-                            <el-input v-model="addForm.groupName" placeholder="请输入分组名称" style="width:100%"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="字典类型" prop="type" :rules="[{required: true, message: '字典类型不能为空', trigger: 'change'}]">
-                            <el-select v-model="addForm.type" placeholder="请选择字典类型" style="width:100%">
-                                <el-option v-for="item in typeList" :key="item" :label="item.dicLabel" :value="item.dicValue"></el-option>
-                            </el-select>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row :gutter="20">
-                    <el-col :span="12">
-                        <el-form-item label="标签名" prop="dicLabel" :rules="[{required: true, message: '标签名不能为空', trigger: 'blur'}]">
-                            <el-input v-model="addForm.dicLabel" placeholder="请输入标签名" style="width:100%"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="数据值" prop="dicValue" :rules="[
-                            {required: true, message: '数据值不能为空', trigger: 'blur'},
-                            {pattern: /^([0-9]+\.?[0-9]*|-[0-9]+\.?[0-9]*)$/, message: '数据值必须是数字', trigger: 'blur'}]">
-                            <el-input v-model="addForm.dicValue" placeholder="请输入数据值" autocomplete="off" style="width:100%"></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row :gutter="20">
-                    <el-col :span="12">
-                        <el-form-item label="排序" prop="sort" :rules="[{required: true, message: '排序不能为空', trigger: 'blur'}]">
-                            <el-input-number v-model="addForm.sort" :min="0" :max="999" style="width:100%"></el-input-number>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row :gutter="20">
-                    <el-col>
-                        <el-form-item label="备注" prop="remarks">
-                            <el-input type="textarea" v-model="addForm.remarks" placeholder="请输入备注" :rows="3" maxlength="120" show-word-limit style="width:100%"></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-            </el-form>
-            <template #footer>
-                <span class="dialog-footer">
-                <el-button @click="addVisible = false">取 消</el-button>
-                <el-button type="primary" @click="onAddDic">确 定</el-button>
-                </span>
-            </template>
-        </el-dialog>
+        <el-card>
+            <Table :data="tableData" :column="tableTitle" :operation="true" :page="false" :loading="loading">
+                <template #search>
+                    <div><el-input @change="onSearch" v-model="searchForm.keyword" placeholder="请输入关键字筛选"></el-input></div>
+                </template>
+                <template #column="scope">
+                    <el-button @click="onAdd(scope)" type="text" style="color:var(--add)">添加</el-button>
+                    <el-button @click="onEdit(scope)" type="text" style="color:var(--edit)">编辑</el-button>
+                    <el-button @click="onDelete(scope)" type="text" style="color:var(--delete)">删除</el-button>
+                </template>
+            </Table>
+            <el-dialog title="新增字典" v-model="addVisible" :show-close="false">
+                <el-form :model="addForm" :rules="rules" ref="addRuleForm" label-position="right" label-width="100px">
+                    <el-row :gutter="20">
+                        <el-col :span="12">
+                            <el-form-item label="分组名" prop="groupName" :rules="[{required: true, message: '分组名不能为空', trigger: 'blur'}]">
+                                <el-input v-model="addForm.groupName" placeholder="请输入分组名称" style="width:100%"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="字典类型" prop="type" :rules="[{required: true, message: '字典类型不能为空', trigger: 'change'}]">
+                                <el-select v-model="addForm.type" placeholder="请选择字典类型" style="width:100%">
+                                    <el-option v-for="item in typeList" :key="item" :label="item.dicLabel" :value="item.dicValue"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="12">
+                            <el-form-item label="标签名" prop="dicLabel" :rules="[{required: true, message: '标签名不能为空', trigger: 'blur'}]">
+                                <el-input v-model="addForm.dicLabel" placeholder="请输入标签名" style="width:100%"></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="数据值" prop="dicValue" :rules="[
+                                {required: true, message: '数据值不能为空', trigger: 'blur'},
+                                {pattern: /^([0-9]+\.?[0-9]*|-[0-9]+\.?[0-9]*)$/, message: '数据值必须是数字', trigger: 'blur'}]">
+                                <el-input v-model="addForm.dicValue" placeholder="请输入数据值" autocomplete="off" style="width:100%"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col :span="12">
+                            <el-form-item label="排序" prop="sort" :rules="[{required: true, message: '排序不能为空', trigger: 'blur'}]">
+                                <el-input-number v-model="addForm.sort" :min="0" :max="999" style="width:100%"></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="20">
+                        <el-col>
+                            <el-form-item label="备注" prop="remarks">
+                                <el-input type="textarea" v-model="addForm.remarks" placeholder="请输入备注" :rows="3" maxlength="120" show-word-limit style="width:100%"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                </el-form>
+                <template #footer>
+                    <span class="dialog-footer">
+                    <el-button @click="addVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="onAddDic">确 定</el-button>
+                    </span>
+                </template>
+            </el-dialog>
+        </el-card>
     </div>
 </template>
 <script setup>
@@ -75,7 +77,6 @@
         searchForm:{
             keyword: null,
         },
-        tableHeight: window.innerHeight-200,
         loading: false,
         tableTitle: [
             {prop:'dicLabel',label:'字典标签',align:'left'},
