@@ -20,7 +20,7 @@ spring:
     # 发送者邮箱
     username: 742354529@qq.com
     # 配置密码，注意不是真正的密码，是申请的授权码
-    password: gfrgcjrlazprbedb
+    password: gfrgcjrlazprbaaa
     # 端口
     port: 587
     # 默认的邮件编码为UTF-8
