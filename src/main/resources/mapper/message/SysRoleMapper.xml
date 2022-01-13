@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tansci.mapper.system.SysRoleMapper">
+
+    <select id="menuRoleList" parameterType="com.tansci.domain.system.SysMenuRole" resultType="com.tansci.domain.system.vo.SysMenuRoleVo">
+        SELECT DISTINCT m.id,m.name,m.chinese_name,m.parent_id,m.sort,mr1.role_id,mr1.menu_id
+        FROM sys_menu m
+        LEFT JOIN sys_menu_role mr ON m.id = mr.menu_id
+        LEFT JOIN sys_menu_role mr1 ON m.id = mr1.menu_id AND mr1.role_id = #{roleId}
+        WHERE m.type = 1
+        <if test="thisRoleId != null">
+            AND mr.role_id = #{thisRoleId}
+        </if>
+    </select>
+
+</mapper>
+
+

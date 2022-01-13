@@ -11,7 +11,7 @@
  Target Server Version : 50721
  File Encoding         : 65001
 
- Date: 16/12/2021 11:49:18
+ Date: 13/01/2022 17:40:43
 */
 
 SET NAMES utf8mb4;
@@ -37,6 +37,10 @@ CREATE TABLE `log_error_info`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '异常日志' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Records of log_error_info
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for log_info
 -- ----------------------------
 DROP TABLE IF EXISTS `log_info`;
@@ -59,6 +63,10 @@ CREATE TABLE `log_info`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '操作日志' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Records of log_info
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for sys_dic
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_dic`;
@@ -78,7 +86,7 @@ CREATE TABLE `sys_dic`  (
   `remarks` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `group_name`(`group_name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 51 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '字典表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 44 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '字典表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_dic
@@ -125,19 +133,19 @@ CREATE TABLE `sys_menu`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_menu
 -- ----------------------------
-INSERT INTO `sys_menu` VALUES (1, 'home', '/home', 'Layout', 'el-icon-s-home', 1, 1, '工作台', 'Home', 0, 1, 0, 0, NULL, '2021-07-28 15:43:30', '2021-07-20 22:02:18');
-INSERT INTO `sys_menu` VALUES (2, 'system', '/system', 'Layout', 'el-icon-setting', 1, 1, '系统管理', 'System', 0, 1, 0, 0, NULL, '2021-10-23 19:50:56', '2021-10-23 19:50:28');
-INSERT INTO `sys_menu` VALUES (3, 'user', '/user', 'Layout', 'el-icon-s-data', 1, 1, '用户列表', 'UserList', 2, 4, 0, 0, NULL, NULL, '2021-07-20 22:09:46');
-INSERT INTO `sys_menu` VALUES (4, 'password', '/password', 'Layout', 'el-icon-unlock', 1, 1, '修改密码', 'Password', 2, 5, 0, 0, NULL, NULL, '2021-07-20 22:11:47');
-INSERT INTO `sys_menu` VALUES (5, 'dicInfo', '/dicInfo', 'Layout', 'el-icon-coin', 1, 1, '字典管理', 'Dic', 2, 6, 0, 0, NULL, '2021-07-23 16:03:04', '2021-07-22 17:09:46');
-INSERT INTO `sys_menu` VALUES (6, 'menu', '/menu', 'Layout', 'el-icon-menu', 1, 1, '菜单管理', 'Menu', 2, 1, 0, 0, NULL, '2021-07-22 17:48:33', '2021-07-22 17:11:10');
-INSERT INTO `sys_menu` VALUES (7, 'role', '/role', 'Layout', 'el-icon-monitor', 1, 1, '角色管理', 'Role', 2, 2, 0, 0, NULL, '2021-07-23 16:11:02', '2021-07-23 16:09:30');
-INSERT INTO `sys_menu` VALUES (8, 'org', '/org', 'Layout', 'el-icon-help', 1, 1, '组织管理', 'Org', 2, 3, 0, 0, NULL, NULL, '2021-10-23 14:23:11');
+INSERT INTO `sys_menu` VALUES (1, 'home', '/home', 'Layout', 'HomeFilled', 1, 1, '工作台', 'Home', 0, 1, 0, 0, NULL, '2021-07-28 15:43:30', '2021-07-20 22:02:18');
+INSERT INTO `sys_menu` VALUES (2, 'system', '/system', 'Layout', 'Tools', 1, 1, '系统管理', 'System', 0, 1, 0, 0, NULL, '2021-12-17 17:33:08', '2021-10-23 19:50:28');
+INSERT INTO `sys_menu` VALUES (3, 'user', '/user', 'Layout', 'Avatar', 1, 1, '用户列表', 'UserList', 2, 4, 0, 0, NULL, '2021-12-17 17:37:24', '2021-07-20 22:09:46');
+INSERT INTO `sys_menu` VALUES (5, 'dicInfo', '/dicInfo', 'Layout', 'Notebook', 1, 1, '字典管理', 'Dic', 2, 6, 0, 0, NULL, '2021-12-17 17:38:14', '2021-07-22 17:09:46');
+INSERT INTO `sys_menu` VALUES (6, 'menu', '/menu', 'Layout', 'Grid', 1, 1, '菜单管理', 'Menu', 2, 1, 0, 0, NULL, '2021-12-17 17:34:53', '2021-07-22 17:11:10');
+INSERT INTO `sys_menu` VALUES (7, 'role', '/role', 'Layout', 'Help', 1, 1, '角色管理', 'Role', 2, 2, 0, 0, NULL, '2021-12-17 17:36:32', '2021-07-23 16:09:30');
+INSERT INTO `sys_menu` VALUES (8, 'org', '/org', 'Layout', 'SetUp', 1, 1, '组织管理', 'Org', 2, 3, 0, 0, NULL, '2021-12-17 17:37:10', '2021-10-23 14:23:11');
+INSERT INTO `sys_menu` VALUES (9, 'log', '/log', 'Layout', 'Document', 1, 1, '日志管理', 'Log', 2, 6, 0, 0, NULL, NULL, '2021-12-20 10:49:42');
 
 -- ----------------------------
 -- Table structure for sys_menu_role
@@ -155,15 +163,30 @@ CREATE TABLE `sys_menu_role`  (
 INSERT INTO `sys_menu_role` VALUES (1, 1);
 INSERT INTO `sys_menu_role` VALUES (1, 2);
 INSERT INTO `sys_menu_role` VALUES (1, 3);
-INSERT INTO `sys_menu_role` VALUES (1, 4);
 INSERT INTO `sys_menu_role` VALUES (1, 5);
 INSERT INTO `sys_menu_role` VALUES (1, 6);
 INSERT INTO `sys_menu_role` VALUES (1, 7);
 INSERT INTO `sys_menu_role` VALUES (1, 8);
+INSERT INTO `sys_menu_role` VALUES (1, 9);
+INSERT INTO `sys_menu_role` VALUES (2, 1);
+INSERT INTO `sys_menu_role` VALUES (2, 3);
+INSERT INTO `sys_menu_role` VALUES (2, 6);
+INSERT INTO `sys_menu_role` VALUES (2, 7);
+INSERT INTO `sys_menu_role` VALUES (2, 8);
+INSERT INTO `sys_menu_role` VALUES (3, 1);
+INSERT INTO `sys_menu_role` VALUES (3, 2);
+INSERT INTO `sys_menu_role` VALUES (3, 3);
+INSERT INTO `sys_menu_role` VALUES (3, 5);
+INSERT INTO `sys_menu_role` VALUES (3, 6);
+INSERT INTO `sys_menu_role` VALUES (3, 7);
+INSERT INTO `sys_menu_role` VALUES (3, 8);
+INSERT INTO `sys_menu_role` VALUES (3, 9);
 INSERT INTO `sys_menu_role` VALUES (4, 1);
 INSERT INTO `sys_menu_role` VALUES (4, 3);
 INSERT INTO `sys_menu_role` VALUES (4, 4);
 INSERT INTO `sys_menu_role` VALUES (4, 5);
+INSERT INTO `sys_menu_role` VALUES (5, 1);
+INSERT INTO `sys_menu_role` VALUES (5, 3);
 
 -- ----------------------------
 -- Table structure for sys_org
@@ -178,7 +201,7 @@ CREATE TABLE `sys_org`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 107 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '组织' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '组织' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_org
@@ -186,7 +209,6 @@ CREATE TABLE `sys_org`  (
 INSERT INTO `sys_org` VALUES (1, '总公司', 0, 1, 0, NULL, '2021-10-23 14:31:30');
 INSERT INTO `sys_org` VALUES (2, '兰州子公司', 1, 2, 0, NULL, '2021-10-23 15:08:20');
 INSERT INTO `sys_org` VALUES (3, '西安子公司', 1, 3, 0, '2021-10-23 15:17:03', '2021-10-23 15:15:16');
-INSERT INTO `sys_org` VALUES (4, '广州市骅阳置业有限公司', 1, 1, 0, '2021-12-16 09:56:07', '2021-12-01 17:51:08');
 
 -- ----------------------------
 -- Table structure for sys_org_role
@@ -217,15 +239,17 @@ CREATE TABLE `sys_role`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '权限' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '权限' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_role
 -- ----------------------------
-INSERT INTO `sys_role` VALUES (1, '超级管理员', 1, 0, NULL, '2021-12-15 17:17:52', '2021-07-23 16:51:14');
-INSERT INTO `sys_role` VALUES (2, '普通用户', 1, 0, NULL, '2021-07-28 15:44:58', '2021-07-23 16:51:01');
-INSERT INTO `sys_role` VALUES (3, '管理员', 1, 0, NULL, '2021-07-23 17:06:56', '2021-07-23 16:42:17');
-INSERT INTO `sys_role` VALUES (4, '演示用户', 0, 1, NULL, NULL, '2021-07-23 16:51:33');
+INSERT INTO `sys_role` VALUES (1, '超级管理员', 1, 0, 'c270251fd4170fa89d166844f43fa0d8', '2021-12-15 17:17:52', '2021-07-23 16:51:14');
+INSERT INTO `sys_role` VALUES (2, '普通用户', 1, 0, 'bc3ac26e69731b617eb80274453f6dba', '2021-07-28 15:44:58', '2021-07-23 16:51:01');
+INSERT INTO `sys_role` VALUES (3, '管理员', 1, 0, 'bc3ac26e69731b617eb80274453f6dba', '2021-07-23 17:06:56', '2021-07-23 16:42:17');
+INSERT INTO `sys_role` VALUES (4, '演示用户', 0, 1, 'bc3ac26e69731b617eb80274453f6dba', NULL, '2021-07-23 16:51:33');
+INSERT INTO `sys_role` VALUES (5, '测试1', 1, 0, '37afd8dab98685df81e665dbc2cb78d6', NULL, '2022-01-04 09:57:50');
+INSERT INTO `sys_role` VALUES (6, '测试2', 1, 0, '37afd8dab98685df81e665dbc2cb78d6', NULL, '2022-01-04 10:21:57');
 
 -- ----------------------------
 -- Table structure for sys_user
@@ -291,5 +315,46 @@ CREATE TABLE `sys_user_role`  (
 INSERT INTO `sys_user_role` VALUES ('37afd8dab98685df81e665dbc2cb78d6', 2);
 INSERT INTO `sys_user_role` VALUES ('bc3ac26e69731b617eb80274453f6dba', 3);
 INSERT INTO `sys_user_role` VALUES ('c270251fd4170fa89d166844f43fa0d8', 1);
+
+-- ----------------------------
+-- Table structure for template
+-- ----------------------------
+DROP TABLE IF EXISTS `template`;
+CREATE TABLE `template`  (
+  `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '主键id',
+  `code` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '模板编码',
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '模板名称',
+  `content` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '模板内容',
+  `type` int(11) NOT NULL COMMENT '模板类型：0：验证码，1：短信通知，2：推广短信，3：国际/港澳台消息',
+  `state` int(11) NULL DEFAULT NULL COMMENT '状态：0、审核中，1、通过，2、未通过',
+  `creater` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '创建人',
+  `business_type` int(11) NULL DEFAULT NULL COMMENT '业务类型：0：短信，1：邮件',
+  `del_flag` int(11) NULL DEFAULT 0 COMMENT '删除转态：0：正常，1：已删除',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '备注',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of template
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for template_details
+-- ----------------------------
+DROP TABLE IF EXISTS `template_details`;
+CREATE TABLE `template_details`  (
+  `id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '主键id',
+  `code` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '编码',
+  `content` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '内容',
+  `state` int(11) NOT NULL COMMENT '状态：0、成功，1：失败',
+  `send_time` datetime NOT NULL COMMENT '发送时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of template_details
+-- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;

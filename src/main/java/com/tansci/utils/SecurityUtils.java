@@ -1,6 +1,6 @@
 package com.tansci.utils;
 
-import com.tansci.domain.SysUser;
+import com.tansci.domain.system.SysUser;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

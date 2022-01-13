@@ -1,7 +1,7 @@
 package com.tansci.utils;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tansci.domain.SysUser;
+import com.tansci.domain.system.SysUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

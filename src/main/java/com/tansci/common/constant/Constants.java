@@ -43,4 +43,15 @@ public class Constants {
 
     public final static String DELETE = "DELETE";
 
+    /**
+     * 消息发送状态码
+     */
+    public final static String NEWS_SUCCESS_CODE = "OK";
+
+    public final static String NEWS_SUCCESS_MESSAGE = "发送成功";
+
+    public final static String NEWS_FAIL_CODE = "FAIL";
+
+    public final static String NEWS_FAIL_MESSAGE = "发送失败";
+
 }

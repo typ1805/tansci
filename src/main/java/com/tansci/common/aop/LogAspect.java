@@ -2,10 +2,10 @@ package com.tansci.common.aop;
 
 import com.alibaba.fastjson.JSON;
 import com.tansci.common.annotation.Log;
-import com.tansci.domain.LogErrorInfo;
-import com.tansci.domain.LogInfo;
-import com.tansci.service.LogErrorInfoService;
-import com.tansci.service.LogInfoService;
+import com.tansci.domain.system.LogErrorInfo;
+import com.tansci.domain.system.LogInfo;
+import com.tansci.service.system.LogErrorInfoService;
+import com.tansci.service.system.LogInfoService;
 import com.tansci.utils.IPUtils;
 import com.tansci.utils.SecurityUserUtils;
 import org.aspectj.lang.JoinPoint;

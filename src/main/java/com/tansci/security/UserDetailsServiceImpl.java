@@ -1,8 +1,8 @@
 package com.tansci.security;
 
 import com.tansci.common.exception.BusinessException;
-import com.tansci.domain.SysUser;
-import com.tansci.service.SysUserService;
+import com.tansci.domain.system.SysUser;
+import com.tansci.service.system.SysUserService;
 import com.tansci.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
