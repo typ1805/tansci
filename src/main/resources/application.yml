@@ -18,9 +18,9 @@ spring:
     # 配置 SMTP 服务器地址 （smtp.126.com（端口：465、994），smtp.163.com（端口：465、994），smtp.yeah.net（端口：465、994），smtp.qq.com（端口：465、587））
     host: smtp.qq.com
     # 发送者邮箱
-    username: 742354529@qq.com
+    username: 74235452@qq.com
     # 配置密码，注意不是真正的密码，是申请的授权码
-    password: gfrgcjrlazprbedb
+    password: gfrgcjrlazprbaaa
     # 端口
     port: 587
     # 默认的邮件编码为UTF-8
