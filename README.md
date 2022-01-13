@@ -53,9 +53,55 @@ GitHub: [https://github.com/typ1805/tansci](https://github.com/typ1805/tansci)
 | nprogress | 0.2.0 | -- |
 | less | 4.1.2 | -- |
 
-## 许可证
+### 项目结构
 
-申请中。。。
+<pre>
+├─docs                         # 文档相关
+├─sql                          # 数据库SQL脚本
+├─src                          # 后端项目目录
+│  ├─main
+│  │  ├─java
+│  │  │  └─com
+│  │  │      └─tansci
+│  │  │          ├─common       # 公共包
+│  │  │          ├─config       # 配置
+│  │  │          ├─controller   # controller 层
+│  │  │          ├─domain       # 映射实体
+│  │  │          │  ├─dto       # DTO 实体
+│  │  │          │  └─vo        # VO 实体
+│  │  │          ├─mapper       # mapper 层
+│  │  │          ├─security     # 安全认证相关
+│  │  │          ├─service      # service 层
+│  │  │          │  └─impl
+│  │  │          └─utils        # 工具包
+│  │  └─resources
+│  │      └─mapper              # mapper XML 映射
+│  └─test                       # 测试
+└─tansci-view                   # 前端项目目录
+    ├─public
+    └─src
+        ├─api                   # 服务AIP配置
+        ├─assets                # 静态资源（包含 公共样式、图片）
+        │  ├─css                
+        │  └─image
+        ├─components            # 公共组件
+        ├─layout                # 整体布局
+        ├─router                # 路由
+        ├─store                 # axios 封装
+        ├─utils                 # 工具包
+        └─views                 # 功能模块
+            └─system            # 基础功能模块
+</pre>
+
+## 集成功能
+
+| 模块 | 功能 | 进度 | 描述 |
+| ---- | ---- | ---- | ---- |
+| 基础模块 | 菜单管理<br>角色管理<br>组织管理<br>用户管理<br>字典管理<br>日志管理（操作日志、异常日志） | $\color{#67C23A}{已完成}$ | 基础功能模块 |
+| 消息通知 | 短信通知<br>邮件通知 | $\color{#E6A23C}{开发中}$ | 多种消息通知 |
+| 定时任务 | ... | $\color{#909399}{计划中}$ | 动态配置定时任务 |
+| 支付功能 | ... | $\color{#909399}{计划中}$ | 包含 支付宝、微信、银联等 |
+| 三方登录 | ... | $\color{#909399}{计划中}$ | 包含 短信、微信、QQ 等三方授权登录方式 |
 
 ## 开发者联系
 
@@ -65,7 +111,7 @@ GitHub: [https://github.com/typ1805/tansci](https://github.com/typ1805/tansci)
 
 3、微信群：加扣扣或关注公众号进
 
-4、个人主站：[https://typ1805.gitee.io/](https://typ1805.gitee.io/)
+4、个人主站：[https://typ1805.gitee.io](https://typ1805.gitee.io)
 
 5、个人公众号：
 
@@ -82,81 +128,3 @@ GitHub: [https://github.com/typ1805/tansci](https://github.com/typ1805/tansci)
 ![日志](./docs/log.png)
 
 ![日志详情](./docs/log-details.png)
-
-## 示例组件
-
-### 1、el-table 封装
-
-1.1、示例
-
-```vue
-    import Table from '../../components/Table.vue'
-```
-
-1.2、可参考 ``tansci-view/src/views/system/User.vue``
-
-```vue
-    <Table :data="tableData" :column="tableTitle" :operation="true" :tableHeight="tableHeight" :page="page" :loading="loading"
-           @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange" @setCellColor="setCellColor">
-        <template #search>
-        </template>
-        <template #column="scope">
-        </template>
-    </Table>
-```
-1.3、Props及事件说明
-
-| 参数 | 说明 | 默认值 |
-| ---- | ---- | ---- |
-| loading | 加载动画 | false |
-| page | 分页参数 | { current: 1, size: 10, total: 0} |
-| column | 字段集合 | Array |
-| operation | 操作列 | 自定义插槽 |
-| tableHeight | table高度 | 520px |
-| headerCellStyle | 表头单元格的 style 的回调方法 | 原 header-cell-style |
-| data | 数据集合 | Array |
-| tree-props | 树形数据 | {children: 'children', hasChildren: 'hasChildren'} |
-| onSizeChange | pageSize 改变时触发 | 原 size-change |
-| onCurrentChange | current-change 改变时触发 | 原 current-change |
-| onSelectionChange | 当选择项发生变化时会触发该事件 | 原 selection-change |
-| setCellColor | 单元格的 style 的回调方法 | 原 cell-style |
-| onButtonClick | 当column的type="button"时的click事件 | -- |
-| onSwitchChange | 当column的type="switch"时的change事件 | -- |
-
-1.4、column 配置说明
-
-| 参数 | 说明 | 默认值 |
-| ---- | ---- | ---- |
-| prop | 字段名称 | String |
-| label | 展示值 | String |
-| alias | 列字典值名称展示 | String |
-| type | 展示类型：button、tag、switch、progress | 属性配置和element属性一致 |
-| option | 对type进行属性配置 | element属性一致 |
-| tooltip | 当内容过长被隐藏时显示 | false |
-| width | 对应列的宽度 | string / number |
-| align | 对齐方式： left、center、left |
-| fixed | 列是否固定在左侧或者右侧：true 、'left'、'right' | -- |
-
-1.5、插槽
-
-| 参数 | 说明 | 默认值 |
-| ---- | ---- | ---- |
-| search | 筛选条件插槽 | <template #search> |
-| column | table操作列插槽，operation为true时生效 | <template #column="scope"> |
-
-### 2、接口日志记录
-
-2.1、使用 ``@Log``
-
-- modul: 操作模块
-- type: 操作类型
-- desc: 操作说明
-
-2.2、示例
-```java
-    @Log(modul = "数据字典-列表", type = Constants.SELECT, desc = "列表")
-    @GetMapping("/dicList")
-    public Wrapper<List<SysDic>> dicList(SysDicDto dto) {
-        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysDicService.dicList(dto));
-    }
-```
