@@ -1,6 +1,6 @@
 package com.tansci.utils;
 
-import com.tansci.domain.SysUser;
+import com.tansci.domain.system.SysUser;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.Authentication;

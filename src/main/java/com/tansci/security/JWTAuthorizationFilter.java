@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.tansci.common.WrapMapper;
 import com.tansci.common.constant.Enums;
 import com.tansci.common.exception.BusinessException;
-import com.tansci.domain.SysUser;
+import com.tansci.domain.system.SysUser;
 import com.tansci.utils.JwtTokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tansci.mapper.system.SysOrgMapper">
+
+    <select id="getOrgChildrens" parameterType="integer" resultType="com.tansci.domain.system.SysOrg">
+        SELECT * FROM (
+            SELECT t1.*,IF(FIND_IN_SET(parent_id, @pids) > 0, @pids := CONCAT(@pids, ',', id), '0') AS ischild
+            FROM (SELECT * FROM sys_org ORDER BY id ASC) t1,(SELECT @pids := #{id}) t2
+        ) t3 WHERE ischild != '0'
+    </select>
+
+</mapper>

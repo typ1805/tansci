@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tansci.mapper.system.SysMenuMapper">
+
+    <select id="list" parameterType="com.tansci.domain.system.SysMenu" resultType="com.tansci.domain.system.SysMenu">
+        SELECT m.id, m.name, m.path, m.component, m.icon, m.type, m.status, m.chinese_name, m.english_name, m.parent_id,
+        m.sort, m.require_auth, m.keep_alive, m.enabled, m.update_time, m.create_time
+        FROM sys_menu m
+        <choose>
+            <when test="roleId != null">
+                LEFT JOIN sys_menu_role mr on m.id = mr.menu_id
+                WHERE mr.role_id = #{roleId}
+                <if test="type != null">
+                    AND m.type = #{type}
+                </if>
+                <if test="status != null">
+                    AND m.status = #{status}
+                </if>
+            </when>
+            <otherwise>
+                WHERE 1 = 1
+                <if test="type != null">
+                    AND m.type = #{type}
+                </if>
+                <if test="status != null">
+                    AND m.status = #{status}
+                </if>
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getMenuChildrens" parameterType="integer" resultType="com.tansci.domain.system.SysMenu">
+        SELECT * FROM (
+            SELECT t1.*,IF(FIND_IN_SET(parent_id, @pids) > 0, @pids := CONCAT(@pids, ',', id), '0') AS ischild
+            FROM (SELECT * FROM sys_menu ORDER BY id ASC) t1,(SELECT @pids := #{id}) t2
+        ) t3 WHERE ischild != '0'
+    </select>
+
+</mapper>
