@@ -1418,12 +1418,704 @@ public class MybatisPlusConfig {
 
 #### 整合Spring Security安全认证
 
-在整合Spring Security前我们需要先实现用户、权限、组织的服务支持。
+Spring Security是一套安全框架，可以基于RBAC（基于角色的权限控制）对用户的访问权限进行控制。它的核心功能主要包括：
+
+- 认证
+- 授权
+- 攻击防护 （防止伪造身份）
+
+其核心就是一组过滤器链，项目启动后将会自动配置。最核心的就是 Basic Authentication Filter 用来认证用户的身份，一个在Spring Security中一种过滤器处理一种认证方式。
+
+> 在整合Spring Security前我们需要先实现用户、权限、组织的基础服务支持。
+
+**1、添加依赖**
+
+```xml
+<properties>
+    <jsch.version>0.1.55</jsch.version>
+    <jjwt.version>0.9.0</jjwt.version>
+</properties>
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+<dependency>
+    <groupId>com.jcraft</groupId>
+    <artifactId>jsch</artifactId>
+    <version>${jsch.version}</version>
+</dependency>
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt</artifactId>
+    <version>${jjwt.version}</version>
+</dependency>
+```
+
+**2、创建Security配置**
+
+在SpringBoot应用中使用Spring Security，用到 @EnableWebSecurity注解，该注解和@Configuration注解一起使用。利用@EnableWebSecurity注解继承WebSecurityConfigurerAdapter类，这样就构成了 Spring Security的配置。
+
+WebSecurityConfigurerAdapter提供了一种便利的方式去创建WebSecurityConfigurer的实例，只需要重写 WebSecurityConfigurerAdapter的方法，即可配置拦截什么URL、设置什么权限等安全控制。
+
+- configure(WebSecurity)：通过重载该方法，可配置Spring Security的Filter链。
+
+| 方法 | 说明 |
+| ---- | ---- |
+| access(String) | 如果给定的SpEL表达式计算结果为true，则允许访问 |
+| anonymous() | 允许匿名用户访问 |
+| authenticated() | 允许认证过的用户访问 |
+| denyAll()	| 无条件拒绝所有访问 |
+| fullyAuthenticated() | 如果用户是完整认证的话（不是通过Remember-me功能认证的），则允许访问 |
+| hasAnyAuthority(String…) | 如果用户具备给定权限中的某一个的话，则允许访问 |
+| hasAnyRole(String…) | 如果用户具备给定角色中的某一个的话，则允许访问 |
+| hasAuthority(String) | 如果用户具备给定权限的话，则允许访问 |
+| hasIpAddress(String) | 如果请求来自给定IP地址的话，则允许访问 |
+| hasRole(String) | 如果用户具备给定角色的话，则允许访问 |
+| not()	| 对其他访问方法的结果求反 |
+| permitAll() | 无条件允许访问 |
+| rememberMe() | 如果用户是通过Remember-me功能认证的，则允许访问 |
+
+- configure(HttpSecurity)：通过重载该方法，可配置如何通过拦截器保护请求。
+
+| 方法 | 说明 |
+| ---- | ---- |
+| authentication | 用户认证对象 |
+| denyAll | 结果始终为false |
+| hasAnyRole(list of roles) | 如果用户被授权指定的任意权限，结果为true |
+| hasRole(role)	| 如果用户被授予了指定的权限，结果 为true |
+| hasIpAddress(IP Adress) | 用户地址 |
+| isAnonymous() | 是否为匿名用户 |
+| isAuthenticated() | 不是匿名用户 |
+| isFullyAuthenticated | 不是匿名也不是remember-me认证 |
+| isRemberMe() | remember-me认证 |
+| permitAll	| 始终true |
+| principal	| 用户主要信息对象 |
+
+- configure(AuthenticationManagerBuilder)：通过重载该方法，可配置user-detail（用户详细信息）服务。
+
+| 方法 | 说明 |
+| ---- | ---- |
+| accountExpired(boolean) | 定义账号是否已经过期 |
+| accountLocked(boolean) | 定义账号是否已经锁定 |
+| and()	| 用来连接配置 |
+| authorities(GrantedAuthority…) | 授予某个用户一项或多项权限 |
+| authorities(List)	| 授予某个用户一项或多项权限 |
+| authorities(String…) | 授予某个用户一项或多项权限 |
+| credentialsExpired(boolean) | 定义凭证是否已经过期 |
+| disabled(boolean) | 定义账号是否已被禁用 |
+| password(String) | 定义用户的密码 |
+| roles(String…) | 授予某个用户一项或多项角色 |
+
+如下安全配置，使得只有认证过的用户才可以正常访问业务服务。
+
+```java
+@Slf4j
+@Configuration
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    @Qualifier("userDetailsServiceImpl")
+    private UserDetailsService userDetailsService;
+
+    /**
+     * @MonthName： passwordEncoder
+     * @Description： 加密密码
+     * @Author： tanyp
+     * @Date： 2021/10/22 16:14
+     * @Param： []
+     * @return： org.springframework.security.crypto.password.PasswordEncoder
+     **/
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.cors().and().csrf().disable()
+                .authorizeRequests()
+                .anyRequest().authenticated()
+                .and()
+                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
+                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
+                // 不需要session
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .exceptionHandling().authenticationEntryPoint(new JWTAuthenticationEntryPoint())
+                .accessDeniedHandler(new JWTAccessDeniedHandler())
+                .and()
+                // 配置登出路径
+                .logout().logoutUrl("/user/logout").logoutSuccessHandler(new JWTLogoutSuccessHandler());
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/api/**");
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+        return source;
+    }
+}
+```
+
+**3、实现身份认证**
+
+在DaoAuthenticationProvider中包含了一个UserDetailsService实例，它负责根据用户名提取用户信息UserDetailService实例，根据用户名提取用户信息UserDetails(含密码)。 
+
+DaoAuthenticationProvider会去对比UserDetailsService提取的用户密码与用户提交的密码是否匹配作为认证成功的关键依据，因此可以通过自定义UserDetailsService的实现类来实现自定义的身份认证。
+
+创建UserDetailsServiceImpl文件需要实现UserDetailsService接口，重写loadUserByUsername方法实现用户登录认证。
+
+```java
+@Slf4j
+@Service
+public class UserDetailsServiceImpl implements UserDetailsService {
+
+    @Autowired
+    private SysUserService sysUserService;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) {
+        SysUser user = sysUserService.login(username);
+        if (Objects.isNull(user)) {
+            throw new BusinessException("用户名获取密码有误！");
+        }
+        return new SecurityUtils(user);
+    }
+
+}
+```
+
+SysUserService创建login方法实现用户是否存在验证、用户权限验证、用户归属组织验证，验证通过后将用户信息、权限、组织存储在session中。
+
+```java
+public SysUser login(String username) {
+    SysUser user = this.baseMapper.selectOne(Wrappers.<SysUser>lambdaQuery().eq(SysUser::getUsername, username));
+    if (Objects.nonNull(user)) {
+        // 获取角色
+        SysUserRole role = sysUserRoleService.getOne(Wrappers.<SysUserRole>lambdaQuery().eq(SysUserRole::getUserId, user.getId()));
+        log.error("====={}=======无权限================", username);
+        if (Objects.isNull(role) || Objects.isNull(role.getRoleId())) {
+            throw new BusinessException("暂无登录权限，请联系管理员！");
+        }
+        user.setRole(String.valueOf(role.getRoleId()));
+
+        // 获取组织
+        SysUserOrg org = sysUserOrgService.getOne(Wrappers.<SysUserOrg>lambdaQuery().eq(SysUserOrg::getUserId, user.getId()));
+        if (Objects.isNull(org) || Objects.isNull(org.getOrgId())) {
+            log.error("====={}=======无组织================", username);
+            throw new BusinessException("暂无登录权限，请联系管理员！");
+        }
+
+        // 获取组织权限
+        List<SysOrg> orgs = sysOrgService.getOrgChildrens(org.getOrgId());
+        if (Objects.nonNull(orgs) && orgs.size() > 0) {
+            List<Integer> orgIds = orgs.stream().map(SysOrg::getId).collect(Collectors.toList());
+            orgIds.add(org.getOrgId());
+            user.setOrgIds(orgIds);
+        } else {
+            user.setOrgIds(Arrays.asList(org.getOrgId()));
+        }
+    }
+    return user;
+}
+```
+
+**4、创建SecurityUtils**
+
+UserDetails和Authentication接口很类似，它们都拥有username，authorities。
+
+Authentication的getCredentials()与UserDetails中的getPassword()需要被区分对待，前者是用户提交的密码凭证，后者是用户实际存储的密码，认证其实就是对这两者的比对。Authentication中的getAuthorities()实际是由UserDetails的getAuthorities()传递而形成的。
+
+UserDetails中用户详细信息(Details)便是经过了AuthenticationProvider认证之后被填充的。通过实现UserDetailsService和UserDetails，我们可以完成对用户信息获取方式以及用户信息字段的自定义。
+
+```java
+@Data
+public class SecurityUtils implements UserDetails {
+
+    private String id;
+
+    private String username;
+
+    private String nickname;
+
+    private String password;
+
+    private Integer type;
+
+    private Integer orgId;
+
+    private List<Integer> orgIds;
+
+    private Collection<? extends GrantedAuthority> authorities;
+
+    public SecurityUtils() {
+    }
+
+    public SecurityUtils(SysUser user) {
+        this.id = user.getId();
+        this.username = user.getUsername();
+        this.nickname = user.getNickname();
+        this.password = user.getPassword();
+        this.type = user.getType();
+        this.orgId = user.getOrgId();
+        this.orgIds = user.getOrgIds();
+        this.authorities = Collections.singleton(new SimpleGrantedAuthority(user.getRole().toString()));
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        // 账号是否未过期，默认是false
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        // 账号是否未锁定，默认是false
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        // 账号凭证是否未过期，默认是false
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+}
+```
+
+**5、创建JwtTokenUtils工具类**
+
+通过JWT进行安全验证，需要封装工具类。主要包含：
+
+- 创建token方法：createToken(SysUser user, boolean isRememberMe)
+- 从token中获取用户名：getUsername(String token)
+- 获取用户角色：getUserRole(String token)
+- 获取用户详细信息：getUser(String token)
+- 验证token是否过期：isExpiration(String token)
+
+生产的token格式为 ```Authorization:Bearer + 字符串```，例如：
+
+```java
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdWJqZWN0IiwicGF5bG9hZCI6IntcImFjY291bnROb25FeHBpcmVkXCI6dHJ1ZSxcImFjY291bnROb25Mb2NrZWRcIjp0cnVlLFwiYXV0aG9yaXRpZXNcIjpbe1wiYXV0aG9yaXR5XCI6XCJcL21zcy11cG1zXC9vcmRlclwvbGlzdFwifSx7XCJhdXRob3JpdHlcIjpcIlwvbXNzLXVwbXNcL29yZGVyXC9kZXRhaWxcIn0se1wiYXV0aG9yaXR5XCI6XCJST0xFX2FkbWluXCJ9XSxcImNyZWRlbnRpYWxzTm9uRXhwaXJlZFwiOnRydWUsXCJlbmFibGVkXCI6dHJ1ZSxcImlkXCI6NDgsXCJwYXNzd29yZFwiOlwiJDJhJDEwJHZtcC56V1duWDNMRnhTczZJMDBpMGV1cmxIUjd5bWNmVVE1SHRYdzcxdzlRSi4ySlVmOFVhXCIsXCJ1c2VybmFtZVwiOlwiYWRtaW5cIn0iLCJleHAiOjE2MDYxMzA4MDd9.Wb-2UkAcVrj4KbQteT6D9RbktXgkPLI-tB5ymMkqsjI
+
+````
+
+```java
+public class JwtTokenUtils {
+
+    public static final String TOKEN_HEADER = "Authorization";
+
+    public static final String TOKEN_PREFIX = "Bearer ";
+
+    private static final String SECRET = "jwtsecretdemo";
+
+    private static final String ISS = "echisan";
+
+    // 角色的key
+    private static final String ROLE_CLAIMS = "rol";
+
+    // 用户信息key
+    private static final String USER_CLAIMS = "user";
+
+    // 过期时间是3600*4秒，既4个小时
+    private static final long EXPIRATION = 14400L;
+
+    // 选择了记住我之后的过期时间为7天
+    private static final long EXPIRATION_REMEMBER = 604800L;
+
+    /**
+     * @MonthName： createToken
+     * @Description： 创建token
+     * @Author： tanyp
+     * @Date： 2021/12/02 10:40
+     * @Param： [username, isRememberMe]
+     * @return： java.lang.String
+     **/
+    public static String createToken(SysUser user, boolean isRememberMe) {
+        long expiration = isRememberMe ? EXPIRATION_REMEMBER : EXPIRATION;
+        Map<String, Object> map = new HashMap<>();
+        map.put(ROLE_CLAIMS, user.getRole());
+        map.put(USER_CLAIMS, user);
+        return Jwts.builder()
+                .signWith(SignatureAlgorithm.HS512, SECRET)
+                .setClaims(map)
+                .setIssuer(ISS)
+                .setSubject(user.getUsername())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
+                .compact();
+    }
+
+    /**
+     * @MonthName： getUsername
+     * @Description： 从token中获取用户名
+     * @Author： tanyp
+     * @Date： 2021/12/02 10:41
+     * @Param： [token]
+     * @return： java.lang.String
+     **/
+    public static String getUsername(String token) {
+        return getTokenBody(token).getSubject();
+    }
+
+    /**
+     * @MonthName： getUserRole
+     * @Description： 获取用户角色
+     * @Author： tanyp
+     * @Date： 2021/12/02 13:00
+     * @Param： [token]
+     * @return： java.lang.String
+     **/
+    public static String getUserRole(String token) {
+        return (String) getTokenBody(token).get(ROLE_CLAIMS);
+    }
+
+    /**
+     * @MonthName： getUser
+     * @Description： 获取用户信息
+     * @Author： tanyp
+     * @Date： 2021/12/02 13:00
+     * @Param： [token]
+     * @return： java.lang.String
+     **/
+    public static SysUser getUser(String token) {
+        Object obj = getTokenBody(token).get(USER_CLAIMS);
+        return JSONObject.parseObject(JSONObject.toJSONBytes(obj), SysUser.class);
+    }
+
+    /**
+     * @MonthName： isExpiration
+     * @Description： 是否已过期
+     * @Author： tanyp
+     * @Date： 2021/12/02 10:41
+     * @Param： [token]
+     * @return： boolean
+     **/
+    public static boolean isExpiration(String token) {
+        try {
+            return getTokenBody(token).getExpiration().before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true;
+        }
+
+    }
+
+    private static Claims getTokenBody(String token) {
+        return Jwts.parser()
+                .setSigningKey(SECRET)
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+}
+```
+
+**6、配置拦截器, 用户权限验证**
+
+当进来一个请求时，从Authorization中获取参数，进而解析获取到其中的账户和密码信息，进行认证。认证成功后返回的Authtication对象信息，会进入下一个filter，由于已经认证成功了会直接进入FilterSecurityInterceptor进行权限验证。
+
+doFilterInternal方法从Header中获取Authorization参数信息，然后调用认证，认证成功后最后直接访问接口。
+
+创建JWTAuthorizationFilter继承BasicAuthenticationFilter父类。
+
+```java
+@Slf4j
+public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
+
+    public JWTAuthorizationFilter(AuthenticationManager authenticationManager) {
+        super(authenticationManager);
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        String token = request.getHeader(JwtTokenUtils.TOKEN_HEADER);
+        if (token == null || !token.startsWith(JwtTokenUtils.TOKEN_PREFIX)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        try {
+            Authentication authentication = getAuthentication(token);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            onSuccessfulAuthentication(request, response, authentication);
+            chain.doFilter(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            onUnsuccessfulAuthentication(request, response, new AccountExpiredException(Enums.AUTH_NO_TOKEN.getValue()));
+        }
+    }
+
+    @Override
+    protected void onSuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, Authentication authResult) throws IOException {
+        log.info("=============Token 验证成功=================");
+    }
+
+    @Override
+    protected void onUnsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
+        log.error("================token校验失败=======================");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(JSONObject.toJSONString(WrapMapper.error(HttpServletResponse.SC_UNAUTHORIZED, failed.getMessage())));
+    }
 
 
+    /**
+     * @MonthName： getAuthentication
+     * @Description： 从token中获取用户信息并新建一个token
+     * @Author： tanyp
+     * @Date： 2021/10/22 17:55
+     * @Param： [tokenHeader]
+     * @return： org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+     **/
+    private UsernamePasswordAuthenticationToken getAuthentication(String tokenHeader) {
+        String token = tokenHeader.replace(JwtTokenUtils.TOKEN_PREFIX, "");
+        boolean expiration = JwtTokenUtils.isExpiration(token);
+        if (expiration) {
+            throw new BusinessException(Enums.AUTH_NO_TOKEN.getValue());
+        } else {
+            String username = JwtTokenUtils.getUsername(token);
+            String role = JwtTokenUtils.getUserRole(token);
+            SysUser user = JwtTokenUtils.getUser(token);
+            if (username != null) {
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, Collections.singleton(new SimpleGrantedAuthority(role)));
+                authenticationToken.setDetails(user);
+                return authenticationToken;
+            }
+        }
+        return null;
+    }
 
+}
+```
 
+**7、配置拦截器, 用户账号验证**
 
+通过UsernamePasswordAuthenticationFilter获取请求中的账户密码来进行授权的filter，这个filter的主要职责为：
+
+- 通过 requiresAuthentication()判断是否以POST方式请求/login;
+- 调用 attemptAuthentication()方法进行认证，内部创建了authenticated属性为false（即未授权）的UsernamePasswordAuthenticationToken 对象，并传递给 AuthenticationManager().authenticate() 方法进行认证，认证成功后 返回一个authenticated=true（即授权成功的)UsernamePasswordAuthenticationToken对象;
+- 通过 sessionStrategy.onAuthentication()将Authentication放入Session中;
+- 通过 successfulAuthentication()调用AuthenticationSuccessHandler.onAuthenticationSuccess()接口进行成功处理（可以通过继承AuthenticationSuccessHandler自行编写成功处理逻辑）successfulAuthentication(request, response, chain, authResult);
+- 通过 unsuccessfulAuthentication()调用AuthenticationFailureHandler.onAuthenticationFailure接口进行失败处理（可以通过继承AuthenticationFailureHandler自行编写失败处理逻辑）。
+
+在构造方法中可设置登录服务路径，默认是"/login"
+
+```java
+public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+    this.authenticationManager = authenticationManager;
+    /**
+    * 设置登录路径
+    */
+    super.setFilterProcessesUrl("/user/login");
+}
+```
+
+```java
+@Slf4j
+public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+
+    private AuthenticationManager authenticationManager;
+
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+        /**
+         * 默认登录是 ‘/login’
+         */
+        super.setFilterProcessesUrl("/user/login");
+    }
+
+    /**
+     * @MonthName： attemptAuthentication
+     * @Description： 获取登录信息
+     * @Author： tanyp
+     * @Date： 2021/10/22 17:46
+     * @Param： [request, response]
+     * @return： org.springframework.security.core.Authentication
+     **/
+    @Override
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        SysUser user = null;
+        try {
+            user = new ObjectMapper().readValue(request.getInputStream(), SysUser.class);
+        } catch (IOException e) {
+            log.error("=======获取登录信息异常：{}", e);
+        }
+        return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+    }
+
+    /**
+     * @MonthName： successfulAuthentication
+     * @Description： 成功验证后调用的方法
+     * 如果验证成功，就生成token并返回
+     * @Author： tanyp
+     * @Date： 2021/10/22 17:46
+     * @Param： [request, response, chain, authResult]
+     * @return： void
+     **/
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
+        SecurityUtils user = (SecurityUtils) authResult.getPrincipal();
+        String role = "";
+        Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
+        for (GrantedAuthority authority : authorities) {
+            role = authority.getAuthority();
+        }
+
+        // 创建token
+        String token = JwtTokenUtils.createToken(
+                SysUser.builder()
+                        .id(user.getId())
+                        .username(user.getUsername())
+                        .password(user.getPassword())
+                        .type(user.getType())
+                        .orgId(user.getOrgId())
+                        .orgIds(user.getOrgIds())
+                        .role(role)
+                        .build(), false);
+
+        // 创建成功的token, 请求的格式应该是 `Bearer token`
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(JSONObject.toJSONString(WrapMapper.success().result(
+                SysUserVo.builder()
+                        .username(user.getUsername())
+                        .nickname(user.getNickname())
+                        .token(token)
+                        .loginTime(LocalDateTime.now()).build()
+        )));
+    }
+
+    /**
+     * @MonthName： unsuccessfulAuthentication
+     * @Description： 这是验证失败时候调用的方法
+     * @Author： tanyp
+     * @Date： 2021/10/22 17:46
+     * @Param： [request, response, failed]
+     * @return： void
+     **/
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
+        log.info("===========登录认证失败：{}=============", failed.getMessage());
+        Wrapper result = null;
+        if (failed instanceof UsernameNotFoundException) {
+            result = WrapMapper.error(Enums.AUTH_NONEXISTENT.getKey(), Enums.AUTH_NONEXISTENT.getValue());
+        } else if (failed instanceof BadCredentialsException) {
+            result = WrapMapper.error(Enums.AUTH_NO_TOKEN.getKey(), Enums.AUTH_NO_TOKEN.getValue());
+        } else if (failed instanceof InternalAuthenticationServiceException) {
+            String message = failed.getMessage() != null ? failed.getMessage() : Wrapper.ERROR_MESSAGE;
+            result = WrapMapper.error(Enums.AUTH_NO_ACCESS.getKey(), message);
+        }
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(JSONObject.toJSONString(result));
+    }
+
+}
+```
+
+**8、没有访问权限时处理**
+
+```java
+public class JWTAccessDeniedHandler implements AccessDeniedHandler {
+
+    @Override
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) throws IOException, ServletException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.getWriter().write(new ObjectMapper().writeValueAsString(WrapMapper.wrap(Wrapper.AUTHORIZATION_CODE, Wrapper.AUTHORIZATION_MESSAGE, null)));
+    }
+
+}
+```
+
+**9、没有携带token或者token无效时处理**
+
+```java
+public class JWTAuthenticationEntryPoint implements AuthenticationEntryPoint {
+
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.getWriter().write(new ObjectMapper().writeValueAsString(WrapMapper.wrap(Wrapper.AUTHORIZATION_CODE, Wrapper.AUTHORIZATION_MESSAGE, null)));
+    }
+
+}
+```
+
+**10、登出处理**
+
+```java
+@Slf4j
+public class JWTLogoutSuccessHandler implements LogoutSuccessHandler {
+
+    @Override
+    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        log.info("========退出成功===========");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.getWriter().write(new ObjectMapper().writeValueAsString(WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null)));
+    }
+
+}
+``` 
+
+**11、封装获取已登录的用户信息**
+
+```java
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class SecurityUserUtils {
+
+    public static Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    public static SysUser getUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (SysUser) authentication.getDetails();
+    }
+
+}
+```
+
+在项目中使用示例
+
+```java
+SysUser user = SecurityUserUtils.getUser();
+```
 
 #### 整合Spring AOP 记录操作、异常日志
 
@@ -1812,3 +2504,5 @@ public String stackTraceToString(String exceptionName, String exceptionMessage, 
 }
 
 ```
+
+> 至此后端项目安全认证、日志记录已全部整合完成。
