@@ -1,6 +1,6 @@
 <template>
     <div class="container-404" :style="defaultHeight">
-        <el-image src="./src/assets/image/404.png" style="width: 30%; height:50%"></el-image>
+        <el-image :src="image" style="width: 30%; height:50%"></el-image>
         <div class="text">找不到您要查找的页面，请与<a href="#">我们联系</a>以报告此问题。</div>
         <div class="text team">—— Tansci</div>
         <div>
@@ -14,6 +14,7 @@
     import {useRouter} from "vue-router"
 
     const router = useRouter()
+    const image = new URL('../assets/image/404.png', import.meta.url).href
     const state = reactive({
         defaultHeight: {
             height: ''

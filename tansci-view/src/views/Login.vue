@@ -3,7 +3,7 @@
 		<el-card shadow="always">
 			<div class="login-main">
 				<div class="login-logo">
-					<el-image src="./src/assets/image/login-left.png"  style="width: 100%; height: 100%;"></el-image>
+					<el-image :src="loginLogo"  style="width: 100%; height: 100%;"></el-image>
 				</div>
 				<div class="login-form">
 					<el-form :model="loginForm" :rules="rules" ref="loginRuleForm">
@@ -52,6 +52,7 @@
 	const router = useRouter()
 	let loginRuleForm = ref(null) 
 	let slidingVerify = ref()
+	const loginLogo = new URL('../assets/image/login-left.png', import.meta.url).href
 	const state = reactive({
 		loginStyle: {
 			height: '',
