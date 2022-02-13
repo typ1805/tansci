@@ -11,7 +11,7 @@
                         <Timer/>
                     </el-icon>
                     <span style="padding-right: 2rem;vertical-align: middle;">{{nowTimes}}</span>
-                    <el-dropdown>
+                    <el-dropdown style="line-height: 60px;">
                         <span class="el-dropdown-link" style="color:var(--theme);">
                             <span style="cursor:pointer;vertical-align: middle;">{{username}} 欢迎您</span>
                             <el-icon style="vertical-align: middle;"><arrow-down /></el-icon>
