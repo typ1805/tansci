@@ -70,4 +70,9 @@
     font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
     font-size: 14px;
   }
+
+  #nprogress .bar {
+    /*自定义进度条颜色*/
+    background: var(--theme) !important;
+  }
 </style>
