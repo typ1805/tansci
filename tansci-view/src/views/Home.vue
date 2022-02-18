@@ -96,7 +96,7 @@
 		myColumnar.setOption({
 			legend: {},
 			tooltip: {},
-			color: ['#20c997', '#007bff', '#dc3545'],
+			color: ['#bdc3c7', '#2c3e50', '#242e42'],
 			dataset: {
 				dimensions: ['product', '2021', '2020', '2019'],
 				source: [
@@ -152,7 +152,7 @@
 				trigger: 'item',
                 formatter: '{a} <br/>{b} : {c}￥ ({d}%)'
 			},
-			color: ['#dc3545', '#007bff', '#28a745'],
+			color: ['#94716B', '#6C5B7B', '#355C7D'],
 			series: [
 				{
 					name: '渠道',
@@ -174,9 +174,9 @@
 						show:false
 					},
 					data: [
-						{value: 335, name: '微信'},
-						{value: 310, name: '支付宝'},
-						{value: 274, name: '银联'},
+						{value: 335, name: '指标一'},
+						{value: 310, name: '指标二'},
+						{value: 274, name: '指标三'},
 					].sort(function (a, b) {
 						return a.value - b.value;
 					})

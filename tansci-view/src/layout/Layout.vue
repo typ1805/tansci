@@ -3,8 +3,8 @@
         <el-header height="60">
             <div class="header">
                 <div style="padding-left: 2rem;">
-                    <el-button @click="onCollapse" type="text" :icon="isCollapse?'Grid':'Menu'" >菜单折叠</el-button>
-                    <el-button type="text" icon="HomeFilled">工作台</el-button>
+                    <!-- <el-button @click="onCollapse" type="text" :icon="isCollapse?'Grid':'Menu'" >菜单折叠</el-button> -->
+                    <el-button @click="onHome" type="text" icon="HomeFilled">工作台</el-button>
                 </div>
                 <div style="padding-right:0.4rem;">
                     <el-icon :size="16" color="#55bc8a" style="vertical-align: middle;padding-right:0.2rem;">
@@ -69,6 +69,14 @@
                         <Submenu v-else :data="item"></Submenu>
                     </template>
                 </el-menu>
+                <div style="position: absolute;bottom: 0;width: inherit;">
+                    <el-button @click="onCollapse" type="primary" color="#909399" style="width:100%;border-radius:0;">
+                        <el-icon v-show="!isCollapse"><d-arrow-left /></el-icon>
+                        <el-icon v-show="!isCollapse"><d-arrow-left /></el-icon>
+                        <el-icon v-show="isCollapse"><d-arrow-right /></el-icon>
+                        <el-icon v-show="isCollapse"><d-arrow-right /></el-icon>
+                    </el-button>
+                </div>
             </el-aside>
             <el-main :style="defaultHeight">
                 <div class="main-view">
@@ -210,6 +218,11 @@
                 })
             }
         });
+    }
+
+    // 跳转工作台
+    const onHome = () =>{
+        router.push({path: "home"});
     }
 
 </script>
