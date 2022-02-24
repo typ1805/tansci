@@ -180,9 +180,10 @@
     }
 
     const onAdd = (val) =>{
+        console.log(val.column.row.parentId)
         state.addForm = {
             id: null,
-            parentId: val.column.row.parentId,
+            parentId: val.column.row.id,
             groupName: null,
             type: null,
             dicLabel: null,

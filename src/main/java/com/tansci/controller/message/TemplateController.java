@@ -41,7 +41,7 @@ public class TemplateController {
     }
 
     @Log(modul = "模板配置-删除模板", type = Constants.DELETE, desc = "删除模板")
-    @DeleteMapping("/delete")
+    @GetMapping("/delete")
     public Wrapper delete(@RequestParam String id) {
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, templateService.delTemplate(id));
     }

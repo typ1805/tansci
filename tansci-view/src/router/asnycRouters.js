@@ -69,6 +69,23 @@ const asnycRouters = [
             }
         ]
     },
+    {
+        path: '/message',
+        type: 'manage',
+        name: "message",
+        type: 1,
+        icon: "Comment",
+        meta: { title: "消息管理" },
+        component: Layout,
+        children: [{
+                path: "/template",
+                name: "template",
+                icon: "Postcard",
+                meta: { title: "消息模板" },
+                component: () => import('../views/message/Template.vue')
+            },
+        ]
+    },
 
 ]
 

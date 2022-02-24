@@ -21,10 +21,10 @@ import java.io.Serializable;
 public class TemplateDto implements Serializable {
 
     // 模板类型：0：验证码，1：短信通知，2：推广短信，3：国际/港澳台消息
-    private Integer templateType;
+    private Integer type;
 
     // 模板名称
-    private String templateName;
+    private String name;
 
     // 业务类型：0：短信，1：邮件
     private Integer businessType;

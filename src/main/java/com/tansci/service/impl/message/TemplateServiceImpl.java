@@ -1,7 +1,6 @@
 package com.tansci.service.impl.message;
 
 import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -12,9 +11,11 @@ import com.tansci.domain.message.Template;
 import com.tansci.domain.message.dto.SmsTemplateDto;
 import com.tansci.domain.message.dto.TemplateDto;
 import com.tansci.domain.message.vo.MessageVo;
+import com.tansci.domain.system.SysDic;
 import com.tansci.mapper.message.TemplateMapper;
 import com.tansci.service.message.SmsService;
 import com.tansci.service.message.TemplateService;
+import com.tansci.service.system.SysDicService;
 import com.tansci.utils.SecurityUserUtils;
 import com.tansci.utils.UUIDUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.beans.Transient;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @ClassName： TemplateServiceImpl.java
@@ -42,15 +46,46 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
     @Qualifier("aliSmsServiceImpl")
     private SmsService aliSmsServiceImpl;
 
+    @Autowired
+    private SysDicService sysDicService;
+
     @Override
     public IPage<Template> page(Page page, TemplateDto dto) {
-        Wrapper wrapper = Wrappers.<Template>query().lambda()
-                .eq(Template::getDelFlag, 0)
-                .eq(Objects.nonNull(dto.getTemplateType()), Template::getType, dto.getTemplateType())
-                .eq(Objects.nonNull(dto.getBusinessType()), Template::getBusinessType, dto.getBusinessType())
-                .like(Objects.nonNull(dto.getTemplateName()), Template::getName, dto.getTemplateName())
-                .orderByDesc(Template::getCreateTime);
-        IPage<Template> pageList = this.baseMapper.selectPage(page, wrapper);
+        IPage<Template> pageList = this.baseMapper.selectPage(page,
+                Wrappers.<Template>lambdaQuery()
+                        .eq(Template::getDelFlag, 0)
+                        .eq(Objects.nonNull(dto.getType()), Template::getType, dto.getType())
+                        .eq(Objects.nonNull(dto.getBusinessType()), Template::getBusinessType, dto.getBusinessType())
+                        .like(Objects.nonNull(dto.getName()), Template::getName, dto.getName())
+                        .orderByDesc(Template::getCreateTime)
+        );
+
+        List<SysDic> tDicList = new ArrayList<>();
+        List<SysDic> tbDicList = new ArrayList<>();
+        List<SysDic> sDicList = new ArrayList<>();
+        if (Objects.nonNull(pageList.getRecords()) || pageList.getRecords().size() > 0) {
+            tDicList = sysDicService.list(Wrappers.<SysDic>lambdaQuery().ne(SysDic::getDicValue, -1).eq(SysDic::getGroupName, "template_type").orderByAsc(SysDic::getSort));
+            sDicList = sysDicService.list(Wrappers.<SysDic>lambdaQuery().ne(SysDic::getDicValue, -1).eq(SysDic::getGroupName, "template_state").orderByAsc(SysDic::getSort));
+            tbDicList = sysDicService.list(Wrappers.<SysDic>lambdaQuery().ne(SysDic::getDicValue, -1).eq(SysDic::getGroupName, "template_business_type").orderByAsc(SysDic::getSort));
+        }
+
+        List<SysDic> finalTDicList = tDicList;
+        List<SysDic> finalTbDicList = tbDicList;
+        List<SysDic> finalSDicList = sDicList;
+        pageList.getRecords().forEach(item -> {
+            Optional<SysDic> tOptional = finalTDicList.stream().filter(t -> Objects.equals(item.getType(), t.getDicValue())).findFirst();
+            if (tOptional.isPresent()) {
+                item.setTypeName(tOptional.get().getDicLabel());
+            }
+            Optional<SysDic> tdOptional = finalTbDicList.stream().filter(t -> Objects.equals(item.getBusinessType(), t.getDicValue())).findFirst();
+            if (tdOptional.isPresent()) {
+                item.setBusinessTypeName(tdOptional.get().getDicLabel());
+            }
+            Optional<SysDic> sOptional = finalSDicList.stream().filter(t -> Objects.equals(item.getState(), t.getDicValue())).findFirst();
+            if (sOptional.isPresent()) {
+                item.setStateName(sOptional.get().getDicLabel());
+            }
+        });
         return pageList;
     }
 
@@ -62,6 +97,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, Template> i
         template.setId(id);
         template.setDelFlag(0);
         template.setCreater(SecurityUserUtils.getUser().getId());
+        template.setUpdateTime(LocalDateTime.now());
         template.setCreateTime(LocalDateTime.now());
         int row = 0;
         switch (template.getBusinessType()) {
