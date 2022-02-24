@@ -4,7 +4,7 @@
             <el-tabs v-model="activeName" @tab-click="onHandleClick">
                 <el-tab-pane label="操作日志" name="info">
                     <Table :data="tableData" :column="tableInfoTitle" :page="page" :loading="loading"
-                        @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange" @onButtonClick="onDetail">
+                        @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange" @onButtonClick="onDetail" @setCellColor="setCellColor">
                     </Table>
                 </el-tab-pane>
                 <el-tab-pane label="异常日志" name="error">
@@ -80,14 +80,14 @@
         },
         tableInfoTitle: [
             {prop:'module',label:'功能模块',type:'button',option:{size:'mini'}},
-            {prop:'type',label:'操作类型'},
+            {prop:'type',label:'操作类型',type:'tag',option:{type:'success',size:'small',effect:'plain'}},
             {prop:'message',label:'操作描述'},
             {prop:'takeUpTime',label:'耗时（ms）'},
             {prop:'userName',label:'操作者'},
             {prop:'method',label:'操作方法'},
             {prop:'uri',label:'请求URL'},
             {prop:'ip',label:'请求IP'},
-            {prop:'version',label:'版本号'},
+            {prop:'version',label:'版本号',type:'tag',option:{type:'danger',size:'small',effect:'plain'}},
             {prop:'createTime',label:'创建时间'},
         ],
         tableErrorTitle: [
@@ -97,7 +97,7 @@
             {prop:'method',label:'操作方法'},
             {prop:'uri',label:'请求URL'},
             {prop:'ip',label:'请求IP'},
-            {prop:'version',label:'版本号'},
+            {prop:'version',label:'版本号',type:'tag',option:{type:'danger',size:'small',effect:'plain'}},
             {prop:'createTime',label:'创建时间'},
         ],
         tableData:[],
@@ -155,6 +155,18 @@
     const onDetail = (val) =>{
         state.detail = val;
         state.detailVisible = true;
+    }
+
+    const setCellColor = (e, callback) => {
+        /**
+         * e.row：表格那一行的数据
+         * e.column：表格单元格那一列的信息
+         */ 
+        if(e.column.property === 'takeUpTime'){
+            callback({color: '#f56c6c'});
+        } else {
+            callback({});
+        }
     }
 </script>
 <style lang="less" scoped>

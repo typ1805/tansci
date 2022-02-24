@@ -97,15 +97,17 @@ GitHub: [https://github.com/typ1805/tansci](https://github.com/typ1805/tansci)
 
 | 模块 | 功能 | 进度 | 描述 |
 | ---- | ---- | ---- | ---- |
-| 基础模块 | 菜单管理<br>角色管理<br>组织管理<br>用户管理<br>字典管理<br>日志管理（操作日志、异常日志） | $\color{#67C23A}{已完成}$ | 基础功能模块 |
-| 消息通知 | 短信通知<br>邮件通知 | $\color{#E6A23C}{开发中}$ | 多种消息通知 |
-| 定时任务 | ... | $\color{#909399}{计划中}$ | 动态配置定时任务 |
-| 支付功能 | ... | $\color{#909399}{计划中}$ | 包含 支付宝、微信、银联等 |
-| 三方登录 | ... | $\color{#909399}{计划中}$ | 包含 短信、微信、QQ 等三方授权登录方式 |
+| 基础模块 | 菜单管理<br>角色管理<br>组织管理<br>用户管理<br>字典管理<br>日志管理（操作日志、异常日志） | 已完成 | 基础功能模块 |
+| 消息通知 | 短信通知<br>邮件通知 | 已完成 | 多种消息通知 |
+| 定时任务 | ... | 开发中 | 动态配置定时任务 |
+| 支付功能 | ... | 计划中 | 包含 支付宝、微信、银联等 |
+| 三方登录 | ... | 计划中 | 包含 短信、微信、QQ 等三方授权登录方式 |
 
 ## 详细文档
 
-[项目详细文档](./docs/文档.md)
+执行SQL初始化数据，测试用户：`admin / admin123`
+
+[项目详细文档](docs/doc.md)
 
 ## 开发者联系
 
@@ -119,16 +121,18 @@ GitHub: [https://github.com/typ1805/tansci](https://github.com/typ1805/tansci)
 
 5、个人公众号：
 
-![欢迎关注](./docs/gzh.jpg)
+![欢迎关注](docs/images/gzh.jpg)
 
 ## 项目预览
 
-![登录](./docs/login.png)
+![登录](docs/images/login.png)
 
-![首页](./docs/home.png)
+![首页](docs/images/home.png)
 
-![菜单](./docs/menu.png)
+![菜单](docs/images/menu.png)
 
-![日志](./docs/log.png)
+![字典管理](docs/images/dic.png)
 
-![日志详情](./docs/log-details.png)
+![日志](docs/images/log.png)
+
+![日志详情](docs/images/log-details.png)

@@ -11,7 +11,7 @@
  Target Server Version : 50721
  File Encoding         : 65001
 
- Date: 13/01/2022 17:40:43
+ Date: 24/02/2022 14:18:24
 */
 
 SET NAMES utf8mb4;
@@ -86,7 +86,7 @@ CREATE TABLE `sys_dic`  (
   `remarks` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `group_name`(`group_name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 44 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '字典表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 58 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '字典表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_dic
@@ -110,6 +110,18 @@ INSERT INTO `sys_dic` VALUES (39, 1, 'role_status', 0, -1, '角色状态', 0, NU
 INSERT INTO `sys_dic` VALUES (40, 39, 'role_status', 0, 0, '未启用', 1, NULL, NULL, NULL, '2021-07-23 17:03:35', '2021-07-23 17:01:52', '');
 INSERT INTO `sys_dic` VALUES (41, 39, 'role_status', 0, 1, '正常', 2, NULL, NULL, NULL, '2021-07-23 17:03:41', '2021-07-23 17:02:11', '');
 INSERT INTO `sys_dic` VALUES (43, 39, 'role_status', 0, 2, '已禁用', 3, NULL, NULL, NULL, '2021-07-23 17:03:46', '2021-07-23 17:03:00', '');
+INSERT INTO `sys_dic` VALUES (44, 1, 'template_type', 1, -1, '模板类型', 0, NULL, NULL, NULL, NULL, '2022-02-24 13:08:12', NULL);
+INSERT INTO `sys_dic` VALUES (46, 44, 'template_type', 1, 0, '验证码', 1, NULL, NULL, NULL, NULL, '2022-02-24 13:10:10', NULL);
+INSERT INTO `sys_dic` VALUES (47, 44, 'template_type', 1, 1, '短信通知', 2, NULL, NULL, NULL, NULL, '2022-02-24 13:11:09', NULL);
+INSERT INTO `sys_dic` VALUES (48, 44, 'template_type', 1, 2, '推广短信', 3, NULL, NULL, NULL, NULL, '2022-02-24 13:11:09', NULL);
+INSERT INTO `sys_dic` VALUES (49, 44, 'template_type', 1, 3, '国际/港澳台消息', 4, NULL, NULL, NULL, NULL, '2022-02-24 13:11:09', NULL);
+INSERT INTO `sys_dic` VALUES (50, 1, 'template_business_type', 1, -1, '模板业务类型', 0, NULL, NULL, NULL, NULL, '2022-02-24 13:13:21', NULL);
+INSERT INTO `sys_dic` VALUES (51, 50, 'template_business_type', 1, 0, '短信', 1, NULL, NULL, NULL, NULL, '2022-02-24 13:13:21', NULL);
+INSERT INTO `sys_dic` VALUES (52, 50, 'template_business_type', 1, 1, '邮件', 2, NULL, NULL, NULL, NULL, '2022-02-24 13:13:21', NULL);
+INSERT INTO `sys_dic` VALUES (54, 1, 'template_state', 1, -1, '模板状态', 0, NULL, NULL, NULL, NULL, '2022-02-24 14:01:44', NULL);
+INSERT INTO `sys_dic` VALUES (55, 54, 'template_state', 1, 0, '审核中', 1, NULL, NULL, NULL, NULL, '2022-02-24 14:02:16', NULL);
+INSERT INTO `sys_dic` VALUES (56, 54, 'template_state', 1, 1, '通过', 2, NULL, NULL, NULL, NULL, '2022-02-24 14:02:38', NULL);
+INSERT INTO `sys_dic` VALUES (57, 54, 'template_state', 1, 2, '未通过', 3, NULL, NULL, NULL, NULL, '2022-02-24 14:02:54', NULL);
 
 -- ----------------------------
 -- Table structure for sys_menu
@@ -133,7 +145,7 @@ CREATE TABLE `sys_menu`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_menu
@@ -146,6 +158,8 @@ INSERT INTO `sys_menu` VALUES (6, 'menu', '/menu', 'Layout', 'Grid', 1, 1, '菜�
 INSERT INTO `sys_menu` VALUES (7, 'role', '/role', 'Layout', 'Help', 1, 1, '角色管理', 'Role', 2, 2, 0, 0, NULL, '2021-12-17 17:36:32', '2021-07-23 16:09:30');
 INSERT INTO `sys_menu` VALUES (8, 'org', '/org', 'Layout', 'SetUp', 1, 1, '组织管理', 'Org', 2, 3, 0, 0, NULL, '2021-12-17 17:37:10', '2021-10-23 14:23:11');
 INSERT INTO `sys_menu` VALUES (9, 'log', '/log', 'Layout', 'Document', 1, 1, '日志管理', 'Log', 2, 6, 0, 0, NULL, NULL, '2021-12-20 10:49:42');
+INSERT INTO `sys_menu` VALUES (10, 'message', '/message', 'Layout', 'Comment', 1, 1, '消息管理', 'Message', 0, 2, 0, 0, NULL, NULL, '2022-02-24 10:17:44');
+INSERT INTO `sys_menu` VALUES (11, 'template', '/template', 'Layout', 'Postcard', 1, 1, '消息模板', 'Template', 10, 0, 0, 0, NULL, NULL, '2022-02-24 10:24:46');
 
 -- ----------------------------
 -- Table structure for sys_menu_role
@@ -181,6 +195,8 @@ INSERT INTO `sys_menu_role` VALUES (3, 6);
 INSERT INTO `sys_menu_role` VALUES (3, 7);
 INSERT INTO `sys_menu_role` VALUES (3, 8);
 INSERT INTO `sys_menu_role` VALUES (3, 9);
+INSERT INTO `sys_menu_role` VALUES (3, 10);
+INSERT INTO `sys_menu_role` VALUES (3, 11);
 INSERT INTO `sys_menu_role` VALUES (4, 1);
 INSERT INTO `sys_menu_role` VALUES (4, 3);
 INSERT INTO `sys_menu_role` VALUES (4, 4);
@@ -201,7 +217,7 @@ CREATE TABLE `sys_org`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '组织' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '组织' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_org
@@ -339,6 +355,7 @@ CREATE TABLE `template`  (
 -- ----------------------------
 -- Records of template
 -- ----------------------------
+INSERT INTO `template` VALUES ('fd1c585d659e416392163e08002ead95', 'YJ1645680416262', '测试邮件模板', '这是一个测试邮件的模板，参数${param1}，第二个参数${param2}。', 0, 1, 'bc3ac26e69731b617eb80274453f6dba', 1, 0, '2022-02-24 13:27:10', '2022-02-24 13:26:56', '测试邮件模板');
 
 -- ----------------------------
 -- Table structure for template_details
