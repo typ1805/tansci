@@ -1,5 +1,7 @@
 package com.tansci.domain.message.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,27 +20,28 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel(value = "短信、邮件消息返回值")
 public class MessageVo implements Serializable {
 
-    // 状态码
+    @ApiModelProperty(value = "状态码")
     private String code;
 
-    // 状态码的描述
+    @ApiModelProperty(value = "状态码的描述")
     private String message;
 
-    // 请求ID
+    @ApiModelProperty(value = "请求ID")
     private String requestId;
 
-    // 发送回执ID
+    @ApiModelProperty(value = "发送回执ID")
     private String bizId;
 
-    // 状态：0、审核中，1、审核通过，2、审核失败
+    @ApiModelProperty(value = "状态：0、审核中，1、审核通过，2、审核失败")
     private Integer state;
 
-    // 审核备注
+    @ApiModelProperty(value = "审核备注")
     private String reason;
 
-    // 模板编码
+    @ApiModelProperty(value = "模板编码")
     private String templateCode;
 
 }

@@ -14,6 +14,9 @@ spring:
       enabled: true
       max-file-size: 100MB
       max-request-size: 100MB
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   mail: # 邮件配置
     # 配置 SMTP 服务器地址 （smtp.126.com（端口：465、994），smtp.163.com（端口：465、994），smtp.yeah.net（端口：465、994），smtp.qq.com（端口：465、587））
     host: smtp.qq.com

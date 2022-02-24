@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,66 +27,73 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @TableName(value = "sys_menu")
+@ApiModel(value = "菜单")
 public class SysMenu {
 
-    // 主键id
+    @ApiModelProperty(value = "主键id")
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    // 菜单名称
+    @ApiModelProperty(value = "菜单名称")
     private String name;
 
-    // 菜单路由
+    @ApiModelProperty(value = "菜单路由")
     private String path;
 
-    // 组件名称
+    @ApiModelProperty(value = "组件名称")
     private String component;
 
-    // 菜单图标
+    @ApiModelProperty(value = "菜单图标")
     private String icon;
 
-    // 状态: 0、未上架，1、正常，2、下架
+    @ApiModelProperty(value = "状态: 0、未上架，1、正常，2、下架")
     private Integer status;
+
+    @ApiModelProperty(value = "状态")
     @TableField(exist = false)
     private String statusName;
 
-    // 类型：0、前端菜单，1、后端菜单
+    @ApiModelProperty(value = "类型：0、前端菜单，1、后端菜单")
     private Integer type;
+
+    @ApiModelProperty(value = "类型")
     @TableField(exist = false)
     private String typeName;
 
-    // 中文名称
+    @ApiModelProperty(value = "中文名称")
     private String chineseName;
 
-    // 英文名称
+    @ApiModelProperty(value = "英文名称")
     private String englishName;
 
-    // 父id
+    @ApiModelProperty(value = "父id")
     private Integer parentId;
 
-    // 排序
+    @ApiModelProperty(value = "排序")
     private Integer sort;
 
-    // 是否登录后才能访问：0、是，1、否
+    @ApiModelProperty(value = "是否登录后才能访问：0、是，1、否")
     private Integer requireAuth;
 
-    // 菜单切换时是否保活：0.是，1、否
+    @ApiModelProperty(value = "菜单切换时是否保活：0.是，1、否")
     private Integer keepAlive;
 
-    // 是否可用：0、是，1、否
+    @ApiModelProperty(value = "是否可用：0、是，1、否")
     private Integer enabled;
 
-    // 更新时间
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone="GMT+8")
+    @ApiModelProperty(value = "更新时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private LocalDateTime updateTime;
 
-    // 创建时间
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone="GMT+8")
+    @ApiModelProperty(value = "创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private LocalDateTime createTime;
 
+    @ApiModelProperty(value = "子集")
     @TableField(exist = false)
     private List<SysMenu> children;
 
+    @ApiModelProperty(value = "角色id")
     @TableField(exist = false)
     private Integer roleId;
 

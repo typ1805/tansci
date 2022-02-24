@@ -1,6 +1,8 @@
 package com.tansci.domain.system;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,12 +20,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @TableName(value = "sys_user_role")
+@ApiModel(value = "用户角色")
 public class SysUserRole {
 
-    // 用户id
+    @ApiModelProperty(value = "用户id")
     private String userId;
 
-    // 角色id
+    @ApiModelProperty(value = "角色id")
     private Integer roleId;
 
 }

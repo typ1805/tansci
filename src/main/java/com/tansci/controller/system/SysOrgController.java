@@ -6,6 +6,8 @@ import com.tansci.common.annotation.Log;
 import com.tansci.common.constant.Constants;
 import com.tansci.domain.system.SysOrg;
 import com.tansci.service.system.SysOrgService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,17 +26,20 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/org")
+@Api(value = "org", tags = "组织")
 public class SysOrgController {
 
     @Autowired
     private SysOrgService sysOrgService;
 
+    @ApiOperation(value = "列表", notes = "列表")
     @Log(modul = "组织-列表", type = Constants.SELECT, desc = "列表")
     @GetMapping("/list")
     public Wrapper<List<SysOrg>> list(SysOrg sysOrg) {
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysOrgService.list(sysOrg));
     }
 
+    @ApiOperation(value = "添加组织信息", notes = "添加组织信息")
     @Log(modul = "组织-添加组织信息", type = Constants.INSERT, desc = "添加组织信息")
     @PostMapping("/save")
     public Wrapper<Boolean> save(@RequestBody SysOrg sysOrg) {
@@ -43,6 +48,7 @@ public class SysOrgController {
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysOrgService.save(sysOrg));
     }
 
+    @ApiOperation(value = "修改组织信息", notes = "修改组织信息")
     @Log(modul = "组织-修改组织信息", type = Constants.UPDATE, desc = "修改组织信息")
     @PostMapping("/update")
     public Wrapper<Boolean> update(@RequestBody SysOrg sysOrg) {
@@ -50,6 +56,7 @@ public class SysOrgController {
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysOrgService.updateById(sysOrg));
     }
 
+    @ApiOperation(value = "删除组织信息", notes = "删除组织信息")
     @Log(modul = "组织-删除组织信息", type = Constants.SELECT, desc = "删除组织信息")
     @GetMapping("/del")
     public Wrapper<Boolean> del(Integer id) {

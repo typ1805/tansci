@@ -1,6 +1,8 @@
 package com.tansci.domain.system;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +13,7 @@ import lombok.NoArgsConstructor;
  * @className：SysOrgRole.java
  * @description：组织角色
  * @author：tanyp
- * @dateTime：2021/10/23 13:39 
+ * @dateTime：2021/10/23 13:39
  * @editNote：
  */
 @Data
@@ -19,12 +21,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName(value = "sys_org_role")
+@ApiModel(value = "组织角色")
 public class SysOrgRole {
 
-    // 组织id
+    @ApiModelProperty(value = "组织id")
     private Integer orgId;
 
-    // 角色id
+    @ApiModelProperty(value = "角色id")
     private Integer roleId;
 
 }

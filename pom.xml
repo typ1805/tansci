@@ -23,6 +23,8 @@
         <fastjson.version>1.2.75</fastjson.version>
         <jsch.version>0.1.55</jsch.version>
         <jjwt.version>0.9.0</jjwt.version>
+        <dysmsapi.version>2.0.4</dysmsapi.version>
+        <knife4j-spring-boot.version>3.0.3</knife4j-spring-boot.version>
     </properties>
 
     <dependencies>
@@ -97,7 +99,13 @@
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>dysmsapi20170525</artifactId>
-            <version>2.0.4</version>
+            <version>${dysmsapi.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-spring-boot-starter</artifactId>
+            <version>${knife4j-spring-boot.version}</version>
         </dependency>
 
         <dependency>

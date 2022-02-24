@@ -1,5 +1,7 @@
 package com.tansci.domain.system.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,37 +22,39 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel(value = "字典")
 public class SysDicDto {
 
+    @ApiModelProperty(value = "主键ID")
     private Integer id;
 
-    // 父ID
+    @ApiModelProperty(value = "父ID")
     private Integer parentId;
 
-    // 分组名称
+    @ApiModelProperty(value = "分组名称")
     private String groupName;
 
-    // 类型：0、系统，1、业务
+    @ApiModelProperty(value = "类型：0、系统，1、业务")
     private Integer type;
 
-    // 值
+    @ApiModelProperty(value = "值")
     private Integer value;
 
-    // 名称
+    @ApiModelProperty(value = "名称")
     private String label;
 
-    // 排序
+    @ApiModelProperty(value = "排序")
     private Integer sort;
 
-    // 开始时间
+    @ApiModelProperty(value = "开始时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;
 
-    // 结束时间
+    @ApiModelProperty(value = "结束时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
-    // 关键字
+    @ApiModelProperty(value = "关键字")
     private String keyword;
 
 }

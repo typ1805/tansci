@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,51 +27,58 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName("template")
+@ApiModel(value = "消息模板")
 public class Template implements Serializable {
 
-    // 主键id
+    @ApiModelProperty(value = "主键id")
     @TableId(value = "id", type = IdType.ASSIGN_UUID)
     private String id;
 
-    // 模板编码
+    @ApiModelProperty(value = "模板编码")
     private String code;
 
-    // 模板类型：0：验证码，1：短信通知，2：推广短信，3：国际/港澳台消息
+    @ApiModelProperty(value = "模板类型：0：验证码，1：短信通知，2：推广短信，3：国际/港澳台消息")
     private Integer type;
+
+    @ApiModelProperty(value = "模板类型")
     @TableField(exist = false)
     private String typeName;
 
-    // 模板名称
+    @ApiModelProperty(value = "模板名称")
     private String name;
 
-    // 模板内容
+    @ApiModelProperty(value = "模板内容")
     private String content;
 
-    // 业务类型：0：短信，1：邮件
+    @ApiModelProperty(value = "业务类型：0：短信，1：邮件")
     private Integer businessType;
+
+    @ApiModelProperty(value = "业务类型")
     @TableField(exist = false)
     private String businessTypeName;
 
-    // 状态：0、审核中，1、通过，2、未通过
+    @ApiModelProperty(value = "状态：0、审核中，1、通过，2、未通过")
     private Integer state;
+
+    @ApiModelProperty(value = "状态")
     @TableField(exist = false)
     private String stateName;
 
-    // 删除转态：0：正常，1：已删除
+    @ApiModelProperty(value = "删除转态：0：正常，1：已删除")
     private Integer delFlag;
 
-    // 创建人
+    @ApiModelProperty(value = "创建人")
     private String creater;
 
-    // 更新时间
+    @ApiModelProperty(value = "更新时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private LocalDateTime updateTime;
 
-    // 创建时间
+    @ApiModelProperty(value = "创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private LocalDateTime createTime;
 
-    // 备注
+    @ApiModelProperty(value = "备注")
     private String remark;
 
 }

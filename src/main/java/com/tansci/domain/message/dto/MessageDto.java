@@ -1,5 +1,7 @@
 package com.tansci.domain.message.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,36 +19,37 @@ import java.util.List;
  * @Date： 2021/6/7 9:20
  **/
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@ApiModel(value = "消息模板DTO")
 public class MessageDto implements Serializable {
 
-    // 邮件主题
+    @ApiModelProperty(value = "邮件主题")
     private String subject;
 
-    // 接收者：可以有多个接收者，中间用逗号隔开
+    @ApiModelProperty(value = "接收者：可以有多个接收者，中间用逗号隔开")
     private String recipient;
 
-    // 抄送人：可以有多个抄送人，中间用逗号隔开
+    @ApiModelProperty(value = "抄送人：可以有多个抄送人，中间用逗号隔开")
     private String cc;
 
-    // 隐秘抄送人：可以有多个抄送人，中间用逗号隔开
+    @ApiModelProperty(value = "隐秘抄送人：可以有多个抄送人，中间用逗号隔开")
     private String bcc;
 
-    // 正文
+    @ApiModelProperty(value = "正文")
     private String text;
 
-    // 手机号，多个以逗号隔开
+    @ApiModelProperty(value = "手机号，多个以逗号隔开")
     private String phone;
 
-    // 模板编码
+    @ApiModelProperty(value = "模板编码")
     private String code;
 
-    // 模板参数
+    @ApiModelProperty(value = "模板参数")
     private TemplateParamDto param;
 
-    // 附件、图片
+    @ApiModelProperty(value = "附件、图片")
     private List<File> attachments;
 
 }

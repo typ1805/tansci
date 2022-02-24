@@ -61,9 +61,6 @@ GitHub: [https://github.com/typ1805/tansci](https://github.com/typ1805/tansci)
             └─system            # 基础功能模块
 </pre>
 
-- 开发周期：实验预计完成时间为 3~4 周。 
-- 难易程度：难。
-
 ## 系统概述
 
 #### 项目介绍

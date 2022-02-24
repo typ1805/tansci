@@ -1,5 +1,7 @@
 package com.tansci.domain.system.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,18 +20,19 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ApiModel(value = "用户VO")
 public class SysUserVo {
 
-    // 用户名称
+    @ApiModelProperty(value = "用户名称")
     private String username;
 
-    // 用户昵称
+    @ApiModelProperty(value = "用户昵称")
     private String nickname;
 
-    // 凭证
+    @ApiModelProperty(value = "凭证")
     private String token;
 
-    // 登录时间
+    @ApiModelProperty(value = "登录时间")
     private LocalDateTime loginTime;
 
 }

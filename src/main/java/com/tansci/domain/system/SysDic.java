@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,42 +28,56 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName(value = "sys_dic")
+@ApiModel(value = "字典")
 public class SysDic {
 
-    // 主键id
+    @ApiModelProperty(value = "主键id")
     @TableId(type = IdType.AUTO)
     private Integer id;
-    // 父ID
+
+    @ApiModelProperty(value = "父ID")
     private Integer parentId;
-    // 分组名称
+
+    @ApiModelProperty(value = "分组名称")
     private String groupName;
 
-    // 类型：0、系统，1、业务
+    @ApiModelProperty(value = "类型：0、系统，1、业务")
     private Integer type;
+
+    @ApiModelProperty(value = "类型")
     @TableField(exist = false)
     private String typeName;
 
-    // 值
+    @ApiModelProperty(value = "值")
     private Integer dicValue;
-    // 名称
+
+    @ApiModelProperty(value = "名称")
     private String dicLabel;
-    // 排序
+
+    @ApiModelProperty(value = "排序")
     private Integer sort;
-    // 预留字段1
+
+    @ApiModelProperty(value = "预留字段1")
     private String text1;
-    // 预留字段3
+
+    @ApiModelProperty(value = "预留字段3")
     private String text2;
-    // 预留字段2
+
+    @ApiModelProperty(value = "预留字段2")
     private String text3;
-    // 更新时间
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone="GMT+8")
+
+    @ApiModelProperty(value = "更新时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private LocalDateTime updateTime;
-    // 创建时间
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone="GMT+8")
+
+    @ApiModelProperty(value = "创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private LocalDateTime createTime;
-    // 描述
+
+    @ApiModelProperty(value = "描述")
     private String remarks;
 
+    @ApiModelProperty(value = "子集")
     @TableField(exist = false)
     private List<SysDic> children;
 

@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +20,7 @@ import java.util.List;
  * @className：SysOrg.java
  * @description：组织
  * @author：tanyp
- * @dateTime：2021/10/23 13:35 
+ * @dateTime：2021/10/23 13:35
  * @editNote：
  */
 @Data
@@ -26,37 +28,42 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName(value = "sys_org")
+@ApiModel(value = "组织")
 public class SysOrg {
 
-    // 主键id
+    @ApiModelProperty(value = "主键id")
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    // 组织名称
+    @ApiModelProperty(value = "组织名称")
     private String name;
 
-    // 父id
+    @ApiModelProperty(value = "父id")
     private Integer parentId;
 
-    // 排序
+    @ApiModelProperty(value = "排序")
     private Integer sort;
 
-    // 删除状态：0、正常，1、已删除
+    @ApiModelProperty(value = "删除状态：0、正常，1、已删除")
     private Integer delFlag;
+
+    @ApiModelProperty(value = "删除状态")
     @TableField(exist = false)
     private String delFlagName;
 
-    // 更新时间
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone="GMT+8")
+    @ApiModelProperty(value = "更新时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private LocalDateTime updateTime;
 
-    // 创建时间
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone="GMT+8")
+    @ApiModelProperty(value = "创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private LocalDateTime createTime;
 
+    @ApiModelProperty(value = "子集")
     @TableField(exist = false)
     private List<SysOrg> children;
 
+    @ApiModelProperty(value = "用户id")
     @TableField(exist = false)
     private String userId;
 
