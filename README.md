@@ -38,6 +38,7 @@ GitHub: [https://github.com/typ1805/tansci](https://github.com/typ1805/tansci)
 | Spring Security | -- | 权限认证 |
 | Fastjson | 1.2.75 | -- |
 | JJWT | 0.9.0 | 安全认证 |
+| knife4j | 3.0.3 | API 文档 |
 | Lombok | -- | -- |
 
 #### 3、前端技术

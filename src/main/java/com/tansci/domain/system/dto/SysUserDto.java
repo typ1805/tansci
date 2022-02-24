@@ -1,5 +1,7 @@
 package com.tansci.domain.system.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,29 +23,32 @@ import java.util.List;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel(value = "用户DTO")
 public class SysUserDto {
 
+    @ApiModelProperty(value = "主键id")
     private String id;
 
-    // 用户名称
+    @ApiModelProperty(value = "用户名称")
     private String username;
 
-    // 用户昵称
+    @ApiModelProperty(value = "用户昵称")
     private String nickname;
 
-    // 新密码
+    @ApiModelProperty(value = "新密码")
     private String password;
 
-    // 旧密码
+    @ApiModelProperty(value = "旧密码")
     private String oldPassword;
 
+    @ApiModelProperty(value = "组织ids")
     private List<Integer> orgIds;
 
-    // 开始时间
+    @ApiModelProperty(value = "开始时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;
 
-    // 结束时间
+    @ApiModelProperty(value = "结束时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 

@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,36 +27,38 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @TableName(value = "sys_role")
+@ApiModel(value = "权限")
 public class SysRole {
 
-    // 主键id
+    @ApiModelProperty(value = "主键id")
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    // 菜单名称
+    @ApiModelProperty(value = "菜单名称")
     private String name;
 
-    // 类型：
+    @ApiModelProperty(value = "类型")
     private Integer type;
     @TableField(exist = false)
     private String typeName;
 
-    // 状态
+    @ApiModelProperty(value = "状态")
     private Integer status;
     @TableField(exist = false)
     private String statusName;
 
-    // 创建人
+    @ApiModelProperty(value = "创建人")
     private String creator;
 
-    // 更新时间
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone="GMT+8")
+    @ApiModelProperty(value = "更新时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private LocalDateTime updateTime;
 
-    // 创建时间
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone="GMT+8")
+    @ApiModelProperty(value = "创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")
     private LocalDateTime createTime;
 
+    @ApiModelProperty(value = "用户ID")
     @TableField(exist = false)
     private List<String> userIds;
 

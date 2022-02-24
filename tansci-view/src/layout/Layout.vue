@@ -5,6 +5,7 @@
                 <div style="padding-left: 2rem;">
                     <!-- <el-button @click="onCollapse" type="text" :icon="isCollapse?'Grid':'Menu'" >菜单折叠</el-button> -->
                     <el-button @click="onHome" type="text" icon="HomeFilled">工作台</el-button>
+                    <el-link href="http://localhost:8005/tansci/doc.html" type="primary" target="_blank" :underline="false" icon="Notebook" style="padding-left: 1rem;">API 文档</el-link>
                 </div>
                 <div style="padding-right:0.4rem;">
                     <el-icon :size="16" color="#55bc8a" style="vertical-align: middle;padding-right:0.2rem;">

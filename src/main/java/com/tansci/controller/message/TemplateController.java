@@ -9,6 +9,8 @@ import com.tansci.common.constant.Constants;
 import com.tansci.domain.message.Template;
 import com.tansci.domain.message.dto.TemplateDto;
 import com.tansci.service.message.TemplateService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,29 +25,34 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/template")
+@Api(value = "template", tags = "模板配置")
 public class TemplateController {
 
     @Autowired
     private TemplateService templateService;
 
+    @ApiOperation(value = "模板列表", notes = "模板列表")
     @Log(modul = "模板配置-模板列表", type = Constants.SELECT, desc = "模板列表")
     @GetMapping("/page")
     public Wrapper<IPage<Template>> page(Page page, TemplateDto dto) {
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, templateService.page(page, dto));
     }
 
+    @ApiOperation(value = "添加模板", notes = "添加模板")
     @Log(modul = "模板配置-添加模板", type = Constants.INSERT, desc = "添加模板")
     @PostMapping("/save")
     public Wrapper save(@RequestBody Template template) {
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, templateService.saveTemplate(template));
     }
 
+    @ApiOperation(value = "删除模板", notes = "删除模板")
     @Log(modul = "模板配置-删除模板", type = Constants.DELETE, desc = "删除模板")
     @GetMapping("/delete")
     public Wrapper delete(@RequestParam String id) {
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, templateService.delTemplate(id));
     }
 
+    @ApiOperation(value = "根据id修改模板", notes = "根据id修改模板")
     @Log(modul = "模板配置-根据id修改模板", type = Constants.UPDATE, desc = "根据id修改模板")
     @PostMapping("/update")
     public Wrapper update(@RequestBody Template template) {

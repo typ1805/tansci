@@ -8,6 +8,8 @@ import com.tansci.common.annotation.Log;
 import com.tansci.common.constant.Constants;
 import com.tansci.domain.system.SysMenu;
 import com.tansci.service.system.SysMenuService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,30 +26,35 @@ import java.util.List;
  **/
 @Slf4j
 @RestController
-@RequestMapping("menu")
+@RequestMapping("/menu")
+@Api(value = "menu", tags = "菜单")
 public class SysMenuController {
 
     @Autowired
     private SysMenuService sysMenuService;
 
-    @Log(modul = "菜单-菜单分页", type = Constants.SELECT, desc = "菜单分页")
+    @ApiOperation(value = "菜单分页", notes = "菜单分页")
+    @Log(modul = "菜单-", type = Constants.SELECT, desc = "菜单分页")
     @GetMapping("/page")
     public Wrapper<IPage<SysMenu>> page(Page page, SysMenu sysMenu) {
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysMenuService.page(page, sysMenu));
     }
 
+    @ApiOperation(value = "菜单列表", notes = "菜单列表")
     @Log(modul = "菜单-菜单列表", type = Constants.SELECT, desc = "菜单列表")
     @GetMapping("/list")
     public Wrapper<List<SysMenu>> list(SysMenu sysMenu) {
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysMenuService.list(sysMenu));
     }
 
+    @ApiOperation(value = "添加菜单", notes = "添加菜单")
     @Log(modul = "菜单-添加菜单", type = Constants.INSERT, desc = "添加菜单")
     @PostMapping("/save")
     public Wrapper<Boolean> save(@RequestBody SysMenu sysMenu) {
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysMenuService.save(sysMenu));
     }
 
+    @ApiOperation(value = "修改菜单", notes = "修改菜单")
     @Log(modul = "菜单-修改菜单", type = Constants.UPDATE, desc = "修改菜单")
     @PostMapping("/update")
     public Wrapper<Boolean> update(@RequestBody SysMenu sysMenu) {
@@ -55,6 +62,7 @@ public class SysMenuController {
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysMenuService.updateById(sysMenu));
     }
 
+    @ApiOperation(value = "删除菜单", notes = "删除菜单")
     @Log(modul = "菜单-删除菜单", type = Constants.DELETE, desc = "删除菜单")
     @GetMapping("/del")
     public Wrapper<Boolean> del(Integer id) {

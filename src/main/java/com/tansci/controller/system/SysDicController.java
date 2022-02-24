@@ -8,6 +8,8 @@ import com.tansci.common.constant.Constants;
 import com.tansci.domain.system.SysDic;
 import com.tansci.domain.system.dto.SysDicDto;
 import com.tansci.service.system.SysDicService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,18 +28,21 @@ import java.util.Objects;
  */
 @Slf4j
 @RestController
-@RequestMapping("dic")
+@RequestMapping("/dic")
+@Api(value = "dic", tags = "数据字典")
 public class SysDicController {
 
     @Autowired
     private SysDicService sysDicService;
 
+    @ApiOperation(value = "列表", notes = "列表")
     @Log(modul = "数据字典-列表", type = Constants.SELECT, desc = "列表")
     @GetMapping("/dicList")
     public Wrapper<List<SysDic>> dicList(SysDicDto dto) {
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysDicService.dicList(dto));
     }
 
+    @ApiOperation(value = "根据分组名称获取列表", notes = "根据分组名称获取列表")
     @Log(modul = "数据字典-根据分组名称获取列表", type = Constants.SELECT, desc = "根据分组名称获取列表")
     @GetMapping("/getGroupNameByList")
     public Wrapper<List<SysDic>> getGroupNameByList(SysDicDto dto) {
@@ -54,6 +59,7 @@ public class SysDicController {
         );
     }
 
+    @ApiOperation(value = "添加字典", notes = "添加字典")
     @Log(modul = "数据字典-添加字典", type = Constants.SELECT, desc = "添加字典")
     @PostMapping("/save")
     public Wrapper<Boolean> save(@RequestBody SysDic sysDic) {
@@ -61,6 +67,7 @@ public class SysDicController {
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysDicService.save(sysDic));
     }
 
+    @ApiOperation(value = "更新字典", notes = "更新字典")
     @Log(modul = "数据字典-更新字典", type = Constants.UPDATE, desc = "更新字典")
     @PostMapping("/update")
     public Wrapper<Boolean> update(@RequestBody SysDic sysDic) {
@@ -68,6 +75,7 @@ public class SysDicController {
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysDicService.updateById(sysDic));
     }
 
+    @ApiOperation(value = "删除", notes = "删除")
     @Log(modul = "数据字典-删除", type = Constants.DELETE, desc = "删除字段信息")
     @GetMapping("/del")
     public Wrapper<Boolean> del(SysDicDto dto) {
