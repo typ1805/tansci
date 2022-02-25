@@ -34,7 +34,7 @@ public class SysMenuController {
     private SysMenuService sysMenuService;
 
     @ApiOperation(value = "菜单分页", notes = "菜单分页")
-    @Log(modul = "菜单-", type = Constants.SELECT, desc = "菜单分页")
+    @Log(modul = "菜单-菜单分页", type = Constants.SELECT, desc = "菜单分页")
     @GetMapping("/page")
     public Wrapper<IPage<SysMenu>> page(Page page, SysMenu sysMenu) {
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysMenuService.page(page, sysMenu));

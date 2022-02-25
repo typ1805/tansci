@@ -325,3 +325,40 @@ export function logInfoPage(params) {
 export function logErrorPage(params) {
     return axios.get('/tansci/log/logErrorPage', { params: params });
 }
+
+// ====================任务管理=========================
+/**
+ * 任务分页
+ * @param {*} params 
+ * @returns 
+ */
+export function taskPage(params) {
+    return axios.get('/tansci/taskConfig/page', { params: params });
+}
+
+/**
+ * 删除任务
+ * @param {*} params 
+ * @returns 
+ */
+export function delTask(params) {
+    return axios.get('/tansci/taskConfig/del', { params: params });
+}
+
+/**
+ * 添加任务
+ * @param {*} params 
+ * @returns 
+ */
+export function saveTask(params) {
+    return axios.post('/tansci/taskConfig/save', params);
+}
+
+/**
+ * 修改任务
+ * @param {*} params 
+ * @returns 
+ */
+export function updateTask(params) {
+    return axios.post('/tansci/taskConfig/update', params);
+}

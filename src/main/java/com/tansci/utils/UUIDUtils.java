@@ -14,4 +14,9 @@ public class UUIDUtils {
     public static String getUUID() {
         return UUID.randomUUID().toString().replace("-", "");
     }
+
+    public static String getUUID(Integer len) {
+        return UUID.randomUUID().toString().replaceAll("-", "").substring(0, len);
+    }
+
 }

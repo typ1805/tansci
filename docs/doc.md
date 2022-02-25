@@ -21,7 +21,7 @@ GitHub: [https://github.com/typ1805/tansci](https://github.com/typ1805/tansci)
 
 #### 开发计划
 
-- 开发内容：本次实验我们主要从安装开发环境、搭建前后端项目、实现功能模块、部署上线的开发全流程。
+- 开发内容：我们主要从安装开发环境、搭建前后端项目、实现功能模块、部署上线的开发全流程。
 - 项目目录：
 <pre>
 ├─docs                         # 文档相关
@@ -83,6 +83,7 @@ GitHub: [https://github.com/typ1805/tansci](https://github.com/typ1805/tansci)
     - JJWT 0.9.0
     - Druid 1.2.6
     - Fastjson 1.2.75
+    - knife4j 3.0.3  
     - Lombok
 
 - 前端架构
@@ -358,144 +359,22 @@ npm config set cache "D:\nodejs\node_cache"
 
 使用Navicat连接安装好的mysql服务，创建名为tansci数据库。
 
-**字典表（sys_dic）**
+- 字典表（sys_dic）
+- 菜单表（sys_menu）
+- 菜单角色表（sys_menu_role）
+- 权限表（sys_role）
+- 组织表（sys_org）
+- 组织角色表（sys_org_role）
+- 用户表（sys_user）
+- 用户组织表（sys_user_org）
+- 用户角色表（sys_user_role）
+- 操作日志表（log_info）
+- 异常日志表（log_error_info）
+- 消息模板表（template）
+- 消息模板详情（template_details）
+- 任务配置表（task_config）
 
-| 字段名称 | 类型 | 长度 | 是否为空 | 键 | 注释 |
-| ---- | ---- | ---- | ---- | ---- | ---- |
-| id | int | 11 | NOT NULL | PRIMARY KEY | 主键id |
-| parent_id | int | 11 | NOT NULL | -- | 父ID |
-| group_name | varchar | 50 | NOT NULL | -- | 分组名称 |
-| type | int | 1 | NOT NULL | -- | 类型：0、系统，1、业务 |
-| dic_value | int | 11 | NOT NULL | -- | 值 |
-| dic_label | varchar | 100 | NOT NULL | -- | 名称 |
-| sort | int | 11 | NOT NULL | -- | 排序 |
-| text1 | varchar | 100 | NULL | -- | 预留字段1 |
-| text2 | varchar | 100 | NULL | -- | 预留字段2 |
-| update_time | datetime | -- | NULL | -- | 更新时间 |
-| create_time | datetime | -- | NULL | -- | 创建时间 |
-| remarks | varchar | 255 | NULL | -- | 备注 |
-
-**菜单表（sys_menu）**
-| 字段名称 | 类型 | 长度 | 是否为空 | 键 | 注释 |
-| ---- | ---- | ---- | ---- | ---- | ---- |
-| id | int | 11 | NOT NULL | PRIMARY KEY | 主键id |
-| parent_id | int | 11 | NOT NULL | -- | 父id |
-| name | varchar | 255 | NOT NULL | -- | 菜单名称 |
-| path | varchar | 255 | NOT NULL | -- | 菜单路由 |
-| component | varchar | 100 | NULL | -- | 组件名称 |
-| icon | varchar | 100 | NULL | -- | 菜单图标 |
-| type | int | 1 | NOT NULL | -- | 类型：0、菜单，1、按钮 |
-| status | int | 1 | NOT NULL | -- | 状态：0、未上架，1、正常，2、下架 |
-| chinese_name | varchar | 255 | NOT NULL | -- | 中文名称 |
-| english_name | varchar | 255 | NOT NULL | -- | 英文名称 |
-| sort | int | 11 | NOT NULL | -- | 排序 |
-| require_auth | int | 1 | NULL | -- | 是否登录后才能访问：0、是，1、否 |
-| keep_alive | int | 1 | NULL | -- | 菜单切换时是否保活：0.是，1、否 |
-| enabled | int | 1 | NULL | -- | 是否可用：0、是，1、否 |
-| sort | int | 11 | NOT NULL | -- | 排序 |
-| update_time | datetime | -- | NULL | -- | 更新时间 |
-| create_time | datetime | -- | NULL | -- | 创建时间 |
-
-**菜单角色表（sys_menu_role）**
-| 字段名称 | 类型 | 长度 | 是否为空 | 键 | 注释 |
-| ---- | ---- | ---- | ---- | ---- | ---- |
-| role_id | int | 11 | NOT NULL | PRIMARY KEY | 角色id |
-| menu_id | int | 11 | NOT NULL | PRIMARY KEY | 菜单id |
-
-**权限表（sys_role）**
-| 字段名称 | 类型 | 长度 | 是否为空 | 键 | 注释 |
-| ---- | ---- | ---- | ---- | ---- | ---- |
-| id | int | 11 | NOT NULL | PRIMARY KEY | 主键id |
-| name | varchar | 255 | NOT NULL | -- | 名称 |
-| type | int | 1 | NOT NULL | -- | 类型 |
-| status | int | 1 | NOT NULL | -- | 状态 |
-| creator | varchar | 64 | NOT NULL | -- | 创建人 |
-| update_time | datetime | -- | NULL | -- | 更新时间 |
-| create_time | datetime | -- | NULL | -- | 创建时间 |
-
-**组织表（sys_org）**
-| 字段名称 | 类型 | 长度 | 是否为空 | 键 | 注释 |
-| ---- | ---- | ---- | ---- | ---- | ---- |
-| id | int | 11 | NOT NULL | PRIMARY KEY | 主键id |
-| parent_id | int | 11 | NOT NULL | -- | 父id |
-| name | varchar | 255 | NOT NULL | -- | 名称 |
-| sort | int | 11 | NOT NULL | -- | 排序 |
-| del_flag | int | 1 | NOT NULL | -- | 删除状态：0、正常，1、删除 |
-| update_time | datetime | -- | NULL | -- | 更新时间 |
-| create_time | datetime | -- | NULL | -- | 创建时间 |
-
-**组织角色表（sys_org_role）**
-| 字段名称 | 类型 | 长度 | 是否为空 | 键 | 注释 |
-| ---- | ---- | ---- | ---- | ---- | ---- |
-| org_id | int | 11 | NOT NULL | PRIMARY KEY | 组织id |
-| role_id | int | 11 | NOT NULL | PRIMARY KEY | 角色id |
-
-**用户表（sys_user）**
-| 字段名称 | 类型 | 长度 | 是否为空 | 键 | 注释 |
-| ---- | ---- | ---- | ---- | ---- | ---- |
-| id | int | 11 | NOT NULL | PRIMARY KEY | 主键id |
-| username | varchar | 100 | NOT NULL | UNIQUE | 用户名称 |
-| password | varchar | 255 | NOT NULL | -- | 密码 |
-| nickname | varchar | 255 | NOT NULL | -- | 用户昵称 |
-| type | int | 1 | NOT NULL | -- | 用户类型：0、超级管理员，1、管理员，2、普通用户 |
-| gender | int | 1 | NULL | -- | 性别：0、男，1、女 |
-| birthday | date | -- | NULL | -- | 出生日期 |
-| address | varchar | 255 | NULL | -- | 地址 |
-| phone | varchar | 11 | NULL | -- | 手机号 |
-| open_id | varchar | 100 | NULL | -- | 微信唯一标识 |
-| email | varchar | 100 | NULL | -- | 邮件 |
-| remember | int | 1 | NULL | -- | 是否记住密码：0、否，1、是 |
-| del_flag | int | 1 | NOT NULL | -- | 删除状态：0、正常，1、删除 |
-| update_time | datetime | -- | NULL | -- | 更新时间 |
-| create_time | datetime | -- | NULL | -- | 创建时间 |
-| remarks | varchar | 255 | NULL | -- | 备注 |
-
-**用户组织表（sys_user_org）**
-| 字段名称 | 类型 | 长度 | 是否为空 | 键 | 注释 |
-| ---- | ---- | ---- | ---- | ---- | ---- |
-| user_id | varchar | 64 | NOT NULL | PRIMARY KEY | 用户id |
-| org_id | int | 11 | NOT NULL | PRIMARY KEY | 组织id |
-
-**用户角色表（sys_user_role）**
-| 字段名称 | 类型 | 长度 | 是否为空 | 键 | 注释 |
-| ---- | ---- | ---- | ---- | ---- | ---- |
-| user_id | varchar | 64 | NOT NULL | PRIMARY KEY | 用户id |
-| role_id | int | 11 | NOT NULL | PRIMARY KEY | 角色id |
-
-**操作日志表（log_info）**
-| 字段名称 | 类型 | 长度 | 是否为空 | 键 | 注释 |
-| ---- | ---- | ---- | ---- | ---- | ---- |
-| id | int | 11 | NOT NULL | PRIMARY KEY | 主键id |
-| module | varchar | 255 | NOT NULL | -- | 功能模块 |
-| type | varchar | 255 | NOT NULL | -- | 操作类型 |
-| message | varchar | 255 | NOT NULL | -- | 操作描述 |
-| req_param | text | -- | NULL | -- | 请求参数 |
-| res_param | text | -- | NULL | -- | 响应参数 |
-| take_up_time | int | 20 | NULL | -- | 耗时 |
-| user_id | varchar | 64 | NULL | -- | 操作用户id |
-| user_name | varchar | 255 | NULL | -- | 操作用户名称 |
-| method | varchar | 255 | NULL | -- | 操作方法 |
-| uri | varchar | 255 | NULL | -- | 请求url |
-| ip | varchar | 50 | NULL | -- | 请求IP |
-| version | varchar | 50 | NULL | -- | 版本号 |
-| create_time | datetime | -- | NULL | -- | 创建时间 |
-
-**异常日志表（log_error_info）**
-| 字段名称 | 类型 | 长度 | 是否为空 | 键 | 注释 |
-| ---- | ---- | ---- | ---- | ---- | ---- |
-| id | int | 11 | NOT NULL | PRIMARY KEY | 主键id |
-| name | varchar | 255 | NOT NULL | -- | 异常名称 |
-| message | text | 255 | NOT NULL | -- | 异常信息 |
-| req_param | text | -- | NULL | -- | 请求参数 |
-| user_id | varchar | 64 | NULL | -- | 操作用户id |
-| user_name | varchar | 255 | NULL | -- | 操作用户名称 |
-| method | varchar | 255 | NULL | -- | 操作方法 |
-| uri | varchar | 255 | NULL | -- | 请求url |
-| ip | varchar | 50 | NULL | -- | 请求IP |
-| version | varchar | 50 | NULL | -- | 版本号 |
-| create_time | datetime | -- | NULL | -- | 创建时间 |
-
-创建表语句及基础数据可执行项目目录下```tansci\sql\tansci.sql```的SQL脚本。
+创建表语句及基础数据可执行项目目录下```tansci\docs\sql\tansci.sql```的SQL脚本。
 
 ## 搭建后端项目
 
@@ -2503,3 +2382,83 @@ public String stackTraceToString(String exceptionName, String exceptionMessage, 
 ```
 
 > 至此后端项目安全认证、日志记录已全部整合完成。
+
+## 任务调度
+
+1. 实现 `TaskRegisterService` 接口，创建业务实现即可。
+
+例如：
+
+```java
+/**
+ * @ClassName： TaskTest1ServiceImpl.java
+ * @ClassPath： com.tansci.service.impl.system.task.TaskTest1ServiceImpl.java
+ * @Description： 自定义任务测试1
+ * @Author： tanyp
+ * @Date： 2022/2/25 10:08
+ **/
+@Slf4j
+@Service("taskTest1Service")
+public class TaskTest1ServiceImpl implements TaskRegisterService {
+
+    @Override
+    public void register() {
+        log.info("===========自定义任务测试【TaskTest1ServiceImpl】====【1】=========");
+    }
+}
+```
+2. 在界面配置实现的任务服务即可。
+
+**注意：**
+
+- `@Service("taskTest1Service") ` 是唯一的，对应 `task_config` 表中的 code 字段；
+- expression 的配置为 cron 表达式。
+
+3. cron表达式
+
+corn从左到右（用空格隔开）：秒 分 小时 月份中的日期 月份 星期中的日期 年份。
+
+| 字段 | 允许值 | 允许的特殊字符 |
+| ---- | ---- | ---- |
+| 秒（Seconds） | 0~59的整数 | , - * / |
+| 分（Minutes） | 0~59的整数 | , - * / |
+| 小时（Hours） | 0~23的整数 | , - * / |
+| 日期（DayofMonth） | 1~31的整数 | ,- * ? / L W C |
+| 月份（Month） | 1~12的整数或者 JAN-DEC | , - * / |
+| 星期（DayofWeek） | 1~7的整数或者 SUN-SAT （1=SUN） | , - * ? / L C # |
+| 年(可选，留空)（Year） | 1970~2099 | , - * / |
+
+- `*`：表示匹配该域的任意值。假如在Minutes域使用*, 即表示每分钟都会触发事件。
+- `?`：只能用在DayofMonth和DayofWeek两个域。
+- `-`：表示范围。例如在Minutes域使用5-20，表示从5分到20分钟每分钟触发一次
+- `/`：表示起始时间开始触发，然后每隔固定时间触发一次。
+- `,`：表示列出枚举值。例如：在Minutes域使用5,20，则意味着在5和20分每分钟触发一次。
+- `L`：表示最后，只能出现在DayofWeek和DayofMonth域。
+- `W`:表示有效工作日(周一到周五),只能出现在DayofMonth域，系统将在离指定日期的最近的有效工作日触发事件。
+- `LW`:这两个字符可以连用，表示在某个月最后一个工作日，即最后一个星期五。
+- `#`:用于确定每个月第几个星期几，只能出现在DayofMonth域。例如在4#2，表示某月的第二个星期三。
+
+常用表达式例子
+
+- `0 0 2 1 * ? *` 表示在每月的1日的凌晨2点调整任务
+- `0 15 10 ? * MON-FRI` 表示周一到周五每天上午10:15执行作业
+- `0 15 10 ? 6L 2002-2006` 表示2002-2006年的每个月的最后一个星期五上午10:15执行作
+- `0 0 10,14,16 * * ?` 每天上午10点，下午2点，4点
+- `0 0/30 9-17 * * ?` 朝九晚五工作时间内每半小时
+- `0 0 12 ? * WED` 表示每个星期三中午12点
+- `0 0 12 * * ?` 每天中午12点触发
+- `0 15 10 ? * *` 每天上午10:15触发
+- `0 15 10 * * ?`  每天上午10:15触发
+- `0 15 10 * * ? *` 每天上午10:15触发
+- `0 15 10 * * ? 2005` 2005年的每天上午10:15触发
+- `0 * 14 * * ?` 在每天下午2点到下午2:59期间的每1分钟触发
+- `0 0/5 14 * * ?` 在每天下午2点到下午2:55期间的每5分钟触发
+- `0 0/5 14,18 * * ?` 在每天下午2点到2:55期间和下午6点到6:55期间的每5分钟触发
+- `0 0-5 14 * * ?` 在每天下午2点到下午2:05期间的每1分钟触发
+- `0 10,44 14 ? 3 WED` 每年三月的星期三的下午2:10和2:44触发
+- `0 15 10 ? * MON-FRI` 周一至周五的上午10:15触发
+- `0 15 10 15 * ?` 每月15日上午10:15触发
+- `0 15 10 L * ?` 每月最后一日的上午10:15触发
+- `0 15 10 ? * 6L` 每月的最后一个星期五上午10:15触发
+- `0 15 10 ? * 6L 2002-2005` 2002年至2005年的每月的最后一个星期五上午10:15触发
+- `0 15 10 ? * 6#3` 每月的第三个星期五上午10:15触发

@@ -86,6 +86,23 @@ const asnycRouters = [
             },
         ]
     },
+    {
+        path: '/task',
+        type: 'manage',
+        name: "task",
+        type: 1,
+        icon: "Comment",
+        meta: { title: "任务管理" },
+        component: Layout,
+        children: [{
+                path: "/taskConfig",
+                name: "taskConfig",
+                icon: "Postcard",
+                meta: { title: "任务调度" },
+                component: () => import('../views/task/TaskConfig.vue')
+            },
+        ]
+    },
 
 ]
 
