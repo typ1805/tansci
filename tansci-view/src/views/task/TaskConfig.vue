@@ -125,6 +125,7 @@
 
     // 添加
     const onAddTask = () =>{
+        state.taskTitle = "创建任务";
         state.taskForm = {
             id: '',
             code: '',
