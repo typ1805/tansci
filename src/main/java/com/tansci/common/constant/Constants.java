@@ -54,4 +54,9 @@ public class Constants {
 
     public final static String NEWS_FAIL_MESSAGE = "发送失败";
 
+    /**
+     * 任务调度默认启动10个线程
+     */
+    public final static Integer DEFAULT_THREAD_POOL = 10;
+
 }
