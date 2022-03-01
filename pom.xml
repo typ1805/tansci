@@ -25,6 +25,7 @@
         <jjwt.version>0.9.0</jjwt.version>
         <dysmsapi.version>2.0.4</dysmsapi.version>
         <knife4j-spring-boot.version>3.0.3</knife4j-spring-boot.version>
+        <com.google.zxing.version>3.3.3</com.google.zxing.version>
     </properties>
 
     <dependencies>
@@ -106,6 +107,17 @@
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-spring-boot-starter</artifactId>
             <version>${knife4j-spring-boot.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>${com.google.zxing.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>${com.google.zxing.version}</version>
         </dependency>
 
         <dependency>

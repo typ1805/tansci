@@ -50,3 +50,11 @@ sms:
   access-key: dsfg4WxAits5MdYgdfgVAYfGfg
   sign-name: TANSCI
   endpoint: dysmsapi.aliyuncs.com
+
+# 三方授权信息
+authorized:
+  wechat: # 微信开放平台信息
+    app_id: 10001  # appid
+    app_secret: 10001  # appsecret
+    base_url: https://open.weixin.qq.com/connect/qrconnect  # 微信开放平台授权baseUrl
+    redirect_url: http://127.0.0.1/api/ucenter/wx/callback  # 重定向ur
