@@ -8,8 +8,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tansci.common.constant.Constants;
 import com.tansci.common.constant.Enums;
 import com.tansci.common.exception.BusinessException;
-import com.tansci.domain.system.dto.SysUserDto;
 import com.tansci.domain.system.*;
+import com.tansci.domain.system.dto.SysUserDto;
 import com.tansci.mapper.system.SysUserMapper;
 import com.tansci.service.system.*;
 import com.tansci.utils.SecurityUserUtils;
@@ -150,6 +150,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         int row = this.baseMapper.insert(user);
         if (row > 0) {
+            if (Objects.isNull(user.getOrgId())) {
+                user.setOrgId(1);
+            }
             return sysUserOrgService.save(SysUserOrg.builder().userId(user.getId()).orgId(user.getOrgId()).build());
         }
         return false;

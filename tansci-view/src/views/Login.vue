@@ -6,7 +6,7 @@
 					<el-image :src="loginLogo"  style="width: 100%; height: 100%;"></el-image>
 				</div>
 				<div class="login-form">
-					<el-form :model="loginForm" :rules="rules" ref="loginRuleForm">
+					<el-form v-if="loginMode" :model="loginForm" :rules="rules" ref="loginRuleForm">
 						<div class="login-form-title">欢迎登录</div>
 						<el-form-item prop="username" :rules="[
 								{required: true,message: '请输入用户名',trigger: 'blur'},
@@ -28,13 +28,18 @@
 							<el-button type="primary" round @click="submit" style="width:100%">登录</el-button>
 						</el-form-item>
 					</el-form>
-					<el-divider>
-						<el-icon><star-filled /></el-icon>
-					</el-divider>
+					<div v-else-if="!loginMode" class="other-form">
+						<div class="login-form-title">{{otherForm.qrcodeTitle}}</div>
+						<el-image :src="otherForm.qrcodeUrl" :lazy="true" style="width:180px;height:180px;cursor: pointer;"></el-image>
+						<div>
+							<el-button @click="loginMode = true" type="text" icon='UserFilled'>账号密码登录</el-button>
+						</div>
+					</div>
+					<el-divider><el-icon><star-filled /></el-icon></el-divider>
 					<div class="other-login">
-						<el-button type="success" icon="Message" circle></el-button>
-						<el-button type="warning" icon="Microphone" circle></el-button>
-						<el-button type="danger" icon="Comment" circle></el-button>
+						<el-image v-for="item in otherForm.modes" :key="item.id" @click="otherLogin(item.id)" :src="item.icon"
+							style="width:32px;height:32px;padding:0 0.4rem;cursor: pointer;">
+						</el-image>
 					</div>
 				</div>
 			</div>
@@ -42,10 +47,11 @@
 	</div>
 </template>
 <script setup>
-	import {onBeforeMount,reactive,ref,toRefs,unref} from "vue"
+	import {onMounted,onBeforeMount,reactive,ref,toRefs,unref} from "vue"
+	import {ElMessage} from 'element-plus'
 	import {useRouter} from 'vue-router'
 	import {useStore} from 'vuex'
-	import {login,menuList} from '../api/systemApi'
+	import {login,menuList,wxLogin,wxCallback} from '../api/systemApi'
 	import SlidingVerify from '../components/SlidingVerify.vue'
 
 	const store = useStore()
@@ -53,6 +59,7 @@
 	let loginRuleForm = ref(null) 
 	let slidingVerify = ref()
 	const loginLogo = new URL('../assets/image/login-left.png', import.meta.url).href
+
 	const state = reactive({
 		loginStyle: {
 			height: '',
@@ -63,9 +70,23 @@
 			verifyStatus: null,
 			keepPassword: null,
 		},
+		loginMode: true,
+		otherForm: {
+			modes:[
+				{id:1,name:'微信扫码登录',icon: new URL('../assets/image/icon/wechat.svg', import.meta.url).href},
+				{id:2,name:'微博扫码登录',icon: new URL('../assets/image/icon/weibo.svg', import.meta.url).href},
+				{id:3,name:'QQ扫码登录',icon: new URL('../assets/image/icon/qq.svg', import.meta.url).href},
+			],
+			qrcodeTitle: '',
+			qrcodeUrl: '',
+		}
 	})
 
-	const {loginStyle,loginForm} = toRefs(state)
+	const {loginStyle,loginForm,loginMode,otherForm} = toRefs(state)
+
+	onMounted(()=>{
+
+	})
 
 	onBeforeMount(() => {
 		state.loginStyle.height = (document.body.clientHeight || document.documentElement.clientHeight) + "px"
@@ -100,9 +121,31 @@
 			}
 		}).catch(()=>{
 			state.loginForm.verifyStatus = null;
-			console.log(slidingVerify)
 			slidingVerify.value.onRefresh()
 		})
+	}
+
+	const otherLogin = (type) =>{
+		// 1、微信，2、微博，3、QQ，4、GitHub
+		let modes = state.otherForm.modes;
+		if(type === 1){
+			let mode = modes.find(function(item){
+				return item.id == type;
+			});
+			state.otherForm.qrcodeTitle = mode.name;
+
+			// 请求接口获取二维码
+			wxLogin({}).then(res=>{
+				if(res){
+					state.otherForm.qrcodeUrl = res.result;
+				} else {
+					ElMessage.warning(res.message)
+				}
+			})
+			state.loginMode = false;
+		} else {
+			ElMessage.warning("暂不支持该登录方式！")
+		}
 	}
 </script>
 <style lang="less" scoped="scoped">
@@ -140,6 +183,14 @@
 				}
 				.other-login{
 					text-align: center;
+				}
+			}
+			.other-form{
+				text-align: center;
+				.el-image{
+					padding: 2px;
+					border: 2px solid #67C23A;
+					border-radius: 4px;
 				}
 			}
 		}

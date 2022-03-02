@@ -11,6 +11,6 @@ public interface AuthorizedService {
 
     String wxLogin();
 
-    String wxCallback(String code, String state);
+    void wxCallback(String code, String state);
 
 }

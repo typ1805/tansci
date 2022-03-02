@@ -11,6 +11,24 @@ export function login(params) {
 }
 
 /**
+ * 微信扫码登录获取二维码
+ * @param params
+ * @returns {Promise<AxiosResponse<T>>}
+ */
+export function wxLogin(params) {
+    return axios.post('/tansci/auth/wxLogin', params);
+}
+
+/**
+ * 微信扫码登录获取token
+ * @param params
+ * @returns {Promise<AxiosResponse<T>>}
+ */
+export function wxCallback(params) {
+    return axios.post('/tansci/auth/wxCallback', params);
+}
+
+/**
  * 登出
  * @param params
  * @returns {Promise<AxiosResponse<T>>}
