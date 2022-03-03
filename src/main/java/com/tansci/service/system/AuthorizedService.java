@@ -1,5 +1,7 @@
 package com.tansci.service.system;
 
+import com.tansci.domain.system.vo.AuthorizedVo;
+
 /**
  * @ClassName： AuthorizedService.java
  * @ClassPath： com.tansci.service.system.AuthorizedService.java
@@ -9,7 +11,7 @@ package com.tansci.service.system;
  **/
 public interface AuthorizedService {
 
-    String wxLogin();
+    AuthorizedVo wxLogin();
 
     void wxCallback(String code, String state);
 

@@ -54,9 +54,9 @@ sms:
 # 三方授权信息
 authorized:
   wechat: # 微信开放平台信息
-    app_id: wx0000001  # appid
-    app_secret: 10000000002  # appsecret
+    app_id: 1000001  # appid
+    app_secret: 1000001  # appsecret
     base_url: https://open.weixin.qq.com/connect/oauth2/authorize  # 微信开放平台授权baseUrl
     base_access_token_url: https://api.weixin.qq.com/sns/oauth2/access_token # 微信开放平台获取token
     base_user_info_url: https://api.weixin.qq.com/sns/userinfo # 微信开放平台获取用户信息
-    redirect_url: http://vxtest.vaiwan.com/tansci/auth/wxCallback  # 重定向ur
+    redirect_url: http://127.0.0.1/tansci/auth/wxCallback  # 重定向ur

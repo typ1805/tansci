@@ -1,14 +1,19 @@
 package com.tansci.service.impl.system;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.google.gson.Gson;
 import com.tansci.common.constant.Constants;
 import com.tansci.common.exception.BusinessException;
 import com.tansci.config.AuthorizedConfig;
 import com.tansci.domain.system.SysUser;
+import com.tansci.domain.system.SysUserRole;
+import com.tansci.domain.system.vo.AuthorizedVo;
+import com.tansci.service.impl.message.WebSocketServer;
 import com.tansci.service.system.AuthorizedService;
+import com.tansci.service.system.SysUserRoleService;
 import com.tansci.service.system.SysUserService;
+import com.tansci.utils.JwtTokenUtils;
 import com.tansci.utils.QRCodeUtils;
 import com.tansci.utils.UUIDUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +22,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -38,9 +43,14 @@ public class AuthorizedServiceImpl implements AuthorizedService {
     private RestTemplate restTemplate;
     @Autowired
     private SysUserService sysUserService;
+    @Autowired
+    private SysUserRoleService sysUserRoleService;
 
     @Override
-    public String wxLogin() {
+    public AuthorizedVo wxLogin() {
+        if (!AuthorizedConfig.WX_APP_ID.startsWith("wx")){
+            throw new BusinessException("无效的微信配置信息！");
+        }
         // 微信开放平台授权baseUrl
         String baseUrl = AuthorizedConfig.WX_BASE_URL + "?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_userinfo&state=%s#wechat_redirect";
 
@@ -58,28 +68,29 @@ public class AuthorizedServiceImpl implements AuthorizedService {
         // 生成qrcodeUrl
         String qrcodeUrl = String.format(baseUrl, AuthorizedConfig.WX_APP_ID, redirectUrl, state);
         log.info("========生成qrcodeUrl:{}===========", qrcodeUrl);
-        return QRCodeUtils.crateQRCode(qrcodeUrl, null, null);
+        String qrcode = QRCodeUtils.crateQRCode(qrcodeUrl, null, null);
+        return AuthorizedVo.builder().state(state).qrcode(qrcode).build();
     }
 
     @Override
     public void wxCallback(String code, String state) {
-        // 向认证服务器发送请求换取access_token
-        String baseAccessTokenUrl = AuthorizedConfig.WX_BASE_ACCESS_TOKEN_URL + "?appid=%s&secret=%s&code=%s&grant_type=authorization_code";
-        String accessTokenUrl = String.format(baseAccessTokenUrl, AuthorizedConfig.WX_APP_ID, AuthorizedConfig.WX_APP_SECRET, code);
-        log.info("=======向认证服务器发送请求换取access_token URL：{}==============", accessTokenUrl);
-        String result = null;
-        try {
-            result = restTemplate.getForObject(accessTokenUrl, String.class);
-            log.info("========向认证服务器发送请求换取access_token 结果========", JSON.toJSON(result));
-        } catch (Exception e) {
-            throw new BusinessException("获取access_token失败");
-        }
+        AuthorizedVo authorizedVo = AuthorizedVo.builder().msg("登录成功").status(200).build();
 
-        // 解析json字符串
-        Gson gson = new Gson();
-        HashMap map = gson.fromJson(result, HashMap.class);
-        String accessToken = (String) map.get("access_token");
-        String openid = (String) map.get("openid");
+        // 获取 access_token
+        String accessTokenUrl = AuthorizedConfig.WX_BASE_ACCESS_TOKEN_URL +
+                "?appid=" + AuthorizedConfig.WX_APP_ID + "&secret=" + AuthorizedConfig.WX_APP_SECRET + "&code=" + code + "&grant_type=authorization_code";
+        log.info("=======获取 access_token URL：{}==============", accessTokenUrl);
+
+        String tokenResult = restTemplate.getForObject(accessTokenUrl, String.class);
+        JSONObject tokenJson = JSON.parseObject(tokenResult);
+        log.info("========获取 access_token 结果========：{}", tokenJson);
+
+        if (Objects.isNull(tokenResult) || Objects.isNull(tokenJson.get("openid"))) {
+            authorizedVo.setMsg("获取access_token失败");
+            authorizedVo.setStatus(500);
+        }
+        String accessToken = String.valueOf(tokenJson.get("access_token"));
+        String openid = String.valueOf(tokenJson.get("openid"));
 
         // 查询数据库当前用用户是否曾经使用过微信登录
         SysUser user = sysUserService.getOne(Wrappers.<SysUser>lambdaQuery().eq(SysUser::getOpenId, openid));
@@ -87,23 +98,21 @@ public class AuthorizedServiceImpl implements AuthorizedService {
             log.info("==========新用户注册============");
 
             // 访问微信的资源服务器，获取用户信息
-            String baseUserInfoUrl = AuthorizedConfig.WX_BASE_USER_INFO_URL + "?access_token=%s&openid=%s";
-            String userInfoUrl = String.format(baseUserInfoUrl, accessToken, openid);
-            String resultUserInfo = null;
-            try {
-                resultUserInfo = restTemplate.getForObject(userInfoUrl, String.class);
-            } catch (Exception e) {
-                throw new BusinessException("获取用户信息失败");
+            String baseUserInfoUrl = AuthorizedConfig.WX_BASE_USER_INFO_URL + "?access_token=" + accessToken + "&openid=" + openid;
+            String userInfo = restTemplate.getForObject(baseUserInfoUrl, String.class);
+            JSONObject userJson = JSON.parseObject(userInfo);
+            log.info("========获取微信用户信息结果========：{}", userJson);
+
+            if (Objects.isNull(userInfo) || Objects.isNull(userJson.get("nickname"))) {
+                authorizedVo.setMsg("获取微信用户信息失败");
+                authorizedVo.setStatus(500);
             }
 
-            // 解析json
-            HashMap<String, Object> mapUserInfo = gson.fromJson(resultUserInfo, HashMap.class);
-            log.info("=========用户信息：{}", JSON.toJSON(mapUserInfo));
-            String nickname = (String) mapUserInfo.get("nickname");
+            String nickname = String.valueOf(userJson.get("nickname"));
             try {
-                nickname = URLEncoder.encode(nickname, "utf-8");
+                nickname = new String(nickname.getBytes("ISO-8859-1"), "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                log.error("====nickname转码失败：{}===", e.getMessage());
+                log.error("=====nickname 转码失败======={}", e);
             }
 
             // 向数据库中插入一条记录
@@ -119,10 +128,24 @@ public class AuthorizedServiceImpl implements AuthorizedService {
                     .remarks("微信扫描注册用户")
                     .build();
             sysUserService.save(user);
+            // 默认用户角色为普通用户
+            sysUserRoleService.save(SysUserRole.builder().roleId(2).userId(user.getId()).build());
         }
 
         // 生成token
-
+        if (Objects.equals(200, authorizedVo.getStatus())) {
+            authorizedVo.setLoginTime(LocalDateTime.now());
+            authorizedVo.setUsername(user.getUsername());
+            authorizedVo.setNickname(user.getNickname());
+            authorizedVo.setToken(JwtTokenUtils.createToken(SysUser.builder().id(user.getId()).username(user.getUsername()).password(user.getPassword()).type(user.getType()).role("2").build(), true));
+        }
+        try {
+            // 发送通知
+            log.info("===发送通知====id:{}=====:{}", state, JSON.toJSONString(authorizedVo));
+            WebSocketServer.sendMessage(state, JSON.toJSONString(authorizedVo));
+        } catch (IOException e) {
+            log.error("=======发送通知异常=========={}", e);
+        }
     }
 
 }

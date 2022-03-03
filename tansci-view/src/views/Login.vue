@@ -30,7 +30,9 @@
 					</el-form>
 					<div v-else-if="!loginMode" class="other-form">
 						<div class="login-form-title">{{otherForm.qrcodeTitle}}</div>
-						<el-image :src="otherForm.qrcodeUrl" :lazy="true" style="width:180px;height:180px;cursor: pointer;"></el-image>
+						<el-result v-if="otherForm.status == 1" icon="success" title="扫码成功" sub-title="正在登录中，请稍后。"></el-result>
+						<el-result v-if="otherForm.status == 2" icon="error" title="授权失败" sub-title="登录授权失败，请刷新重试。"></el-result>
+						<el-image v-if="otherForm.status == 0" :src="otherForm.qrcodeUrl" :lazy="true" style="width:180px;height:180px;cursor: pointer;"></el-image>
 						<div>
 							<el-button @click="loginMode = true" type="text" icon='UserFilled'>账号密码登录</el-button>
 						</div>
@@ -47,7 +49,7 @@
 	</div>
 </template>
 <script setup>
-	import {onMounted,onBeforeMount,reactive,ref,toRefs,unref} from "vue"
+	import {onBeforeMount,reactive,ref,toRefs,unref} from "vue"
 	import {ElMessage} from 'element-plus'
 	import {useRouter} from 'vue-router'
 	import {useStore} from 'vuex'
@@ -79,14 +81,12 @@
 			],
 			qrcodeTitle: '',
 			qrcodeUrl: '',
-		}
+			status: 0,
+		},
+		socket: null,
+		socketUrl: 'ws://localhost:8005/tansci/ws/',
 	})
-
-	const {loginStyle,loginForm,loginMode,otherForm} = toRefs(state)
-
-	onMounted(()=>{
-
-	})
+	const {loginStyle,loginForm,loginMode,otherForm,socket,socketUrl} = toRefs(state)
 
 	onBeforeMount(() => {
 		state.loginStyle.height = (document.body.clientHeight || document.documentElement.clientHeight) + "px"
@@ -135,9 +135,14 @@
 			state.otherForm.qrcodeTitle = mode.name;
 
 			// 请求接口获取二维码
+			let id = '';
+			state.otherForm.status = 0;
 			wxLogin({}).then(res=>{
 				if(res){
-					state.otherForm.qrcodeUrl = res.result;
+					state.otherForm.qrcodeUrl = res.result.qrcode;
+					// 建立 socket 连接
+					let url = state.socketUrl + res.result.state;
+					webSocket(url)
 				} else {
 					ElMessage.warning(res.message)
 				}
@@ -147,6 +152,44 @@
 			ElMessage.warning("暂不支持该登录方式！")
 		}
 	}
+
+	const webSocket = (url) =>{
+		if ('WebSocket' in window) {
+			state.socket = new WebSocket(url);
+			state.socket.onmessage = function (event) {
+				let resp = JSON.parse(event.data);
+				if(resp.status == 200){
+					state.otherForm.status = 1;
+					store.commit('setToken', resp.token);
+					store.commit('setUser', {
+						username: resp.username,
+						nickname: resp.nickname,
+						loginTime: resp.loginTime
+					});
+					// 获取菜单
+					menuList({type:1, status: 1}).then(res=>{
+						store.commit('setMenus', res.result);
+						router.push({path: 'home'});
+					})
+				} else {
+					state.otherForm.status = 2;
+				}
+			}
+			state.socket.onopen = function () {
+				console.log('连接已建立')
+			}
+			state.socket.onclose = function () {
+				console.log('连接已关闭')
+			}
+			state.socket.onerror = function () {
+				console.log('连接异常,尝试重新连接')
+				webSocket();
+			}
+			window.onbeforeunload = function () {
+				state.socket.onclose();
+			}
+		}
+	} 
 </script>
 <style lang="less" scoped="scoped">
 	.login {
