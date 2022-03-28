@@ -21,27 +21,27 @@ public class AuthorizedConfig implements InitializingBean {
      */
 
     // appid
-    @Value("${authorized.wechat.app_id}")
+    @Value("${authorized.wechat.app-id}")
     private String wxAppId;
 
     // appsecret
-    @Value("${authorized.wechat.app_secret}")
+    @Value("${authorized.wechat.app-secret}")
     private String wxAppSecret;
 
     // 微信开放平台授权baseUrl
-    @Value("${authorized.wechat.base_url}")
+    @Value("${authorized.wechat.base-url}")
     private String wxBaseUrl;
 
     // 微信开放平台获取token
-    @Value("${authorized.wechat.base_access_token_url}")
+    @Value("${authorized.wechat.base-access-token-url}")
     private String wxBaseAccessTokenUrl;
 
     // 微信开放平台获取用户信息
-    @Value("${authorized.wechat.base_user_info_url}")
+    @Value("${authorized.wechat.base-user-info-url}")
     private String wxBaseUserInfoUrl;
 
     // 重定向ur
-    @Value("${authorized.wechat.redirect_url}")
+    @Value("${authorized.wechat.redirect-url}")
     private String wxRedirectUrl;
 
     public static String WX_APP_ID;

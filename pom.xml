@@ -26,6 +26,8 @@
         <dysmsapi.version>2.0.4</dysmsapi.version>
         <knife4j-spring-boot.version>3.0.3</knife4j-spring-boot.version>
         <com.google.zxing.version>3.3.3</com.google.zxing.version>
+        <wechatpay-apiv3.version>0.4.4</wechatpay-apiv3.version>
+        <alipay-sdk-java.version>4.22.67.ALL</alipay-sdk-java.version>
     </properties>
 
     <dependencies>
@@ -123,6 +125,20 @@
             <groupId>com.google.zxing</groupId>
             <artifactId>javase</artifactId>
             <version>${com.google.zxing.version}</version>
+        </dependency>
+
+        <!-- 支付：微信 -->
+        <dependency>
+            <groupId>com.github.wechatpay-apiv3</groupId>
+            <artifactId>wechatpay-apache-httpclient</artifactId>
+            <version>${wechatpay-apiv3.version}</version>
+        </dependency>
+
+        <!-- 支付：支付宝 -->
+        <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+            <version>${alipay-sdk-java.version}</version>
         </dependency>
 
         <dependency>
