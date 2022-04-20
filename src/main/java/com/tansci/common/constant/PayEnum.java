@@ -11,7 +11,7 @@ import java.util.Objects;
  * @className：PayConstants.java
  * @description：支付枚举
  * @author：tanyp
- * @dateTime：2022/3/28 13:40 
+ * @dateTime：2022/3/28 13:40
  * @editNote：
  */
 @Getter
@@ -107,7 +107,7 @@ public enum PayEnum {
      * @Return： java.lang.String
      * @editNote：
      */
-    public static String getVlaueByGroup(Integer key, String group) {
+    public static String getVlaueByGroup(String key, String group) {
         for (PayEnum item : PayEnum.values()) {
             if (Objects.equals(key, item.key) && Objects.equals(group, item.group)) {
                 return item.getValue();

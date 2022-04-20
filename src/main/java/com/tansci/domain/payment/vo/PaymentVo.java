@@ -28,6 +28,12 @@ public class PaymentVo {
     @ApiModelProperty(value = "支付订单号")
     private String paymentId;
 
+    @ApiModelProperty(value = "退款单号")
+    private String refundId;
+
+    @ApiModelProperty(value = "三方退款单号")
+    private String refundNo;
+
     @ApiModelProperty(value = "支付时间")
     private String payTime;
 
@@ -48,5 +54,8 @@ public class PaymentVo {
 
     @ApiModelProperty(value = "退款时间")
     private String refundTime;
+
+    @ApiModelProperty(value = "预支付交易会话标识")
+    private String prepayId;
 
 }

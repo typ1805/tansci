@@ -12,7 +12,6 @@ import com.tansci.config.PaymentConfig;
 import com.tansci.domain.payment.dto.PaymentDto;
 import com.tansci.domain.payment.vo.PaymentVo;
 import com.tansci.service.payment.PaymentService;
-import com.tansci.utils.HumpConversionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +27,7 @@ import java.util.Objects;
  * @className：AliPaymentServiceImpl.java
  * @description：支付宝支付
  * @author：tanyp
- * @dateTime：2022/3/28 11:32 
+ * @dateTime：2022/3/28 11:32
  * @editNote：
  */
 @Slf4j
@@ -38,14 +37,29 @@ public class AliPaymentServiceImpl implements PaymentService {
     @Override
     public PaymentVo pay(PaymentDto dto) {
         PaymentVo paymentVo = PaymentVo.builder().orderId(dto.getOrderId()).build();
+
+        /**
+         * out_trade_no：商户订单号：64个字符以内，仅支持字母、数字、下划线且需保证在商户端不重复
+         * total_amount：订单总金额: 单位为元，精确到小数点后两位，取值范围：[0.01,100000000]
+         * subject：订单标题: 不可使用特殊字符，如 /，=，& 等
+         * product_code：产品码: 商家和支付宝签约的产品码
+         * quit_url：用户付款中途退出返回商户网站的地址
+         */
+
         try {
-            Map param = HumpConversionUtils.transform(dto);
             switch (dto.getPayType()) {
                 case "WAP":
                     // 手机网站支付
+                    Map<String, Object> wapReq = new HashMap<>();
+                    wapReq.put("out_trade_no", dto.getOrderId());
+                    wapReq.put("total_amount", dto.getAmount());
+                    wapReq.put("subject", dto.getDescription());
+                    wapReq.put("product_code", "QUICK_WAP_WAY");
+                    wapReq.put("quit_url", dto.getQuitUrl());
+
                     AlipayTradeWapPayRequest wapRequest = new AlipayTradeWapPayRequest();
+                    wapRequest.setBizContent(JSON.toJSONString(wapReq));
                     wapRequest.setNotifyUrl(PaymentConfig.ALI_NOTIFY_URL);
-                    wapRequest.setBizContent(JSON.toJSONString(param));
 
                     AlipayTradeWapPayResponse wapResponse = new DefaultAlipayClient(
                             PaymentConfig.ALI_GATEWAY_URL,
@@ -63,18 +77,25 @@ public class AliPaymentServiceImpl implements PaymentService {
                     String wapBody = wapResponse.getBody();
                     if (!Objects.isNull(wapBody) && !Objects.equals("", wapBody)) {
                         paymentVo.setHtml(wapBody);
+                        paymentVo.setPaymentId(wapResponse.getTradeNo());
                         paymentVo.setState(PayEnum.ALI_WAIT_BUYER_PAY.getValue());
                         paymentVo.setMessage(PayEnum.ALI_WAIT_BUYER_PAY.getKey());
                     } else {
                         paymentVo.setState(PayEnum.ALI_PAYERROR.getValue());
-                        paymentVo.setMessage(PayEnum.ALI_PAYERROR.getKey());
+                        paymentVo.setMessage(wapResponse.getMsg());
                     }
                     break;
                 case "PAGE":
                     // 电脑网站支付
+                    Map<String, Object> pageReq = new HashMap<>();
+                    pageReq.put("out_trade_no", dto.getOrderId());
+                    pageReq.put("total_amount", dto.getAmount());
+                    pageReq.put("subject", dto.getDescription());
+                    pageReq.put("product_code", "FAST_INSTANT_TRADE_PAY");
+
                     AlipayTradePagePayRequest pageRequest = new AlipayTradePagePayRequest();
                     pageRequest.setNotifyUrl(PaymentConfig.ALI_NOTIFY_URL);
-                    pageRequest.setBizContent(JSON.toJSONString(param));
+                    pageRequest.setBizContent(JSON.toJSONString(pageReq));
 
                     AlipayTradePagePayResponse pageResponse = new DefaultAlipayClient(
                             PaymentConfig.ALI_GATEWAY_URL,
@@ -91,18 +112,25 @@ public class AliPaymentServiceImpl implements PaymentService {
                     String pageBody = pageResponse.getBody();
                     if (!Objects.isNull(pageBody) && !Objects.equals("", pageBody)) {
                         paymentVo.setHtml(pageBody);
+                        paymentVo.setPaymentId(pageResponse.getTradeNo());
                         paymentVo.setState(PayEnum.ALI_WAIT_BUYER_PAY.getValue());
                         paymentVo.setMessage(PayEnum.ALI_WAIT_BUYER_PAY.getKey());
                     } else {
                         paymentVo.setState(PayEnum.ALI_PAYERROR.getValue());
-                        paymentVo.setMessage(PayEnum.ALI_PAYERROR.getKey());
+                        paymentVo.setMessage(pageResponse.getMsg());
                     }
                     break;
                 case "APP":
                     // app支付接口2.0
+                    Map<String, Object> appReq = new HashMap<>();
+                    appReq.put("out_trade_no", dto.getOrderId());
+                    appReq.put("total_amount", dto.getAmount());
+                    appReq.put("subject", dto.getDescription());
+                    appReq.put("product_code", "QUICK_MSECURITY_PAY");
+
                     AlipayTradeAppPayRequest appRequest = new AlipayTradeAppPayRequest();
                     appRequest.setNotifyUrl(PaymentConfig.ALI_NOTIFY_URL);
-                    appRequest.setBizContent(JSON.toJSONString(param));
+                    appRequest.setBizContent(JSON.toJSONString(appReq));
 
                     AlipayTradeAppPayResponse appResponse = new DefaultAlipayClient(
                             PaymentConfig.ALI_GATEWAY_URL,
@@ -119,18 +147,24 @@ public class AliPaymentServiceImpl implements PaymentService {
                     String orderBody = appResponse.getBody();
                     if (!Objects.isNull(orderBody) && !Objects.equals("", orderBody)) {
                         paymentVo.setHtml(orderBody);
+                        paymentVo.setPaymentId(appResponse.getTradeNo());
                         paymentVo.setState(PayEnum.ALI_WAIT_BUYER_PAY.getValue());
                         paymentVo.setMessage(PayEnum.ALI_WAIT_BUYER_PAY.getKey());
                     } else {
                         paymentVo.setState(PayEnum.ALI_PAYERROR.getValue());
-                        paymentVo.setMessage(PayEnum.ALI_PAYERROR.getKey());
+                        paymentVo.setMessage(appResponse.getMsg());
                     }
                     break;
                 case "NATIVE":
                     // 预支付NATIVE
+                    Map<String, Object> nativeReq = new HashMap<>();
+                    nativeReq.put("out_trade_no", dto.getOrderId());
+                    nativeReq.put("total_amount", dto.getAmount());
+                    nativeReq.put("subject", dto.getDescription());
+
                     AlipayTradePrecreateRequest nativeRequest = new AlipayTradePrecreateRequest();
                     nativeRequest.setNotifyUrl(PaymentConfig.ALI_NOTIFY_URL);
-                    nativeRequest.setBizContent(JSON.toJSONString(param));
+                    nativeRequest.setBizContent(JSON.toJSONString(nativeReq));
 
                     AlipayTradePrecreateResponse nativeResponse = new DefaultAlipayClient(
                             PaymentConfig.ALI_GATEWAY_URL,
@@ -145,6 +179,11 @@ public class AliPaymentServiceImpl implements PaymentService {
                     log.info("支付返回信息:{}", JSON.toJSON(nativeRequest));
                     if (Objects.equals("10000", nativeResponse.getCode())) {
                         paymentVo.setCodeUrl(nativeResponse.getQrCode());
+                        paymentVo.setState(PayEnum.ALI_WAIT_BUYER_PAY.getValue());
+                        paymentVo.setMessage(PayEnum.ALI_WAIT_BUYER_PAY.getKey());
+                    } else {
+                        paymentVo.setState(PayEnum.ALI_PAYERROR.getValue());
+                        paymentVo.setMessage(nativeResponse.getMsg());
                     }
                     break;
                 default:
@@ -160,9 +199,18 @@ public class AliPaymentServiceImpl implements PaymentService {
     @Override
     public PaymentVo query(PaymentDto dto) {
         PaymentVo paymentVo = PaymentVo.builder().orderId(dto.getOrderId()).build();
+
+        /**
+         * out_trade_no：订单支付时传入的商户订单号,和支付宝交易号不能同时为空，trade_no,out_trade_no如果同时存在优先取trade_no
+         * trade_no：支付宝交易号，和商户订单号不能同时为空
+         */
+
         try {
+            Map param = new HashMap();
+            param.put("out_trade_no", dto.getOrderId());
+            param.put("trade_no", dto.getPaymentId());
+
             AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
-            Map param = HumpConversionUtils.transform(dto);
             request.setBizContent(JSON.toJSONString(param));
 
             AlipayTradeQueryResponse response = new DefaultAlipayClient(
@@ -191,10 +239,19 @@ public class AliPaymentServiceImpl implements PaymentService {
     @Override
     public PaymentVo close(PaymentDto dto) {
         PaymentVo paymentVo = PaymentVo.builder().orderId(dto.getOrderId()).build();
+
+        /**
+         * out_trade_no：订单支付时传入的商户订单号,和支付宝交易号不能同时为空，trade_no,out_trade_no如果同时存在优先取trade_no
+         * trade_no：支付宝交易号，和商户订单号不能同时为空
+         */
+
         try {
+            Map param = new HashMap();
+            param.put("out_trade_no", dto.getOrderId());
+            param.put("trade_no", dto.getPaymentId());
+
             AlipayTradeCloseRequest request = new AlipayTradeCloseRequest();
             request.setNotifyUrl(PaymentConfig.ALI_GATEWAY_URL);
-            Map param = HumpConversionUtils.transform(dto);
             request.setBizContent(JSON.toJSONString(param));
 
             AlipayTradeCloseResponse response = new DefaultAlipayClient(
@@ -223,10 +280,21 @@ public class AliPaymentServiceImpl implements PaymentService {
     @Override
     public PaymentVo refund(PaymentDto dto) {
         PaymentVo paymentVo = PaymentVo.builder().orderId(dto.getOrderId()).build();
+
+        /**
+         * out_trade_no：订单支付时传入的商户订单号,和支付宝交易号不能同时为空，trade_no,out_trade_no如果同时存在优先取trade_no
+         * trade_no：支付宝交易号，和商户订单号不能同时为空
+         * refund_amount：退款金额
+         */
+
         try {
+            Map param = new HashMap();
+            param.put("out_trade_no", dto.getOrderId());
+            param.put("trade_no", dto.getPaymentId());
+            param.put("refund_amount", dto.getAmount());
+
             AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
             request.setNotifyUrl(PaymentConfig.ALI_GATEWAY_URL);
-            Map param = HumpConversionUtils.transform(dto);
             request.setBizContent(JSON.toJSONString(param));
 
             AlipayTradeRefundResponse response = new DefaultAlipayClient(
@@ -242,6 +310,7 @@ public class AliPaymentServiceImpl implements PaymentService {
             log.info("退款返回信息：{}", JSON.toJSON(response));
             if (Objects.equals("10000", response.getCode())) {
                 paymentVo.setPaymentId(response.getTradeNo());
+                paymentVo.setAmount(response.getRefundFee());
                 paymentVo.setState(PayEnum.ALI_TRADE_CLOSED.getValue());
             }
             paymentVo.setMessage(response.getMsg());
@@ -353,4 +422,5 @@ public class AliPaymentServiceImpl implements PaymentService {
     public void refundNotify(HttpServletRequest request, HttpServletResponse response) {
 
     }
+
 }

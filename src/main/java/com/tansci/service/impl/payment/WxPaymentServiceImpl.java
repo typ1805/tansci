@@ -9,7 +9,6 @@ import com.tansci.config.PaymentConfig;
 import com.tansci.domain.payment.dto.PaymentDto;
 import com.tansci.domain.payment.vo.PaymentVo;
 import com.tansci.service.payment.PaymentService;
-import com.tansci.utils.QRCodeUtils;
 import com.wechat.pay.contrib.apache.httpclient.WechatPayHttpClientBuilder;
 import com.wechat.pay.contrib.apache.httpclient.auth.*;
 import com.wechat.pay.contrib.apache.httpclient.notification.Notification;
@@ -31,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.util.HashMap;
@@ -42,7 +42,7 @@ import java.util.Objects;
  * @className：WxPaymentServiceImpl.java
  * @description：微信支付
  * @author：tanyp
- * @dateTime：2022/3/28 11:31 
+ * @dateTime：2022/3/28 11:31
  * @editNote：
  */
 @Slf4j
@@ -94,60 +94,137 @@ public class WxPaymentServiceImpl implements PaymentService {
     public PaymentVo pay(PaymentDto dto) {
         PaymentVo paymentVo = PaymentVo.builder().orderId(dto.getOrderId()).build();
         try {
-            // 订单金额信息
-            Map amountMap = new HashMap();
-            amountMap.put("total", dto.getAmount());
-            amountMap.put("currency", "CNY");
-            // 支付者信息
-            Map payerMap = new HashMap();
-            amountMap.put("openid", dto.getOpenId());
             // 请求body参数
-            Map map = new HashMap();
-            map.put("mchid", PaymentConfig.WX_MCH_ID);
-            map.put("appid", PaymentConfig.WX_APP_ID);
-            map.put("out_trade_no", dto.getOrderId());
-            map.put("description", dto.getDescription());
-            map.put("notify_url", PaymentConfig.WX_NNOTIFY_URL);
-            map.put("amount", amountMap);
-            map.put("payer", payerMap);
+            Map param = new HashMap();
+            param.put("mchid", PaymentConfig.WX_MCH_ID);
+            param.put("appid", PaymentConfig.WX_APP_ID);
+            param.put("out_trade_no", dto.getOrderId());
+            param.put("description", dto.getDescription());
+            param.put("notify_url", PaymentConfig.WX_NNOTIFY_URL);
+            Map amount = new HashMap();
+            amount.put("total", dto.getAmount());
+            amount.put("currency", "CNY");
+            param.put("amount", amount);
 
             CloseableHttpClient httpClient = httpClient();
-            StringEntity entity = new StringEntity(JSONObject.toJSONString(map));
-            entity.setContentType("application/json");
+            HttpPost httpPost = new HttpPost();
+            httpPost.setHeader("Accept", "application/json");
+            StringEntity entity = null;
+
             CloseableHttpResponse response = null;
+            Integer statusCode = null;
+
             try {
                 switch (dto.getPayType()) {
-                    case "NATIVE":
-                        // 请求URL
-                        HttpPost httpPost = new HttpPost("https://api.mch.weixin.qq.com/v3/pay/transactions/jsapi");
+                    case "WAP": // H5下单
+                        Map sceneInfo = new HashMap();
+                        sceneInfo.put("payer_client_ip", dto.getClientIp());
+                        Map h5Info = new HashMap();
+                        h5Info.put("type", "Wap");
+                        sceneInfo.put("h5_info", h5Info);
+                        param.put("scene_info", sceneInfo);
+
+                        entity = new StringEntity(JSONObject.toJSONString(param));
+                        entity.setContentType("application/json");
                         httpPost.setEntity(entity);
-                        httpPost.setHeader("Accept", "application/json");
+                        httpPost.setURI(URI.create("https://api.mch.weixin.qq.com/v3/pay/transactions/h5"));
+
                         // 完成签名并执行请求
                         response = httpClient.execute(httpPost);
-                        int statusCode = response.getStatusLine().getStatusCode();
+                        statusCode = response.getStatusLine().getStatusCode();
                         if (Objects.equals(Constants.SUCCESS, statusCode)) {
-                            log.info("请求支付接口成功，响应参数：{} " + EntityUtils.toString(response.getEntity()));
-                            // 生成二维码 TODO
-                            String bodyAsString = EntityUtils.toString(response.getEntity());
+                            log.info("=====WAP(H5)====请求支付接口成功，响应参数：{} " + EntityUtils.toString(response.getEntity()));
+                            // 生成二维码
+                            String bodyString = EntityUtils.toString(response.getEntity());
+                            JSONObject jsonBody = JSONObject.parseObject(bodyString);
 
-
-                            String qrcode = QRCodeUtils.crateQRCode("", null, null);
-                            paymentVo.setCodeUrl(qrcode);
+                            paymentVo.setHtml(jsonBody.get("h5_url").toString());
                             paymentVo.setMessage(PayEnum.WX_USERPAYING.getKey());
                             paymentVo.setState(PayEnum.WX_USERPAYING.getValue());
                         } else {
-                            log.info("请求支付接口失败，状态：{}，响应参数：{} ", statusCode, EntityUtils.toString(response.getEntity()));
+                            log.info("=====WAP(H5)====请求支付接口失败，状态：{}，响应参数：{} ", statusCode, EntityUtils.toString(response.getEntity()));
+                            paymentVo.setMessage(PayEnum.WX_PAYERROR.getKey());
+                            paymentVo.setState(PayEnum.WX_PAYERROR.getValue());
+                        }
+                        break;
+                    case "NATIVE":
+                        entity = new StringEntity(JSONObject.toJSONString(param));
+                        entity.setContentType("application/json");
+                        httpPost.setEntity(entity);
+                        httpPost.setURI(URI.create("https://api.mch.weixin.qq.com/v3/pay/transactions/native"));
+
+                        // 完成签名并执行请求
+                        response = httpClient.execute(httpPost);
+                        statusCode = response.getStatusLine().getStatusCode();
+                        if (Objects.equals(Constants.SUCCESS, statusCode)) {
+                            log.info("=====NATIVE====请求支付接口成功，响应参数：{} " + EntityUtils.toString(response.getEntity()));
+                            // 生成二维码
+                            String bodyString = EntityUtils.toString(response.getEntity());
+                            JSONObject jsonBody = JSONObject.parseObject(bodyString);
+
+                            paymentVo.setCodeUrl(jsonBody.get("code_url").toString());
+                            paymentVo.setMessage(PayEnum.WX_USERPAYING.getKey());
+                            paymentVo.setState(PayEnum.WX_USERPAYING.getValue());
+                        } else {
+                            log.info("=====NATIVE====请求支付接口失败，状态：{}，响应参数：{} ", statusCode, EntityUtils.toString(response.getEntity()));
                             paymentVo.setMessage(PayEnum.WX_PAYERROR.getKey());
                             paymentVo.setState(PayEnum.WX_PAYERROR.getValue());
                         }
                         break;
                     case "MICROPAY":
+                        // v3 暂不支持 TODO
+
                         break;
                     case "JSAPI":
-                        break;
-                    case "MWEB":
+                        Map payer = new HashMap();
+                        payer.put("openid", dto.getOpenId());
+                        param.put("payer", payer);
+
+                        entity = new StringEntity(JSONObject.toJSONString(param));
+                        entity.setContentType("application/json");
+                        httpPost.setEntity(entity);
+                        httpPost.setURI(URI.create("https://api.mch.weixin.qq.com/v3/pay/transactions/jsapi"));
+
+                        // 完成签名并执行请求
+                        response = httpClient.execute(httpPost);
+                        statusCode = response.getStatusLine().getStatusCode();
+                        if (Objects.equals(Constants.SUCCESS, statusCode)) {
+                            log.info("=====JSAPI====请求支付接口成功，响应参数：{} " + EntityUtils.toString(response.getEntity()));
+                            // 生成二维码
+                            String bodyString = EntityUtils.toString(response.getEntity());
+                            JSONObject jsonBody = JSONObject.parseObject(bodyString);
+
+                            paymentVo.setPrepayId(jsonBody.get("prepay_id").toString());
+                            paymentVo.setMessage(PayEnum.WX_USERPAYING.getKey());
+                            paymentVo.setState(PayEnum.WX_USERPAYING.getValue());
+                        } else {
+                            log.info("=====JSAPI====请求支付接口失败，状态：{}，响应参数：{} ", statusCode, EntityUtils.toString(response.getEntity()));
+                            paymentVo.setMessage(PayEnum.WX_PAYERROR.getKey());
+                            paymentVo.setState(PayEnum.WX_PAYERROR.getValue());
+                        }
                         break;
                     case "APP":
+                        entity = new StringEntity(JSONObject.toJSONString(param));
+                        entity.setContentType("application/json");
+                        httpPost.setEntity(entity);
+                        httpPost.setURI(URI.create("https://api.mch.weixin.qq.com/v3/pay/transactions/app"));
+
+                        // 完成签名并执行请求
+                        response = httpClient.execute(httpPost);
+                        statusCode = response.getStatusLine().getStatusCode();
+                        if (Objects.equals(Constants.SUCCESS, statusCode)) {
+                            log.info("=====APP=====请求支付接口成功，响应参数：{} " + EntityUtils.toString(response.getEntity()));
+                            String bodyString = EntityUtils.toString(response.getEntity());
+                            JSONObject jsonBody = JSONObject.parseObject(bodyString);
+
+                            paymentVo.setPrepayId(jsonBody.get("prepay_id").toString());
+                            paymentVo.setMessage(PayEnum.WX_USERPAYING.getKey());
+                            paymentVo.setState(PayEnum.WX_USERPAYING.getValue());
+                        } else {
+                            log.info("=====APP=====请求支付接口失败，状态：{}，响应参数：{} ", statusCode, EntityUtils.toString(response.getEntity()));
+                            paymentVo.setMessage(PayEnum.WX_PAYERROR.getKey());
+                            paymentVo.setState(PayEnum.WX_PAYERROR.getValue());
+                        }
                         break;
                     default:
                         throw new BusinessException("不支持此支付类型");
@@ -183,12 +260,13 @@ public class WxPaymentServiceImpl implements PaymentService {
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (Objects.equals(Constants.SUCCESS, statusCode)) {
                     log.info("请求查询订单接口成功，响应参数：{} " + EntityUtils.toString(response.getEntity()));
-                    // TODO
-                    String bodyAsString = EntityUtils.toString(response.getEntity());
+                    String bodyString = EntityUtils.toString(response.getEntity());
+                    JSONObject jsonBody = JSONObject.parseObject(bodyString);
 
-                    paymentVo.setPaymentId("");
-                    paymentVo.setMessage(PayEnum.WX_USERPAYING.getKey());
-                    paymentVo.setState(PayEnum.WX_USERPAYING.getValue());
+                    paymentVo.setPaymentId(jsonBody.getString("transaction_id"));
+                    paymentVo.setPayTime(jsonBody.getString("success_time"));
+                    paymentVo.setMessage(jsonBody.getString("trade_state_desc"));
+                    paymentVo.setState(PayEnum.getVlaueByGroup(jsonBody.getString("trade_state"), "pay_wx_status"));
                 } else {
                     log.info("请求查询订单接口失败，状态：{}，响应参数：{} ", statusCode, EntityUtils.toString(response.getEntity()));
                 }
@@ -227,10 +305,7 @@ public class WxPaymentServiceImpl implements PaymentService {
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (Objects.equals(Constants.SUCCESS, statusCode)) {
                     log.info("请求关闭订单接口成功，响应参数：{} " + EntityUtils.toString(response.getEntity()));
-                    // TODO
-                    String bodyAsString = EntityUtils.toString(response.getEntity());
-
-                    paymentVo.setPaymentId("");
+                    // 无返回值
                     paymentVo.setMessage(PayEnum.WX_CLOSED.getKey());
                     paymentVo.setState(PayEnum.WX_CLOSED.getValue());
                 } else {
@@ -254,7 +329,55 @@ public class WxPaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentVo refund(PaymentDto dto) {
-        return null;
+        PaymentVo paymentVo = PaymentVo.builder().orderId(dto.getOrderId()).refundId(dto.getRefundId()).build();
+        try {
+            Map param = new HashMap();
+            param.put("out_trade_no", dto.getOrderId());
+            param.put("out_refund_no", dto.getRefundId());
+            Map account = new HashMap();
+            account.put("refund", dto.getAmount());
+            account.put("total", dto.getAmount());
+            account.put("currency", "CNY");
+            param.put("funds_account", account);
+
+            HttpPost httpPost = new HttpPost("https://api.mch.weixin.qq.com/v3/refund/domestic/refunds");
+            httpPost.addHeader("Accept", "application/json");
+            httpPost.addHeader("Content-type", "application/json; charset=utf-8");
+            StringEntity entity = new StringEntity(JSONObject.toJSONString(param));
+            entity.setContentType("application/json");
+            httpPost.setEntity(entity);
+
+            CloseableHttpClient httpClient = httpClient();
+            CloseableHttpResponse response = null;
+            try {
+                response = httpClient.execute(httpPost);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (Objects.equals(Constants.SUCCESS, statusCode)) {
+                    log.info("请求退款接口成功，响应参数：{} " + EntityUtils.toString(response.getEntity()));
+                    String bodyString = EntityUtils.toString(response.getEntity());
+                    JSONObject jsonBody = JSONObject.parseObject(bodyString);
+
+                    paymentVo.setPayTime(jsonBody.getString("success_time"));
+                    paymentVo.setRefundNo(jsonBody.getString("refund_id"));
+                    paymentVo.setMessage(PayEnum.WX_PROCESSING.getKey());
+                    paymentVo.setState(PayEnum.getVlaueByGroup(jsonBody.getString("status"), "pay_wx_status"));
+                } else {
+                    log.info("请求退款接口失败，状态：{}，响应参数：{} ", statusCode, EntityUtils.toString(response.getEntity()));
+                }
+            } finally {
+                if (Objects.nonNull(response)) {
+                    response.close();
+                }
+                if (Objects.nonNull(httpClient)) {
+                    after(httpClient);
+                }
+            }
+        } catch (Exception e) {
+            paymentVo.setMessage(PayEnum.WX_NOTPAY.getKey());
+            paymentVo.setState(PayEnum.WX_NOTPAY.getValue());
+            log.error("请求微信退款订单异常，异常信息:{}", e);
+        }
+        return paymentVo;
     }
 
     @Override
