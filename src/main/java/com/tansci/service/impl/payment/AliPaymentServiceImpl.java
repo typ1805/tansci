@@ -226,7 +226,7 @@ public class AliPaymentServiceImpl implements PaymentService {
             log.info("查询返回信息：{}", JSON.toJSON(response));
             if (Objects.equals("10000", response.getCode())) {
                 paymentVo.setPaymentId(response.getTradeNo());
-                paymentVo.setState(response.getTradeStatus());
+                paymentVo.setState(PayEnum.getVlaueByGroup(response.getTradeStatus(), "pay_ali_status"));
             }
             paymentVo.setMessage(response.getMsg());
         } catch (AlipayApiException e) {
@@ -279,7 +279,7 @@ public class AliPaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentVo refund(PaymentDto dto) {
-        PaymentVo paymentVo = PaymentVo.builder().orderId(dto.getOrderId()).build();
+        PaymentVo paymentVo = PaymentVo.builder().orderId(dto.getOrderId()).refundId(dto.getRefundId()).build();
 
         /**
          * out_trade_no：订单支付时传入的商户订单号,和支付宝交易号不能同时为空，trade_no,out_trade_no如果同时存在优先取trade_no
@@ -310,6 +310,7 @@ public class AliPaymentServiceImpl implements PaymentService {
             log.info("退款返回信息：{}", JSON.toJSON(response));
             if (Objects.equals("10000", response.getCode())) {
                 paymentVo.setPaymentId(response.getTradeNo());
+                paymentVo.setRefundNo(response.getTradeNo());
                 paymentVo.setAmount(response.getRefundFee());
                 paymentVo.setState(PayEnum.ALI_TRADE_CLOSED.getValue());
             }
@@ -322,57 +323,61 @@ public class AliPaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public void payNotify(HttpServletRequest request, HttpServletResponse response) {
+    public PaymentVo payNotify(HttpServletRequest request, HttpServletResponse response) {
         PaymentVo paymentVo = new PaymentVo();
         Map<String, String> params = new HashMap<String, String>();
         Map<String, String[]> requestParams = request.getParameterMap();
         for (Iterator<String> iter = requestParams.keySet().iterator(); iter.hasNext(); ) {
-            String name = (String) iter.next();
-            String[] values = (String[]) requestParams.get(name);
+            String name = iter.next();
+            String[] values = requestParams.get(name);
             String valueStr = "";
             for (int i = 0; i < values.length; i++) {
                 valueStr = (i == values.length - 1) ? valueStr + values[i] : valueStr + values[i] + ",";
             }
-            //乱码解决，这段代码在出现乱码时使用
+
+            // 乱码解决，这段代码在出现乱码时使用
 //            valueStr = new String(valueStr.getBytes("ISO-8859-1"), "utf-8");
             params.put(name, valueStr);
         }
-
 
         try {
             String appId = new String(request.getParameter("app_id").getBytes("ISO-8859-1"), "UTF-8");
             // 验证app_id是否为该商户本身
             if (!Objects.equals(PaymentConfig.ALI_APP_ID, appId)) {
                 log.error("非法的回调请求，请求appId：{}", appId);
-                throw new BusinessException("非法的回调请求");
+                return null;
             }
 
             // 验证签名
             if (AlipaySignature.rsaCheckV1(params, PaymentConfig.ALI_PUBLIC_KEY, PaymentConfig.ALI_CHARSET, PaymentConfig.ALI_SIGN_TYPE)) {
-                //商户订单号
+                // 商户订单号
                 String outTradeNo = null;
                 if (!Objects.isNull(request.getParameter("out_trade_no"))) {
                     outTradeNo = new String(request.getParameter("out_trade_no").getBytes("ISO-8859-1"), "UTF-8");
                 }
                 paymentVo.setOrderId(outTradeNo);
-                //支付宝交易号
+
+                // 支付宝交易号
                 String tradeNo = null;
                 if (!Objects.isNull(request.getParameter("trade_no"))) {
                     tradeNo = new String(request.getParameter("trade_no").getBytes("ISO-8859-1"), "UTF-8");
                 }
                 paymentVo.setPaymentId(tradeNo);
-                //交易状态
+
+                // 交易状态
                 String tradeStatus = null;
                 if (!Objects.isNull(request.getParameter("trade_status"))) {
                     tradeStatus = new String(request.getParameter("trade_status").getBytes("ISO-8859-1"), "UTF-8");
                 }
-                paymentVo.setState(tradeStatus);
+                paymentVo.setState(PayEnum.getVlaueByGroup(tradeStatus, "pay_ali_status"));
+
                 // 支付总金额
                 String totalAmount = null;
                 if (!Objects.isNull(request.getParameter("total_amount"))) {
                     totalAmount = new String(request.getParameter("total_amount").getBytes("ISO-8859-1"), "UTF-8");
                 }
                 paymentVo.setAmount(totalAmount);
+
                 // 支付时间
                 String gmtPayment = null;
                 if (!Objects.isNull(request.getParameter("gmt_payment"))) {
@@ -388,12 +393,13 @@ public class AliPaymentServiceImpl implements PaymentService {
                     outBizNo = new String(request.getParameter("out_biz_no").getBytes("ISO-8859-1"), "UTF-8");
                 }
                 paymentVo.setOrderId(outBizNo);
+
                 // 本次退款是否发生了资金变化
                 String fundChange = null;
                 if (!Objects.isNull(request.getParameter("fund_change"))) {
                     fundChange = new String(request.getParameter("fund_change").getBytes("ISO-8859-1"), "UTF-8");
                 }
-                //            paymentVo.setFundChange(fundChange);
+//                paymentVo.setAmount(fundChange);
 
                 // 退款总金额
                 String refundFee = null;
@@ -401,26 +407,26 @@ public class AliPaymentServiceImpl implements PaymentService {
                     refundFee = new String(request.getParameter("refund_fee").getBytes("ISO-8859-1"), "UTF-8");
                 }
                 paymentVo.setAmount(refundFee);
+
                 // 退款时间
                 String gmtRefund = null;
                 if (!Objects.isNull(request.getParameter("gmt_refund"))) {
                     gmtRefund = new String(request.getParameter("gmt_refund").getBytes("ISO-8859-1"), "UTF-8");
                 }
                 paymentVo.setRefundTime(gmtRefund);
+                return paymentVo;
             } else {
                 log.error("验证失败");
-                throw new BusinessException("验证失败");
             }
         } catch (Exception e) {
             log.error("验证失败:{}", e);
-            throw new BusinessException("验证失败");
         }
-        // 回调成功，修改数据库   todo
+        return null;
     }
 
     @Override
-    public void refundNotify(HttpServletRequest request, HttpServletResponse response) {
-
+    public PaymentVo refundNotify(HttpServletRequest request, HttpServletResponse response) {
+        return null;
     }
 
 }

@@ -42,10 +42,16 @@ public class PaymentConfig implements InitializingBean {
     @Value("${pay.wechat.private-key}")
     private String wxPrivateKey;
 
+    public static String WX_APP_ID;
+    public static String WX_MCH_ID;
+    public static String WX_MCH_SERIAL_NO;
+    public static String WX_APIV3_KEY;
+    public static String WX_NNOTIFY_URL;
+    public static String WX_PRIVATE_KEY;
+
     /**
      * 支付宝配置
      */
-
     @Value("${pay.ali.app-id}")
     private String aliAppId;
 
@@ -75,13 +81,6 @@ public class PaymentConfig implements InitializingBean {
 
     @Value("${pay.ali.public-key}")
     private String aliPublicKey;
-
-    public static String WX_APP_ID;
-    public static String WX_MCH_ID;
-    public static String WX_MCH_SERIAL_NO;
-    public static String WX_APIV3_KEY;
-    public static String WX_NNOTIFY_URL;
-    public static String WX_PRIVATE_KEY;
 
     public static String ALI_APP_ID;
     public static String ALI_AUTHORIZED_URL;

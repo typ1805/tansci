@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
  * @className：PaymentService.java
  * @description：支付
  * @author：tanyp
- * @dateTime：2022/3/28 10:15 
+ * @dateTime：2022/3/28 10:15
  * @editNote：
  */
 public interface PaymentService {
@@ -69,7 +69,7 @@ public interface PaymentService {
      * @Return：
      * @editNote：
      */
-    void payNotify(HttpServletRequest request, HttpServletResponse response);
+    PaymentVo payNotify(HttpServletRequest request, HttpServletResponse response);
 
     /**
      * @methodName：refundNotify
@@ -80,6 +80,6 @@ public interface PaymentService {
      * @Return：
      * @editNote：
      */
-    void refundNotify(HttpServletRequest request, HttpServletResponse response);
+    PaymentVo refundNotify(HttpServletRequest request, HttpServletResponse response);
 
 }

@@ -9,8 +9,13 @@ import com.tansci.config.PaymentConfig;
 import com.tansci.domain.payment.dto.PaymentDto;
 import com.tansci.domain.payment.vo.PaymentVo;
 import com.tansci.service.payment.PaymentService;
+import com.tansci.utils.PayResponseUtils;
 import com.wechat.pay.contrib.apache.httpclient.WechatPayHttpClientBuilder;
-import com.wechat.pay.contrib.apache.httpclient.auth.*;
+import com.wechat.pay.contrib.apache.httpclient.auth.PrivateKeySigner;
+import com.wechat.pay.contrib.apache.httpclient.auth.Verifier;
+import com.wechat.pay.contrib.apache.httpclient.auth.WechatPay2Credentials;
+import com.wechat.pay.contrib.apache.httpclient.auth.WechatPay2Validator;
+import com.wechat.pay.contrib.apache.httpclient.cert.CertificatesManager;
 import com.wechat.pay.contrib.apache.httpclient.notification.Notification;
 import com.wechat.pay.contrib.apache.httpclient.notification.NotificationHandler;
 import com.wechat.pay.contrib.apache.httpclient.notification.NotificationRequest;
@@ -27,7 +32,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -49,10 +53,9 @@ import java.util.Objects;
 @Service
 public class WxPaymentServiceImpl implements PaymentService {
 
-    // 验签器
-    private Verifier verifier;
-
-    private static CloseableHttpClient httpClient = null;
+    CloseableHttpClient httpClient;
+    CertificatesManager certificatesManager;
+    Verifier verifier;
 
     /**
      * @methodName：httpClient
@@ -63,18 +66,27 @@ public class WxPaymentServiceImpl implements PaymentService {
      * @Return： org.apache.http.impl.client.CloseableHttpClient
      * @editNote：
      */
-    public CloseableHttpClient httpClient() throws IOException {
-        // 加载商户私钥（privateKey：私钥字符串）
-        PrivateKey merchantPrivateKey = PemUtil.loadPrivateKey(new ByteArrayInputStream(PaymentConfig.WX_PRIVATE_KEY.getBytes("utf-8")));
+    public CloseableHttpClient httpClient() throws Exception {
+        PrivateKey merchantPrivateKey = PemUtil.loadPrivateKey(PaymentConfig.WX_PRIVATE_KEY);
 
-        // 加载平台证书（mchId：商户号,mchSerialNo：商户证书序列号,apiV3Key：V3密钥）
-        AutoUpdateCertificatesVerifier verifier = new AutoUpdateCertificatesVerifier(
-                new WechatPay2Credentials(PaymentConfig.WX_MCH_ID, new PrivateKeySigner(PaymentConfig.WX_MCH_SERIAL_NO, merchantPrivateKey)), PaymentConfig.WX_APIV3_KEY.getBytes("utf-8"));
+        // 获取证书管理器实例
+        certificatesManager = CertificatesManager.getInstance();
 
-        // 初始化httpClient
+        // 向证书管理器增加需要自动更新平台证书的商户信息
+        certificatesManager.putMerchant(
+                PaymentConfig.WX_MCH_ID,
+                new WechatPay2Credentials(PaymentConfig.WX_MCH_ID, new PrivateKeySigner(PaymentConfig.WX_MCH_SERIAL_NO, merchantPrivateKey)),
+                PaymentConfig.WX_APIV3_KEY.getBytes(StandardCharsets.UTF_8)
+        );
+
+        // 从证书管理器中获取verifier
+        verifier = certificatesManager.getVerifier(PaymentConfig.WX_MCH_ID);
+
+        // 构造httpclient
         return httpClient = WechatPayHttpClientBuilder.create()
                 .withMerchant(PaymentConfig.WX_MCH_ID, PaymentConfig.WX_MCH_SERIAL_NO, merchantPrivateKey)
-                .withValidator(new WechatPay2Validator(verifier)).build();
+                .withValidator(new WechatPay2Validator(verifier))
+                .build();
     }
 
     /**
@@ -357,7 +369,7 @@ public class WxPaymentServiceImpl implements PaymentService {
                     String bodyString = EntityUtils.toString(response.getEntity());
                     JSONObject jsonBody = JSONObject.parseObject(bodyString);
 
-                    paymentVo.setPayTime(jsonBody.getString("success_time"));
+                    paymentVo.setRefundTime(jsonBody.getString("success_time"));
                     paymentVo.setRefundNo(jsonBody.getString("refund_id"));
                     paymentVo.setMessage(PayEnum.WX_PROCESSING.getKey());
                     paymentVo.setState(PayEnum.getVlaueByGroup(jsonBody.getString("status"), "pay_wx_status"));
@@ -381,28 +393,85 @@ public class WxPaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public void payNotify(HttpServletRequest request, HttpServletResponse response) {
-        Notification notification = null;
+    public PaymentVo payNotify(HttpServletRequest request, HttpServletResponse response) {
         try {
-            // 构建request，传入必要参数
-            NotificationRequest _request = new NotificationRequest.Builder()
-//                    .withSerialNumber(wechatPaySerial) todo
-                    .withNonce(request.getHeader("Wechatpay-Nonce"))
-                    .withTimestamp(request.getHeader("Wechatpay-Timestamp"))
-                    .withSignature(request.getHeader("Wechatpay-Signature"))
-//                    .withBody(body) todo
+            NotificationRequest req = new NotificationRequest.Builder()
+                    .withSerialNumber(request.getHeader("Wechatpay-Serial")) // 商户序列号
+                    .withNonce(request.getHeader("Wechatpay-Nonce")) // 随机字符串
+                    .withTimestamp(request.getHeader("Wechatpay-Timestamp")) // 时间戳
+                    .withSignature(request.getHeader("Wechatpay-Signature")) // 签名
+                    .withBody(PayResponseUtils.getRequestBody(request)) // 请求体
                     .build();
             NotificationHandler handler = new NotificationHandler(verifier, PaymentConfig.WX_APIV3_KEY.getBytes(StandardCharsets.UTF_8));
-            // 验签和解析请求体
-            notification = handler.parse(_request);
 
+            // 验签和解析请求体
+            Notification notification = handler.parse(req);
+            log.info("======微信支付回调=【验签和解析请求体】======：{}", notification.toString());
+
+            // 判断支付是否成功
+            if (Objects.equals("TRANSACTION.SUCCESS", notification.getEventType())) {
+                // 解密后资源数据
+                Notification.Resource resource = notification.getResource();
+                String resourceStr = PayResponseUtils.decryptResponseBody(resource.getAssociatedData(), resource.getNonce(), resource.getCiphertext());
+                if (Objects.nonNull(resourceStr)) {
+                    JSONObject json = JSONObject.parseObject(resourceStr);
+                    return PaymentVo.builder()
+                            .paymentId(json.getString("transaction_id"))
+                            .orderId(json.getString("out_trade_no"))
+                            .payTime(json.getString("success_time"))
+                            .message(json.getString("trade_state_desc"))
+                            .state(PayEnum.getVlaueByGroup(json.getString("trade_state"), "pay_wx_status"))
+                            .build();
+                }
+            } else {
+                log.info("======微信支付回调====【回调错误摘要】=====：{}", notification.getSummary());
+            }
         } catch (Exception e) {
-            log.error("请求微信支付回调异常，异常信息:{}", e);
+            log.error("====微信支付回调【验签和解析请求体】异常，异常信息:{}", e);
         }
+        return null;
     }
 
     @Override
-    public void refundNotify(HttpServletRequest request, HttpServletResponse response) {
+    public PaymentVo refundNotify(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            NotificationRequest req = new NotificationRequest.Builder()
+                    .withSerialNumber(request.getHeader("Wechatpay-Serial")) // 商户序列号
+                    .withNonce(request.getHeader("Wechatpay-Nonce")) // 随机字符串
+                    .withTimestamp(request.getHeader("Wechatpay-Timestamp")) // 时间戳
+                    .withSignature(request.getHeader("Wechatpay-Signature")) // 签名
+                    .withBody(PayResponseUtils.getRequestBody(request)) // 请求体
+                    .build();
+            NotificationHandler handler = new NotificationHandler(verifier, PaymentConfig.WX_APIV3_KEY.getBytes(StandardCharsets.UTF_8));
 
+            // 验签和解析请求体
+            Notification notification = handler.parse(req);
+            log.info("======微信退款回调=【验签和解析请求体】======：{}", notification.toString());
+
+            // 判断退款是否成功
+            if (Objects.equals("REFUND.SUCCESS", notification.getEventType())) {
+                // 解密后资源数据
+                Notification.Resource resource = notification.getResource();
+                String resourceStr = PayResponseUtils.decryptResponseBody(resource.getAssociatedData(), resource.getNonce(), resource.getCiphertext());
+                if (Objects.nonNull(resourceStr)) {
+                    JSONObject json = JSONObject.parseObject(resourceStr);
+                    return PaymentVo.builder()
+                            .paymentId(json.getString("transaction_id"))
+                            .orderId(json.getString("out_trade_no"))
+                            .refundNo(json.getString("refund_id"))
+                            .refundId(json.getString("out_refund_no"))
+                            .refundTime(json.getString("success_time"))
+                            .message(json.getString("user_received_account"))
+                            .state(PayEnum.getVlaueByGroup(json.getString("refund_status"), "pay_wx_status"))
+                            .build();
+                }
+            } else {
+                log.info("======微信退款回调====【回调错误摘要】=====：{}", notification.getSummary());
+            }
+        } catch (Exception e) {
+            log.error("====微信退款回调【验签和解析请求体】异常，异常信息:{}", e);
+        }
+        return null;
     }
+
 }
