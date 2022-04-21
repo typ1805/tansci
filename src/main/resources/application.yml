@@ -54,9 +54,31 @@ sms:
 # 三方授权信息
 authorized:
   wechat: # 微信开放平台信息
-    app_id: 1000001  # appid
-    app_secret: 1000001  # appsecret
-    base_url: https://open.weixin.qq.com/connect/oauth2/authorize  # 微信开放平台授权baseUrl
-    base_access_token_url: https://api.weixin.qq.com/sns/oauth2/access_token # 微信开放平台获取token
-    base_user_info_url: https://api.weixin.qq.com/sns/userinfo # 微信开放平台获取用户信息
-    redirect_url: http://127.0.0.1/tansci/auth/wxCallback  # 重定向ur
+    app-id: 1000001  # appid
+    app-secret: 1000001  # appsecret
+    base-url: https://open.weixin.qq.com/connect/oauth2/authorize  # 微信开放平台授权baseUrl
+    base-access-token-url: https://api.weixin.qq.com/sns/oauth2/access_token # 微信开放平台获取token
+    base-user-info-url: https://api.weixin.qq.com/sns/userinfo # 微信开放平台获取用户信息
+    redirect-url: http://127.0.0.1/tansci/auth/wxCallback  # 重定向ur
+
+# 支付
+pay:
+  wechat:  # 微信支付
+    app-id: 1000001 # appid
+    mch-id: 165626515841  # 商户号
+    mch-serial-no: 40148B8C4SDFSGRDFVRBRBERWDWRF0AA0031A46  # API证书序列号
+    apiv3-key: DVREEVEREBERykpbgqcfsdsfggsdg   # apiV3秘钥
+    # API证书私钥
+    private-key: MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDfID3uxhzUBrGvu3j3s/MJWmep3N0lv9VWbkk9NI2B7C4usWCxaS58dbgQswdBF9e4X7PxFb7d2M0Trnr9roNJEJvDvWYv+zN7b8UqhHEEtwMghxrVycU4W6De2jjxSiptHtF3cZWLHML9vPJixhaaFMdVBGZuQ26JswVZHkjDHfrhnbSQVMJn5rqp1TAeXzwvyJNyxJokNEnfh7kIUz/ddEUDFdEY1qPVevysWEN6hPT2UIGszQIvafTlQJ2Y9CXW/whLHC4w6G04a7iJG2fRwT4hQkGfYSzeJWjL951n69Q9i6eDe9VuzjljfeCi60ERa3CewVccJWZDpCKsC7QFAgMBAAECggEAIgu5Z4WzQGcFFdt1SdabbwHsb27UD76Fvvp1EnHCZeCz60wFhQyXm0YbH/ExWi1ZLTjtLAw1Y4SBRk+JVMwcHDn8ipGL1iZuZJdZbnNnC2EhiQUUgyqWfVL96QNDTQ4UCzJ4o9EhEGkDF9SM56VyLXCeOcrCFnETnM9EMaT9VUgkv7Gpwq2ajnOWVscmcai+ikNUEUMovyglae1aICzT+yXdB+JSaB/CR03Tyyg8kV4GQsJtOCMttctukwbg0KotOvd5xjTvq4tQbMbBl3JaY6CSwWvpEQBA5hnE0fAzFQagNLNK2G48ZOnPLfY9431XvE9Y6/wtoPBOZI+TLsKwAQKBgQD9g2Rs0t5h6a8mwKbt5vwaJwdsL3aSIdItDt9aaKi9oJm2Y2699CFmgL3hVzvN37Njxn7Ms50SOI4+JRxT6qVs8mzTsEk+XNXmufjtXiFFpH4NHrq23R5cwe1QSs/2t9hN7EqbUKnwFS+ompwvjstQyux9mS1IJZeLUZrBXn8OwQKBgQDhUIr1TKJGYS7agZ29sKZNX/OTsHumdxitWc2KGscTCCxEizBv2uytykqLVTZ53U/wMaUPoleE1DfDE/hcvS5q7+tgfcZ/lfEKlm5UbgztmEwKC/wCcOvt2S5lNaj0yaHuebcGKfxe67AS1qtSNj5fB6VRWWpxV0XIY4xA/grgreejyjtyjrjeyjykekekeytkeqcc4WMe8SESY6aNqIIcqpZify1uOPWcMxH1nuYXVXvVB2cJBJzD5MmuRHFGtsdoMXKivkZCuwIyI6NddxcN+KKZSpbIN0jrfvzv5xUrfoEyDtW5yAe6ks5eiL0SElx7SLxyOV7vxmCb0cQowML9VxFTQQKBgGMCoL2gemLRC+TLNoUH3lx8AK5yzDNffIGYx+CbWcW8Pq+0NonAu2a3UUCfJnwwy5LyTeVr4melVgese+RM4dvuKBHT02l3e1+6sSr63UV/OlLj508vTg3L9T5WcTN4c2c3Jz1XL+aKTWpJ2SkcWxYpZvUzhLnfrvObAyP/qKe9AoGAGLEznjXMYUcIPj0dJr0rx5+kJX4OZjeyjeyjeyj5ejteyj5eahTEG6HuIJsOdmFx1IPW6fYAu6BvFgIaYcUJbFKSfucT3WrdPOIuNZCYaN8NevZ7oMI4qfGirirCekhedtXld1G1pibH7a6b16CBsUoPGBBRTNRTNRNRNRQGnJoWCQmE=
+    notify-url: http://127.0.0.1/tansci/api/notify  # 回调通知地址
+  ali:
+    app-id: 1000001
+    authorized-url: https://openauth.alipay.com/oauth2/publicAppAuthorize.htm
+    format: JSON
+    charset: UTF-8
+    sign-type: RSA2
+    notify-url: http://127.0.0.1/tansci/api/notify
+    gateway-url: https://openapi.alipay.com/gateway.do
+    return-url:
+    private-key:
+    public-key:
