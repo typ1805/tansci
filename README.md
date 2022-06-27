@@ -1,7 +1,3 @@
-## 项目
-
-TANSCI 系统
-
 ## 简介
 
 TANSCI 基于 SpringBoot + Vue3.2 + Element Plus 的后台管理系统
