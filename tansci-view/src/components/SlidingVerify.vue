@@ -1,9 +1,12 @@
 <template>
     <div v-if="verifyRefresh" class="sliding-verify">
         <div class="slider" :class="rangeStatus?'success':''" >
-            <el-icon @mousedown.self="onMove">
+            <div class="i" @mousedown.self="onMove">
+                {{rangeStatus?'✔':'››'}}
+            </div>
+            <!-- <el-icon @mousedown.self="onMove">
                 <component :is="rangeStatus?successIcon:startIcon"></component>
-            </el-icon>
+            </el-icon> -->
             {{rangeStatus?successText:startText}}
         </div>
     </div>
@@ -124,7 +127,7 @@
             height: 32px; 
             border: 1px solid #dcdfe6;
         }
-        .slider i{
+        .slider .i{
             position: absolute;
             left: 0;
             width: 34px; 
@@ -135,13 +138,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            font-size: 20px;
         }
         .slider.success{
             background-color: #7AC23C;
             color: #fff;
             right: 0;
         }
-        .slider.success i{
+        .slider.success .i{
             color: #7AC23C;
         }
     }
