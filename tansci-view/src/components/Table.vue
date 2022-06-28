@@ -141,5 +141,5 @@
         emit('onCurrentChange', e)
     }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 </style>

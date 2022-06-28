@@ -112,7 +112,7 @@
         onRefresh
     })
 </script>
-<style scoped lang="less">
+<style scoped lang="scss">
     .sliding-verify{
         width: 100%;
         .slider{

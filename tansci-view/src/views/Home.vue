@@ -50,11 +50,11 @@
 <script setup>
 	import {onMounted,reactive,toRefs} from 'vue'
 	import * as echarts from 'echarts'
-	import {useStore} from "vuex"
+	import {useUserStore} from '../store/settings'
 
-	const store = useStore()
+	const userStore = useUserStore();
 	const state = reactive({
-		username: store.getters.getUser.nickname?store.getters.getUser.nickname:'管理员',
+		username: userStore.getUser.username == null ? '未登录':userStore.getUser.username,
 		shadow: 'always',
 		todoList: [],
 		cards: [],
@@ -189,7 +189,7 @@
 	}
 
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 	.home {
 		.home-header{
 			display: flex;

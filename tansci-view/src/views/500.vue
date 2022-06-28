@@ -45,7 +45,7 @@
     }
 </script>
 
-<style lang="less">
+<style lang="scss">
     .container-500 {
         height: 100%;
         margin: 0 auto;

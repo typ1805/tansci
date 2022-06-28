@@ -1,0 +1,32 @@
+$--colors: (
+    "primary": (
+        "base": #242e42,
+    ),
+    "success": (
+        "base": #21ba45,
+    ),
+    "warning": (
+        "base": #f2711c,
+    ),
+    "danger": (
+        "base": #db2828,
+    ),
+    "error": (
+        "base": #db2828,
+    ),
+    "info": (
+        "base": #2F9688,
+    ),
+);
+
+@forward "element-plus/theme-chalk/src/common/var.scss" with (
+    // do not use same name, it will override.
+    $colors: $--colors,
+    // $button-padding-horizontal: ("default": 50px)
+);
+
+// 如果要导入所有
+@use "element-plus/theme-chalk/src/index.scss" as *;
+
+// 您可以对其进行注释以隐藏调试信息
+@debug $--colors;

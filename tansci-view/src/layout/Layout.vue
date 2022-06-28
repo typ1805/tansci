@@ -61,7 +61,7 @@
                 <el-menu router :default-active="$route.path" :collapse="isCollapse" @select="onSelect"
                     text-color="#242e42" active-text-color="#2F9688" background-color="var(--bg1)">
                     <template v-for="item in routers" :key="item">
-                        <el-menu-item v-if="!item.children || item.children.length == 0" :index="item.path">
+                        <el-menu-item v-if="!item.children || item.children.length == 1" :index="item.path">
                             <el-icon v-if="item.icon" style="vertical-align: middle;">
                                 <component :is="item.icon"></component>
                             </el-icon>
@@ -97,13 +97,15 @@
     import {useRouter} from 'vue-router'
     import Submenu from "../components/Submenu.vue"
     import MenuTag from "../components/MenuTag.vue"
-    import {useStore} from "vuex"
+    import {useUserStore, useTokenStore, useMenuStore} from '../store/settings'
     import {timeFormate} from '../utils/utils.js'
     import {modifyPass,logout} from '../api/systemApi.js'
 
     const router = useRouter()
-    const store = useStore()
-    const username = store.getters.getUser.nickname?store.getters.getUser.nickname:'管理员';
+    const userStore = useUserStore();
+    const tokenStore = useTokenStore();
+    const menuStore = useMenuStore();
+    const username = userStore.getUser.username == null ? '未登录':userStore.getUser.username;
     const nowTimes = ref('');
     const validateForm = ref(null)
     const menuTag = ref(null)
@@ -132,7 +134,7 @@
 
     onMounted(()=>{
         // 获取菜单
-        state.routers = store.getters.getMenus;
+        state.routers = menuStore.getMenu;
 
         window.onresize = () => {
                     return (() => {
@@ -165,9 +167,10 @@
         }).then(() => {
             logout({}).then(res=>{
                 if(res){
-                    store.commit('delToken')
-                    store.commit('delUser')
-                    store.commit('delMenus')
+                    // 清除相关缓存信息
+                    userStore.delUser();
+                    tokenStore.delToken();
+                    menuStore.delMenu();
                     router.push({path: 'login'})
                 }
             });
@@ -205,7 +208,7 @@
         const form = unref(validateForm)
         if (!form) return;
         await form.validate();
-        state.passForm.username = store.getters.getUser.username;
+        state.passForm.username = userStore.getUser.username;
         modifyPass(state.passForm).then(res=>{
             if(res){
                 ElMessageBox.alert('修改密码成功，需重新登录！', '提示', {
@@ -227,7 +230,7 @@
     }
 
 </script>
-<style lang="less" scoped>
+<style lang="scss">
     .layout-container{
         .el-header{
             padding: 0;
@@ -242,7 +245,7 @@
             border-image:linear-gradient(to right,var(--bg1),#DCDFE6,var(--bg1)) 1 10;
             box-shadow: 0 4px 8px 0 rgba(36,46,66,.06)!important;
             
-            /deep/ .el-dialog__header{
+            .el-dialog__header{
                 background: var(--theme);
                 padding: 0 10px;
                 .el-dialog__title{
@@ -257,7 +260,7 @@
             background: var(--bg1);
             overflow-y: auto;
             overflow-x: hidden;
-            /deep/ .el-menu{
+            .el-menu{
                 border: none;
                 .el-menu-item, .el-sub-menu__title{
                     height: 40px;
@@ -270,7 +273,7 @@
                     background: var(--bg1) !important;
                 }
             }
-            /deep/ .el-card{
+            .el-card{
                 margin: 0.4rem 0.6rem;
                 background-color: var(--theme);
                 color:#fff;
@@ -287,7 +290,7 @@
             overflow-x: hidden;
             overflow-y: auto;
             background: var(--bg1);
-            /deep/ .el-dialog__header{
+            .el-dialog__header{
                 background: var(--theme);
                 padding: 10px;
                 .el-dialog__title{
@@ -301,7 +304,7 @@
         .main-view{
             .main-view-tag{
                 margin: 0.4rem;
-                /deep/.el-card__body{
+                .el-card__body{
                     padding: 0.3rem 0.4rem;
                 }
             }

@@ -169,13 +169,13 @@
         }
     }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
     .log{
         .detail-text{
             max-height: 400px;
             overflow: auto;
         }
-        /deep/ .el-descriptions__label{
+        .el-descriptions__label{
             width: 80px;
         }
     }

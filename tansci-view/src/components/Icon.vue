@@ -5,7 +5,7 @@
 </template>
 <script setup>
     import {defineProps, reactive, toRefs} from 'vue'
-    import * as ElIcons from '@element-plus/icons'
+    import * as ElIcons from '@element-plus/icons-vue'
 
     const prop = defineProps({
         iconVisible: {
@@ -21,13 +21,13 @@
     })
     const {iconList} = toRefs(state)
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
     .icon-dialog{
         .el-dialog__header{
             padding: 0 !important;
         }
     } 
-    /deep/ .el-icon{
+    .el-icon{
         font-size: 24px;
         padding: 0.4rem;
         color: #909399;

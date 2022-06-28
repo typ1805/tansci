@@ -38,7 +38,7 @@ public class SysMenu {
     private String name;
 
     @ApiModelProperty(value = "菜单路由")
-    private String path;
+    private String url;
 
     @ApiModelProperty(value = "组件名称")
     private String component;

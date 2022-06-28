@@ -93,7 +93,7 @@
         onLoad
     })
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
     .container-template{
         overflow: hidden;
         border: 1px solid #DCDFE6;

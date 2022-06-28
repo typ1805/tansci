@@ -9,10 +9,10 @@
 <script setup>
 	import {onMounted, defineProps, reactive, toRefs} from 'vue'
     import {useRouter} from 'vue-router'
-    import {useStore} from "vuex"
+    import {useMenuStore} from '../store/settings'
 
     const router = useRouter()
-    const store = useStore()
+    const menuStore = useMenuStore();
 	const prop = defineProps({
         size: {
             type: String,
@@ -21,7 +21,7 @@
 	})
 
     const state = reactive({
-        menuTags: store.getters.getMenus,
+        menuTags: menuStore.getMenu,
         size: prop.size,
     })
     const {
@@ -105,11 +105,11 @@
         onSelected
     })
 </script>
-<style lang="less" scoped>
-    /deep/ .el-space__item{
+<style lang="scss" scoped>
+    .el-space__item{
         cursor: pointer;
     }
-    /deep/ .el-tag--plain, .el-tag--dark{
+    .el-tag--plain, .el-tag--dark{
         border: 1px solid var(--theme);
     }
 </style>

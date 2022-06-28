@@ -4,7 +4,7 @@
 <mapper namespace="com.tansci.mapper.system.SysMenuMapper">
 
     <select id="list" parameterType="com.tansci.domain.system.SysMenu" resultType="com.tansci.domain.system.SysMenu">
-        SELECT m.id, m.name, m.path, m.component, m.icon, m.type, m.status, m.chinese_name, m.english_name, m.parent_id,
+        SELECT m.id, m.name, m.url, m.component, m.icon, m.type, m.status, m.chinese_name, m.english_name, m.parent_id,
         m.sort, m.require_auth, m.keep_alive, m.enabled, m.update_time, m.create_time
         FROM sys_menu m
         <choose>

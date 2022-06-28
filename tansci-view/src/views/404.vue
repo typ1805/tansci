@@ -43,7 +43,7 @@
     }
 </script>
 
-<style lang="less" scoped="scoped">
+<style lang="scss" scoped="scoped">
     .container-404 {
         height: 100%;
         margin: 0 auto;

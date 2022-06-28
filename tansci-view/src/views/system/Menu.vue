@@ -23,8 +23,8 @@
                         <el-option label="菜单" :value="1"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="菜单路由" prop="path" :rules="[{required: true, message: '路由不能为空', trigger: 'blur'}]">
-                    <el-input v-model="addMenuForm.path" placeholder="请输入路由" style="width:50%"></el-input>
+                <el-form-item label="菜单路由" prop="url" :rules="[{required: true, message: '路由不能为空', trigger: 'blur'}]">
+                    <el-input v-model="addMenuForm.url" placeholder="请输入路由" style="width:50%"></el-input>
                 </el-form-item>
                 <el-form-item label="菜单组件" prop="component" :rules="[{required: true, message: '请选择组件', trigger: 'blur'}]">
                     <el-select v-model="addMenuForm.component" placeholder="请选菜单组件" style="width:50%">
@@ -76,7 +76,7 @@
             parentId:'',
             name:'',
             type:'',
-            path:'',
+            url:'',
             component:'',
             chineseName:'',
             englishName:'',
@@ -108,7 +108,7 @@
             parentId: data.parentId,
             name: data.name,
             type: data.type,
-            path: data.path,
+            url: data.url,
             component: data.component,
             chineseName: data.chineseName,
             englishName: data.englishName,
@@ -127,7 +127,7 @@
                 parentId: state.menuId,
                 name:'',
                 type:'',
-                path:'',
+                url:'',
                 component:'',
                 chineseName:'',
                 englishName:'',
@@ -187,7 +187,7 @@
                         parentId:'',
                         name:'',
                         type:'',
-                        path:'',
+                        url:'',
                         component:'',
                         chineseName:'',
                         englishName:'',
@@ -213,7 +213,7 @@
                         parentId:'',
                         name:'',
                         type:'',
-                        path:'',
+                        url:'',
                         component:'',
                         chineseName:'',
                         englishName:'',
@@ -229,17 +229,17 @@
     }
 
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 	.menu {
         display: flex;
         padding-bottom: 4rem;
         .menu-tree{
             min-width: 300px;
-            /deep/ .el-tree-node:focus>.el-tree-node__content{
+            .el-tree-node:focus>.el-tree-node__content{
                 background-color: #fff !important;
                 color: var(--theme) !important;
             }
-            /deep/ .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content { 
+            .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content { 
                 background-color: #fff !important;
                 color: var(--theme) !important;
             }

@@ -52,11 +52,12 @@
 	import {onBeforeMount,reactive,ref,toRefs,unref} from "vue"
 	import {ElMessage} from 'element-plus'
 	import {useRouter} from 'vue-router'
-	import {useStore} from 'vuex'
-	import {login,menuList,wxLogin,wxCallback} from '../api/systemApi'
+	import {useUserStore, useTokenStore} from '../store/settings'
+	import {login,wxLogin,wxCallback} from '../api/systemApi'
 	import SlidingVerify from '../components/SlidingVerify.vue'
 
-	const store = useStore()
+	const userStore = useUserStore();
+	const tokenStore = useTokenStore();
 	const router = useRouter()
 	let loginRuleForm = ref(null) 
 	let slidingVerify = ref()
@@ -104,20 +105,16 @@
 		if (!form) return;
 		await form.validate();
 
-		// 登录成功后设置token到vuex中
 		let param = {
 			username: state.loginForm.username,
 			password: state.loginForm.password
 		}
-		login(param).then(loginRes=>{
-			if(loginRes){
-				store.commit('setToken', loginRes.result.token);
-				store.commit('setUser', loginRes.result);
-				// 获取菜单
-				menuList({type:1, status: 1}).then(menuRes=>{
-					store.commit('setMenus', menuRes.result);
-					router.push({path: 'home'});
-				})
+		login(param).then(res=>{
+			if(res){
+				// 存储用户信息和token
+				userStore.setUser(res.result);
+				tokenStore.setToken(res.result.token);
+				router.push({path: 'home'});
 			}
 		}).catch(()=>{
 			state.loginForm.verifyStatus = null;
@@ -160,17 +157,10 @@
 				let resp = JSON.parse(event.data);
 				if(resp.status == 200){
 					state.otherForm.status = 1;
-					store.commit('setToken', resp.token);
-					store.commit('setUser', {
-						username: resp.username,
-						nickname: resp.nickname,
-						loginTime: resp.loginTime
-					});
-					// 获取菜单
-					menuList({type:1, status: 1}).then(res=>{
-						store.commit('setMenus', res.result);
-						router.push({path: 'home'});
-					})
+					// 存储用户信息和token
+					userStore.setUser(resp);
+					tokenStore.setToken(resp.token);
+					router.push({path: 'home'});
 				} else {
 					state.otherForm.status = 2;
 				}
@@ -191,7 +181,7 @@
 		}
 	} 
 </script>
-<style lang="less" scoped="scoped">
+<style lang="scss" scoped="scoped">
 	.login {
 		background-image: url('../assets/image/login-bg.svg');
 		background-size: 100% 100%;
@@ -201,7 +191,7 @@
 		flex-wrap: wrap;
 		justify-content: center;
 		align-items: center;
-		/deep/ .el-card__body{
+		.el-card__body{
 			padding: 0;
 		}
 		.login-main{
