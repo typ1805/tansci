@@ -61,6 +61,8 @@ public enum Enums {
      */
     MENU_TYPE_0(0, "menu_type", "按钮"),
     MENU_TYPE_1(1, "menu_type", "菜单"),
+    MENU_TYPE_2(2, "menu_type", "嵌套链接"),
+    MENU_TYPE_3(3, "menu_type", "跳转链接"),
 
     /**
      * 状态

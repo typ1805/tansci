@@ -2,6 +2,7 @@ package com.tansci.mapper.system;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.tansci.domain.system.SysMenu;
+import com.tansci.domain.system.dto.SysMenuDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
 @Mapper
 public interface SysMenuMapper extends BaseMapper<SysMenu> {
 
-    List<SysMenu> list(SysMenu sysMenu);
+    List<SysMenu> list(SysMenuDto dto);
 
     List<SysMenu> getMenuChildrens(Integer id);
 

@@ -5,7 +5,7 @@
                 <div style="padding-left: 2rem;">
                     <!-- <el-button @click="onCollapse" type="text" :icon="isCollapse?'Grid':'Menu'" >菜单折叠</el-button> -->
                     <el-button @click="onHome" type="text" icon="HomeFilled">工作台</el-button>
-                    <el-link href="http://localhost:8005/tansci/doc.html" type="primary" target="_blank" :underline="false" icon="Notebook" style="padding-left: 1rem;">API 文档</el-link>
+                    <!-- <el-link href="http://localhost:8005/tansci/doc.html" type="primary" target="_blank" :underline="false" icon="Notebook" style="padding-left: 1rem;">API 文档</el-link> -->
                 </div>
                 <div style="padding-right:0.4rem;">
                     <el-icon :size="16" color="#55bc8a" style="vertical-align: middle;padding-right:0.2rem;">
@@ -61,11 +61,13 @@
                 <el-menu router :default-active="$route.path" :collapse="isCollapse" @select="onSelect"
                     text-color="#242e42" active-text-color="#2F9688" background-color="var(--bg1)">
                     <template v-for="item in routers" :key="item">
-                        <el-menu-item v-if="!item.children || item.children.length == 1" :index="item.path">
+                        <el-menu-item v-if="!item.children || item.children.length == 1" :index="item.type == 1 ? item.path:''">
                             <el-icon v-if="item.icon" style="vertical-align: middle;">
                                 <component :is="item.icon"></component>
                             </el-icon>
-                            <span style="vertical-align: middle;">{{item.chineseName}}</span>
+                            <span v-if="item.type == 1" style="vertical-align: middle;">{{item.chineseName}}</span>
+                            <span v-else-if="item.type == 2" @click="onLink(item)" style="vertical-align: middle;">{{item.chineseName}}</span>
+                            <a v-else-if="item.type == 3" :href='item.url' target='_target' style="vertical-align: middle;text-decoration: none;color:#242e42;">{{item.chineseName}}</a>
                         </el-menu-item>
                         <Submenu v-else :data="item"></Submenu>
                     </template>
@@ -84,7 +86,8 @@
                     <el-card class="main-view-tag" shadow="always">
                         <MenuTag ref="menuTag" :size="'default'"></MenuTag>
                     </el-card>
-                    <router-view class="main-view-content"/>
+                    <router-view v-show="!isLink" class="main-view-content"/>
+                    <iframe v-show="isLink" :src="link" :style="{height:iframeHeight}" width="100%" frameborder="0"></iframe>
                 </div>
             </el-main>
         </el-container>
@@ -121,15 +124,19 @@
             oldPassword: '',
             password: '',
             rePassword: ''
-        }
+        },
+        iframeHeight: '',
+        isLink: false,
+        link:'',
     })
 
     const {
-        logo,isCollapse,asideWidth,defaultHeight,routers,dialogPass,passForm,
+        logo,isCollapse,asideWidth,defaultHeight,routers,dialogPass,passForm,link,isLink,iframeHeight
     } = toRefs(state)
 
     onBeforeMount(() => {
         state.defaultHeight.height = (document.body.clientHeight || document.documentElement.clientHeight) + "px";
+        state.iframeHeight = document.body.clientHeight - 120 + 'px';
     })
 
     onMounted(()=>{
@@ -139,12 +146,22 @@
         window.onresize = () => {
                     return (() => {
                 state.defaultHeight.height = (document.body.clientHeight || document.documentElement.clientHeight) + "px";
+                state.iframeHeight = document.body.clientHeight - 120 + 'px';
             })()
         }
         onNowTimes();
     })
 
+    const onLink = (val) =>{
+        state.isLink = true;
+        state.link = val.url;
+    }
+
     const onSelect = (e) =>{
+        console.log(e)
+        if(e){
+            state.isLink = false;
+        }
         menuTag.value.onSelected(e)
     }
 

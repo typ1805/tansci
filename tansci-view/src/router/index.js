@@ -44,14 +44,13 @@ router.beforeEach(async (to, from, next) => {
     // 动态添加路由
     if(sessionStorage.getItem('token') && flag){
         const menuStore = useMenuStore();
-        await menuList({type:1, status: 1}).then((res)=>{
+        await menuList({types:'1,2,3', status: 1}).then((res)=>{
             let result = routerFilter(res.result)
             result.push({path:'/:pathMatch(.*)*', redirect:'/404'})
             result.forEach((item) => {
                 router.addRoute(item)
             })
             menuStore.setMenu([...result])
-            console.log(result)
             flag = false
             next({ ...to, replace: true })
         })

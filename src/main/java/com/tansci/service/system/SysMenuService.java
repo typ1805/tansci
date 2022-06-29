@@ -1,9 +1,8 @@
 package com.tansci.service.system;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.tansci.domain.system.SysMenu;
+import com.tansci.domain.system.dto.SysMenuDto;
 
 import java.util.List;
 
@@ -16,9 +15,7 @@ import java.util.List;
  **/
 public interface SysMenuService extends IService<SysMenu> {
 
-    IPage<SysMenu> page(Page page, SysMenu sysMenu);
-
-    List<SysMenu> list(SysMenu sysMenu);
+    List<SysMenu> list(SysMenuDto dto);
 
     boolean save(SysMenu sysMenu);
 

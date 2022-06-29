@@ -1,14 +1,11 @@
 package com.tansci.service.impl.system;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.tansci.common.constant.Enums;
-import com.tansci.domain.system.SysDic;
 import com.tansci.domain.system.SysMenu;
 import com.tansci.domain.system.SysMenuRole;
 import com.tansci.domain.system.SysUserRole;
+import com.tansci.domain.system.dto.SysMenuDto;
 import com.tansci.mapper.system.SysMenuMapper;
 import com.tansci.service.system.SysDicService;
 import com.tansci.service.system.SysMenuRoleService;
@@ -21,7 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -43,41 +43,20 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     private SysMenuRoleService sysMenuRoleService;
 
     @Override
-    public IPage<SysMenu> page(Page page, SysMenu sysMenu) {
-        IPage<SysMenu> menuIPage = this.page(page, Wrappers.<SysMenu>lambdaQuery()
-                .eq(Objects.nonNull(sysMenu.getId()), SysMenu::getId, sysMenu.getId()).or()
-                .eq(Objects.nonNull(sysMenu.getId()), SysMenu::getParentId, sysMenu.getId())
-                .like(Objects.nonNull(sysMenu.getName()), SysMenu::getName, sysMenu.getName())
-                .like(Objects.nonNull(sysMenu.getChineseName()), SysMenu::getChineseName, sysMenu.getChineseName())
-                .like(Objects.nonNull(sysMenu.getEnglishName()), SysMenu::getEnglishName, sysMenu.getEnglishName())
-        );
-
-        List<SysDic> statusList = menuIPage.getSize() > 0 ? sysDicService.list(Wrappers.<SysDic>lambdaQuery().eq(SysDic::getGroupName, "menu_status")) : new ArrayList<>();
-        menuIPage.getRecords().forEach(item -> {
-            Optional<SysDic> sOptional = statusList.stream().filter(s -> s.getDicValue() == item.getStatus()).findFirst();
-            if (sOptional.isPresent()) {
-                item.setStatusName(sOptional.get().getDicLabel());
-            }
-            item.setTypeName(Enums.getVlaueByGroup(item.getType(), "menu_type"));
-        });
-        return menuIPage;
-    }
-
-    @Override
-    public List<SysMenu> list(SysMenu sysMenu) {
-        if (Objects.nonNull(sysMenu.getType()) && 1 == sysMenu.getType()) {
+    public List<SysMenu> list(SysMenuDto dto) {
+        if (Objects.nonNull(SecurityUserUtils.getUser().getType()) && Objects.equals(1, SecurityUserUtils.getUser().getType())) {
             SysUserRole role = sysUserRoleService.getOne(Wrappers.<SysUserRole>lambdaQuery().eq(SysUserRole::getUserId, SecurityUserUtils.getUser().getId()));
-            sysMenu.setRoleId(role.getRoleId());
+            dto.setRoleId(role.getRoleId());
         }
-        List<SysMenu> list = this.baseMapper.list(sysMenu);
-        if (Objects.nonNull(sysMenu.getRoleId())) {
+        List<SysMenu> list = this.baseMapper.list(dto);
+        if (Objects.nonNull(dto.getRoleId())) {
             // 获取所有菜单的父idgit
             List<Integer> parentIds = list.stream().map(SysMenu::getParentId).distinct().collect(Collectors.toList());
             if (Objects.nonNull(parentIds) && parentIds.size() > 0) {
                 List<SysMenu> parentList = this.list(
                         Wrappers.<SysMenu>lambdaQuery().in(SysMenu::getId, parentIds)
-                                .eq(Objects.nonNull(sysMenu.getType()), SysMenu::getType, sysMenu.getType())
-                                .eq(Objects.nonNull(sysMenu.getStatus()), SysMenu::getStatus, sysMenu.getStatus())
+                                .in(Objects.nonNull(dto.getTypes()), SysMenu::getType, dto.getTypes())
+                                .eq(Objects.nonNull(dto.getStatus()), SysMenu::getStatus, dto.getStatus())
                 );
                 list.addAll(parentList);
             }

@@ -3,16 +3,19 @@
 
 <mapper namespace="com.tansci.mapper.system.SysMenuMapper">
 
-    <select id="list" parameterType="com.tansci.domain.system.SysMenu" resultType="com.tansci.domain.system.SysMenu">
-        SELECT m.id, m.name, m.url, m.component, m.icon, m.type, m.status, m.chinese_name, m.english_name, m.parent_id,
-        m.sort, m.require_auth, m.keep_alive, m.enabled, m.update_time, m.create_time
+    <select id="list" parameterType="com.tansci.domain.system.dto.SysMenuDto" resultType="com.tansci.domain.system.SysMenu">
+        SELECT m.id, m.name, m.url, m.icon, m.type, m.status, m.chinese_name, m.english_name, m.parent_id,
+        m.sort, m.update_time, m.create_time
         FROM sys_menu m
         <choose>
             <when test="roleId != null">
                 LEFT JOIN sys_menu_role mr on m.id = mr.menu_id
                 WHERE mr.role_id = #{roleId}
-                <if test="type != null">
-                    AND m.type = #{type}
+                <if test="types != null and types.size > 0">
+                    AND m.type in
+                    <foreach collection="types" item="type" open="(" close=")" separator=",">
+                        #{type}
+                    </foreach>
                 </if>
                 <if test="status != null">
                     AND m.status = #{status}
@@ -20,8 +23,11 @@
             </when>
             <otherwise>
                 WHERE 1 = 1
-                <if test="type != null">
-                    AND m.type = #{type}
+                <if test="types != null and types.size > 0">
+                    AND m.type in
+                    <foreach collection="types" item="type" open="(" close=")" separator=",">
+                        #{type}
+                    </foreach>
                 </if>
                 <if test="status != null">
                     AND m.status = #{status}

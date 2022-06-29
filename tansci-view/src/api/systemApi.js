@@ -151,15 +151,6 @@ export function menuList(params) {
 }
 
 /**
- * 列表
- * @param {*} params 
- * @returns 
- */
-export function menuPage(params) {
-    return axios.get('/tansci/menu/page', { params: params });
-}
-
-/**
  * 删除菜单
  * @param {*} params 
  * @returns 

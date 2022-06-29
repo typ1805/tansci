@@ -11,7 +11,7 @@
  Target Server Version : 50721
  File Encoding         : 65001
 
- Date: 28/06/2022 17:39:52
+ Date: 29/06/2022 17:37:59
 */
 
 SET NAMES utf8mb4;
@@ -129,41 +129,39 @@ INSERT INTO `sys_dic` VALUES (57, 54, 'template_state', 1, 2, '未通过', 3, NU
 DROP TABLE IF EXISTS `sys_menu`;
 CREATE TABLE `sys_menu`  (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id',
+  `parent_id` int(11) NOT NULL COMMENT '父id',
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '菜单名称',
   `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '菜单路由',
-  `component` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '组件名称',
   `icon` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '菜单图标',
-  `type` int(1) NOT NULL COMMENT '类型：0、前端菜单，1、后端菜单',
+  `type` int(1) NOT NULL COMMENT '类型：0、按钮，1、菜单，2、嵌套链接，3、跳转链接',
   `status` int(1) NULL DEFAULT NULL COMMENT '状态：0、未上架，1、正常，2、下架',
   `chinese_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '中文名称',
   `english_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '英文名称',
-  `parent_id` int(11) NOT NULL COMMENT '父id',
   `sort` int(11) NULL DEFAULT NULL COMMENT '排序',
-  `require_auth` int(1) NULL DEFAULT 0 COMMENT '是否登录后才能访问：0、是，1、否',
-  `keep_alive` int(1) NULL DEFAULT 0 COMMENT '菜单切换时是否保活：0.是，1、否',
-  `enabled` int(1) NULL DEFAULT NULL COMMENT '是否可用：0、是，1、否',
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_menu
 -- ----------------------------
-INSERT INTO `sys_menu` VALUES (1, 'home', '/Home', 'Layout', 'HomeFilled', 1, 1, '工作台', 'Home', 0, 1, 0, 0, NULL, '2021-07-28 15:43:30', '2021-07-20 22:02:18');
-INSERT INTO `sys_menu` VALUES (2, 'system', '/system', 'Layout', 'Tools', 1, 1, '系统管理', 'System', 0, 1, 0, 0, NULL, '2021-12-17 17:33:08', '2021-10-23 19:50:28');
-INSERT INTO `sys_menu` VALUES (3, 'user', '/system/User', 'Layout', 'Avatar', 1, 1, '用户列表', 'UserList', 2, 4, 0, 0, NULL, '2021-12-17 17:37:24', '2021-07-20 22:09:46');
-INSERT INTO `sys_menu` VALUES (5, 'dicInfo', '/system/DicInfo', 'Layout', 'Notebook', 1, 1, '字典管理', 'Dic', 2, 6, 0, 0, NULL, '2021-12-17 17:38:14', '2021-07-22 17:09:46');
-INSERT INTO `sys_menu` VALUES (6, 'menu', '/system/Menu', 'Layout', 'Grid', 1, 1, '菜单管理', 'Menu', 2, 1, 0, 0, NULL, '2021-12-17 17:34:53', '2021-07-22 17:11:10');
-INSERT INTO `sys_menu` VALUES (7, 'role', '/system/Role', 'Layout', 'Help', 1, 1, '角色管理', 'Role', 2, 2, 0, 0, NULL, '2021-12-17 17:36:32', '2021-07-23 16:09:30');
-INSERT INTO `sys_menu` VALUES (8, 'org', '/system/Org', 'Layout', 'SetUp', 1, 1, '组织管理', 'Org', 2, 3, 0, 0, NULL, '2021-12-17 17:37:10', '2021-10-23 14:23:11');
-INSERT INTO `sys_menu` VALUES (9, 'log', '/system/Log', 'Layout', 'Document', 1, 1, '日志管理', 'Log', 2, 6, 0, 0, NULL, NULL, '2021-12-20 10:49:42');
-INSERT INTO `sys_menu` VALUES (10, 'message', '/message', 'Layout', 'Comment', 1, 1, '消息管理', 'Message', 0, 2, 0, 0, NULL, NULL, '2022-02-24 10:17:44');
-INSERT INTO `sys_menu` VALUES (11, 'template', '/message/Template', 'Layout', 'Postcard', 1, 1, '消息模板', 'Template', 10, 0, 0, 0, NULL, NULL, '2022-02-24 10:24:46');
-INSERT INTO `sys_menu` VALUES (12, 'task', '/task', 'Layout', 'Clock', 1, 1, '任务管理', 'Task Manage', 0, 0, 0, 0, NULL, NULL, '2022-02-25 11:24:07');
-INSERT INTO `sys_menu` VALUES (13, 'taskConfig', '/task/TaskConfig', 'Layout', 'Odometer', 1, 1, '任务调度', 'TaskConfig', 12, 1, 0, 0, NULL, NULL, '2022-02-25 11:25:00');
-INSERT INTO `sys_menu` VALUES (14, 'taskLog', '/task/TaskLog', 'Layout', 'Document', 1, 1, '调度日志', 'TaskLog', 12, 2, 0, 0, NULL, NULL, '2022-06-28 17:35:05');
-INSERT INTO `sys_menu` VALUES (15, 'messageLog', '/message/MessageLog', 'Layout', 'Document', 1, 1, '消息日志', 'MessageLog', 10, 2, 0, 0, NULL, NULL, '2022-06-28 17:37:21');
+INSERT INTO `sys_menu` VALUES (1, 0, 'home', '/Home', 'HomeFilled', 1, 1, '工作台', 'Home', 1, '2021-07-28 15:43:30', '2021-07-20 22:02:18');
+INSERT INTO `sys_menu` VALUES (2, 0, 'system', '/system', 'Tools', 1, 1, '系统管理', 'System', 1, '2021-12-17 17:33:08', '2021-10-23 19:50:28');
+INSERT INTO `sys_menu` VALUES (3, 2, 'user', '/system/User', 'Avatar', 1, 1, '用户列表', 'UserList', 4, '2021-12-17 17:37:24', '2021-07-20 22:09:46');
+INSERT INTO `sys_menu` VALUES (5, 2, 'dicInfo', '/system/DicInfo', 'Notebook', 1, 1, '字典管理', 'Dic', 6, '2021-12-17 17:38:14', '2021-07-22 17:09:46');
+INSERT INTO `sys_menu` VALUES (6, 2, 'menu', '/system/Menu', 'Grid', 1, 1, '菜单管理', 'Menu', 1, '2021-12-17 17:34:53', '2021-07-22 17:11:10');
+INSERT INTO `sys_menu` VALUES (7, 2, 'role', '/system/Role', 'Help', 1, 1, '角色管理', 'Role', 2, '2021-12-17 17:36:32', '2021-07-23 16:09:30');
+INSERT INTO `sys_menu` VALUES (8, 2, 'org', '/system/Org', 'SetUp', 1, 1, '组织管理', 'Org', 3, '2021-12-17 17:37:10', '2021-10-23 14:23:11');
+INSERT INTO `sys_menu` VALUES (9, 2, 'log', '/system/Log', 'Document', 1, 1, '日志管理', 'Log', 6, NULL, '2021-12-20 10:49:42');
+INSERT INTO `sys_menu` VALUES (10, 0, 'message', '/message', 'Comment', 1, 1, '消息管理', 'Message', 2, NULL, '2022-02-24 10:17:44');
+INSERT INTO `sys_menu` VALUES (11, 10, 'template', '/message/Template', 'Postcard', 1, 1, '消息模板', 'Template', 0, NULL, '2022-02-24 10:24:46');
+INSERT INTO `sys_menu` VALUES (12, 0, 'task', '/task', 'Clock', 1, 1, '任务管理', 'Task Manage', 0, NULL, '2022-02-25 11:24:07');
+INSERT INTO `sys_menu` VALUES (13, 12, 'taskConfig', '/task/TaskConfig', 'Odometer', 1, 1, '任务调度', 'TaskConfig', 1, NULL, '2022-02-25 11:25:00');
+INSERT INTO `sys_menu` VALUES (14, 12, 'taskLog', '/task/TaskLog', 'Document', 1, 1, '调度日志', 'TaskLog', 2, NULL, '2022-06-28 17:35:05');
+INSERT INTO `sys_menu` VALUES (15, 10, 'messageLog', '/message/MessageLog', 'Document', 1, 1, '消息日志', 'MessageLog', 2, NULL, '2022-06-28 17:37:21');
+INSERT INTO `sys_menu` VALUES (16, 0, 'api', 'http://localhost:8005/tansci/doc.html', 'Notebook', 2, 1, 'API文档', 'API Docs', 5, '2022-06-29 16:33:20', '2022-06-29 15:21:23');
+INSERT INTO `sys_menu` VALUES (17, 0, 'biying', 'https://cn.bing.com', 'Search', 3, 1, '必应链接', 'biying', 6, NULL, '2022-06-29 17:17:44');
 
 -- ----------------------------
 -- Table structure for sys_menu_role
@@ -205,6 +203,8 @@ INSERT INTO `sys_menu_role` VALUES (3, 12);
 INSERT INTO `sys_menu_role` VALUES (3, 13);
 INSERT INTO `sys_menu_role` VALUES (3, 14);
 INSERT INTO `sys_menu_role` VALUES (3, 15);
+INSERT INTO `sys_menu_role` VALUES (3, 16);
+INSERT INTO `sys_menu_role` VALUES (3, 17);
 INSERT INTO `sys_menu_role` VALUES (4, 1);
 INSERT INTO `sys_menu_role` VALUES (4, 3);
 INSERT INTO `sys_menu_role` VALUES (4, 4);

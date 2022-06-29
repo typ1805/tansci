@@ -40,9 +40,6 @@ public class SysMenu {
     @ApiModelProperty(value = "菜单路由")
     private String url;
 
-    @ApiModelProperty(value = "组件名称")
-    private String component;
-
     @ApiModelProperty(value = "菜单图标")
     private String icon;
 
@@ -53,7 +50,7 @@ public class SysMenu {
     @TableField(exist = false)
     private String statusName;
 
-    @ApiModelProperty(value = "类型：0、前端菜单，1、后端菜单")
+    @ApiModelProperty(value = "类型：0、按钮，1、菜单，2、嵌套链接，3、跳转链接")
     private Integer type;
 
     @ApiModelProperty(value = "类型")
@@ -71,15 +68,6 @@ public class SysMenu {
 
     @ApiModelProperty(value = "排序")
     private Integer sort;
-
-    @ApiModelProperty(value = "是否登录后才能访问：0、是，1、否")
-    private Integer requireAuth;
-
-    @ApiModelProperty(value = "菜单切换时是否保活：0.是，1、否")
-    private Integer keepAlive;
-
-    @ApiModelProperty(value = "是否可用：0、是，1、否")
-    private Integer enabled;
 
     @ApiModelProperty(value = "更新时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")

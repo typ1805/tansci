@@ -1,12 +1,11 @@
 package com.tansci.controller.system;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tansci.common.WrapMapper;
 import com.tansci.common.Wrapper;
 import com.tansci.common.annotation.Log;
 import com.tansci.common.constant.Constants;
 import com.tansci.domain.system.SysMenu;
+import com.tansci.domain.system.dto.SysMenuDto;
 import com.tansci.service.system.SysMenuService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,18 +32,11 @@ public class SysMenuController {
     @Autowired
     private SysMenuService sysMenuService;
 
-    @ApiOperation(value = "菜单分页", notes = "菜单分页")
-    @Log(modul = "菜单-菜单分页", type = Constants.SELECT, desc = "菜单分页")
-    @GetMapping("/page")
-    public Wrapper<IPage<SysMenu>> page(Page page, SysMenu sysMenu) {
-        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysMenuService.page(page, sysMenu));
-    }
-
     @ApiOperation(value = "菜单列表", notes = "菜单列表")
     @Log(modul = "菜单-菜单列表", type = Constants.SELECT, desc = "菜单列表")
     @GetMapping("/list")
-    public Wrapper<List<SysMenu>> list(SysMenu sysMenu) {
-        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysMenuService.list(sysMenu));
+    public Wrapper<List<SysMenu>> list(SysMenuDto dto) {
+        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysMenuService.list(dto));
     }
 
     @ApiOperation(value = "添加菜单", notes = "添加菜单")

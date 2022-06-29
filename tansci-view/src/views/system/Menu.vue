@@ -21,15 +21,12 @@
                     <el-select v-model="addMenuForm.type" placeholder="请选菜单类型" style="width:50%">
                         <el-option label="按钮" :value="0"></el-option>
                         <el-option label="菜单" :value="1"></el-option>
+                        <el-option label="嵌套链接" :value="2"></el-option>
+                        <el-option label="跳转链接" :value="3"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="菜单路由" prop="url" :rules="[{required: true, message: '路由不能为空', trigger: 'blur'}]">
                     <el-input v-model="addMenuForm.url" placeholder="请输入路由" style="width:50%"></el-input>
-                </el-form-item>
-                <el-form-item label="菜单组件" prop="component" :rules="[{required: true, message: '请选择组件', trigger: 'blur'}]">
-                    <el-select v-model="addMenuForm.component" placeholder="请选菜单组件" style="width:50%">
-                        <el-option label="菜单组件" value="Layout"></el-option>
-                    </el-select>
                 </el-form-item>
                 <el-form-item label="中文名称" prop="chineseName" :rules="[
                     {required: true, message: '中文名称不能为空', trigger: 'blur'},
@@ -45,12 +42,6 @@
                 </el-form-item>
                 <el-form-item label="菜单顺序" prop="sort" :rules="[{required: true, message: '菜单顺序不能为空', trigger: 'blur'}]">
                     <el-input-number v-model="addMenuForm.sort" :min="0" :max="999" style="width:50%"></el-input-number>
-                </el-form-item>
-                <el-form-item label="权限访问" prop="requireAuth">
-                    <el-switch v-model="addMenuForm.requireAuth" :active-value="1" :inactive-value="0" active-color="#13ce66" inactive-color="#ff4949" active-text="需要访问权限" inactive-text="不需要访问权限"></el-switch>
-                </el-form-item>
-                <el-form-item label="切换缓冲" prop="keepAlive">
-                    <el-switch v-model="addMenuForm.keepAlive" :active-value="1" :inactive-value="0" active-color="#13ce66" inactive-color="#ff4949" active-text="切换不激活" inactive-text="切换保持激活"></el-switch>
                 </el-form-item>
                 <el-form-item v-show="operate != 0 && operate != 3">
                     <el-button type="primary" @click="onAddMenu">提交</el-button>
@@ -77,13 +68,10 @@
             name:'',
             type:'',
             url:'',
-            component:'',
             chineseName:'',
             englishName:'',
             icon:'',
             sort: 0,
-            requireAuth: 0,
-            keepAlive: 0
         },
     })
     const {treeData,operate,menuId,iconVisible,addMenuForm} = toRefs(state)
@@ -93,7 +81,7 @@
     })
 
     const onMenuList = () =>{
-        menuList({type: 1}).then(res=>{
+        menuList({}).then(res=>{
             if(res){
                 state.treeData = res.result;
             }
@@ -109,13 +97,10 @@
             name: data.name,
             type: data.type,
             url: data.url,
-            component: data.component,
             chineseName: data.chineseName,
             englishName: data.englishName,
             icon: data.icon,
             sort: data.sort,
-            requireAuth: data.requireAuth,
-            keepAlive: data.keepAlive,
         }
     }
 
@@ -128,13 +113,10 @@
                 name:'',
                 type:'',
                 url:'',
-                component:'',
                 chineseName:'',
                 englishName:'',
                 icon:'',
                 sort: 0,
-                requireAuth: 0,
-                keepAlive: 0
             }
         } else if(val == 2) {
             state.operate = 2;
@@ -188,13 +170,10 @@
                         name:'',
                         type:'',
                         url:'',
-                        component:'',
                         chineseName:'',
                         englishName:'',
                         icon:'',
                         sort: 0,
-                        requireAuth: 0,
-                        keepAlive: 0
                     };
                     onMenuList();
                 }
@@ -214,13 +193,10 @@
                         name:'',
                         type:'',
                         url:'',
-                        component:'',
                         chineseName:'',
                         englishName:'',
                         icon:'',
                         sort: 0,
-                        requireAuth: 0,
-                        keepAlive: 0
                     };
                     onMenuList();
                 }
