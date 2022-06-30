@@ -1,94 +1,84 @@
 <template>
     <el-container class="layout-container">
-        <el-header height="60">
-            <div class="header">
-                <div style="padding-left: 2rem;">
-                    <!-- <el-button @click="onCollapse" type="text" :icon="isCollapse?'Grid':'Menu'" >菜单折叠</el-button> -->
-                    <el-button @click="onHome" type="text" icon="HomeFilled">工作台</el-button>
-                    <!-- <el-link href="http://localhost:8005/tansci/doc.html" type="primary" target="_blank" :underline="false" icon="Notebook" style="padding-left: 1rem;">API 文档</el-link> -->
+        <el-aside :style="{height: defaultHeight+'px'}" :width="asideWidth" style="padding-bottom:4rem;">
+            <el-card v-show="!isCollapse" shadow="always">
+                <div>
+                    <el-icon :size="26" style="vertical-align: middle;"><OfficeBuilding/></el-icon>
+                    <span style="vertical-align: middle;padding-left:1rem;">TANSCI</span>
                 </div>
-                <div style="padding-right:0.4rem;">
-                    <el-icon :size="16" color="#55bc8a" style="vertical-align: middle;padding-right:0.2rem;">
-                        <Timer/>
-                    </el-icon>
-                    <span style="padding-right: 2rem;vertical-align: middle;">{{nowTimes}}</span>
-                    <el-dropdown style="line-height: 60px;">
-                        <span class="el-dropdown-link" style="color:var(--theme);">
-                            <span style="cursor:pointer;vertical-align: middle;">{{username}} 欢迎您</span>
-                            <el-icon style="vertical-align: middle;"><arrow-down /></el-icon>
-                        </span>
-                        <template #dropdown>
-                            <el-dropdown-menu>
-                                <el-dropdown-item @click="onPassword" icon="Lock">修改密码</el-dropdown-item>
-                                <el-dropdown-item @click="onLogout" icon="SwitchButton">退出</el-dropdown-item>
-                            </el-dropdown-menu>
-                        </template>
-                    </el-dropdown>
-                    <el-dialog v-model="dialogPass" title="修改密码" width="35%" :destroy-on-close="true" :show-close="false">
-                        <el-form :model="passForm" :rules="rules" ref="validateForm" status-icon label-width="100px">
-                            <el-form-item label="原始密码" prop="oldPassword" :rules="[
-                                {required: true, message: '请输入原始密码', trigger: 'blur'},
-                                {pattern: /^[a-zA-Z]\w{5,17}$/, message: '原始密码格式有误，请重新输入', trigger: 'blur'}]">
-                                <el-input class="input-size" type="password" v-model="passForm.oldPassword" prefix-icon="Lock" autocomplete="off" style="width:100%"/>
-                            </el-form-item>
-                            <el-form-item label="新密码" prop="password" :rules="[
-                                {required: true, message: '请输入新密码', trigger: 'blur'},
-                                {pattern: /^[a-zA-Z]\w{5,17}$/, message: '以字母开头，长度在6~18之间，只能包含字母、数字和下划线', trigger: 'blur'}]">
-                                <el-input class="input-size" type="password" v-model="passForm.password" prefix-icon="Lock" autocomplete="off" style="width:100%"/>
-                            </el-form-item>
-                            <el-form-item label="确认密码" prop="rePassword" :rules="[{validator: validatePass, trigger: 'blur'}]">
-                                <el-input class="input-size" type="password" v-model="passForm.rePassword" prefix-icon="Lock" autocomplete="off" style="width:100%"/>
-                            </el-form-item>
-                        </el-form>
-                        <template #footer>
-                            <span class="dialog-footer">
-                                <el-button @click="dialogPass = false">取消</el-button>
-                                <el-button type="primary" @click="onPassSubmit">立即修改</el-button>
-                            </span>
-                        </template>
-                    </el-dialog>
-                </div>
-            </div>
-        </el-header>
+            </el-card>
+            <el-menu router :default-active="$route.path" :collapse="isCollapse" @select="onSelect"
+                text-color="#242e42" active-text-color="#2F9688" background-color="var(--bg1)">
+                <template v-for="item in routers" :key="item">
+                    <el-menu-item v-if="!item.children || item.children.length == 1" :index="item.type == 1 ? item.path:''">
+                        <el-icon v-if="item.icon" style="vertical-align: middle;">
+                            <component :is="item.icon"></component>
+                        </el-icon>
+                        <span v-if="item.type == 1" style="vertical-align: middle;">{{item.chineseName}}</span>
+                        <span v-else-if="item.type == 2" @click="onNestedLink(item)" style="vertical-align: middle;">{{item.chineseName}}</span>
+                        <a v-else-if="item.type == 3" :href='item.url' target='_blank' style="vertical-align: middle;text-decoration: none;color:#242e42;">{{item.chineseName}}</a>
+                    </el-menu-item>
+                    <Submenu v-else :data="item"></Submenu>
+                </template>
+            </el-menu>
+        </el-aside>
         <el-container>
-            <el-aside :style="{height: defaultHeight+'px'}" :width="asideWidth" style="padding-bottom:4rem;">
-                <el-card v-show="!isCollapse" shadow="always">
-                    <div>
-                        <el-icon :size="26" style="vertical-align: middle;"><OfficeBuilding/></el-icon>
-                        <span style="vertical-align: middle;padding-left:1rem;">TANSCI</span>
+            <el-header height="60">
+                <div class="header">
+                    <div style="padding-left: 0.4rem;">
+                        <el-icon @click="onCollapse" :size="20" style="vertical-align: middle; cursor: pointer;">
+                            <component :is="isCollapse?'Expand':'Fold'"></component>
+                        </el-icon>
+                        <el-icon :size="16" color="#55bc8a" style="vertical-align: middle;padding-left:2rem;">
+                            <Timer/>
+                        </el-icon>
+                        <span style="padding-right: 2rem;vertical-align: middle;">{{nowTimes}}</span>
                     </div>
-                </el-card>
-                <el-menu router :default-active="$route.path" :collapse="isCollapse" @select="onSelect"
-                    text-color="#242e42" active-text-color="#2F9688" background-color="var(--bg1)">
-                    <template v-for="item in routers" :key="item">
-                        <el-menu-item v-if="!item.children || item.children.length == 1" :index="item.type == 1 ? item.path:''">
-                            <el-icon v-if="item.icon" style="vertical-align: middle;">
-                                <component :is="item.icon"></component>
-                            </el-icon>
-                            <span v-if="item.type == 1" style="vertical-align: middle;">{{item.chineseName}}</span>
-                            <span v-else-if="item.type == 2" @click="onNestedLink(item)" style="vertical-align: middle;">{{item.chineseName}}</span>
-                            <a v-else-if="item.type == 3" :href='item.url' target='_blank' style="vertical-align: middle;text-decoration: none;color:#242e42;">{{item.chineseName}}</a>
-                        </el-menu-item>
-                        <Submenu v-else :data="item"></Submenu>
-                    </template>
-                </el-menu>
-                <div style="position: absolute;bottom: 0;width: inherit;">
-                    <el-button @click="onCollapse" type="primary" color="#909399" style="width:100%;border-radius:0;">
-                        <el-icon v-show="!isCollapse"><d-arrow-left /></el-icon>
-                        <el-icon v-show="!isCollapse"><d-arrow-left /></el-icon>
-                        <el-icon v-show="isCollapse"><d-arrow-right /></el-icon>
-                        <el-icon v-show="isCollapse"><d-arrow-right /></el-icon>
-                    </el-button>
+                    <div style="padding-right:0.4rem;">
+                        <el-dropdown style="line-height: 60px;">
+                            <span class="el-dropdown-link" style="color:var(--theme);">
+                                <span style="cursor:pointer;vertical-align: middle;">{{username}} 欢迎您</span>
+                                <el-icon style="vertical-align: middle;"><arrow-down /></el-icon>
+                            </span>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item @click="onPassword" icon="Lock">修改密码</el-dropdown-item>
+                                    <el-dropdown-item @click="onLogout" icon="SwitchButton">退出</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
+                        <el-dialog v-model="dialogPass" title="修改密码" width="35%" :destroy-on-close="true" :show-close="false">
+                            <el-form :model="passForm" :rules="rules" ref="validateForm" status-icon label-width="100px">
+                                <el-form-item label="原始密码" prop="oldPassword" :rules="[
+                                    {required: true, message: '请输入原始密码', trigger: 'blur'},
+                                    {pattern: /^[a-zA-Z]\w{5,17}$/, message: '原始密码格式有误，请重新输入', trigger: 'blur'}]">
+                                    <el-input class="input-size" type="password" v-model="passForm.oldPassword" prefix-icon="Lock" autocomplete="off" style="width:100%"/>
+                                </el-form-item>
+                                <el-form-item label="新密码" prop="password" :rules="[
+                                    {required: true, message: '请输入新密码', trigger: 'blur'},
+                                    {pattern: /^[a-zA-Z]\w{5,17}$/, message: '以字母开头，长度在6~18之间，只能包含字母、数字和下划线', trigger: 'blur'}]">
+                                    <el-input class="input-size" type="password" v-model="passForm.password" prefix-icon="Lock" autocomplete="off" style="width:100%"/>
+                                </el-form-item>
+                                <el-form-item label="确认密码" prop="rePassword" :rules="[{validator: validatePass, trigger: 'blur'}]">
+                                    <el-input class="input-size" type="password" v-model="passForm.rePassword" prefix-icon="Lock" autocomplete="off" style="width:100%"/>
+                                </el-form-item>
+                            </el-form>
+                            <template #footer>
+                                <span class="dialog-footer">
+                                    <el-button @click="dialogPass = false">取消</el-button>
+                                    <el-button type="primary" @click="onPassSubmit">立即修改</el-button>
+                                </span>
+                            </template>
+                        </el-dialog>
+                    </div>
                 </div>
-            </el-aside>
+                <div class="header-menu">
+                    <MenuTag ref="menuTag" :size="'default'"></MenuTag>
+                </div>
+            </el-header>
             <el-main :style="{height: defaultHeight+'px'}">
-                <div class="main-view">
-                    <el-card class="main-view-tag" shadow="always">
-                        <MenuTag ref="menuTag" :size="'default'"></MenuTag>
-                    </el-card>
-                    <router-view v-show="!iframe.isIframe" class="main-view-content"/>
-                    <iframe v-show="iframe.isIframe" :src="iframe.src" :style="{height:(defaultHeight-110)+'px'}" width="100%" frameborder="0"></iframe>
-                </div>
+                <router-view v-show="!iframe.isIframe" style="margin: 0.4rem;"/>
+                <iframe v-show="iframe.isIframe" :src="iframe.src" :style="{height:(defaultHeight-110)+'px'}" width="100%" frameborder="0"></iframe>
             </el-main>
         </el-container>
         <el-backtop target=".el-main"></el-backtop>
@@ -241,33 +231,36 @@
         });
     }
 
-    // 跳转工作台
-    const onHome = () =>{
-        router.push({path: "home"});
-    }
-
 </script>
 <style lang="scss">
     .layout-container{
         .el-header{
             padding: 0;
-        }
-        .header{
-            display: flex;
-            justify-content: space-between;
-            line-height: 60px;
-            color: var(--theme);
-            background: var(--bg1);
-            border:1px transparent solid;
-            border-image:linear-gradient(to right,var(--bg1),#DCDFE6,var(--bg1)) 1 10;
-            box-shadow: 0 4px 8px 0 rgba(36,46,66,.06)!important;
-            
-            .el-dialog__header{
-                background: var(--theme);
-                padding: 0 10px;
-                .el-dialog__title{
-                    color: var(--theme);
+
+            .header{
+                display: flex;
+                justify-content: space-between;
+                line-height: 60px;
+                color: var(--theme);
+                background: var(--bg1);
+                border:1px transparent solid;
+                border-image:linear-gradient(to right,var(--bg1),#DCDFE6,var(--bg1)) 1 10;
+                box-shadow: 0 4px 8px 0 rgba(36,46,66,.06)!important;
+                
+                .el-dialog__header{
+                    background: var(--theme);
+                    padding: 0 10px;
+                    .el-dialog__title{
+                        color: var(--theme);
+                    }
                 }
+            }
+
+            .header-menu{
+                padding: 0.2rem 0 0.4rem 0.4rem;
+                border: 1px transparent solid;
+                border-image: linear-gradient(to right, var(--bg1),#DCDFE6, var(--bg1)) 1 10;
+                box-shadow: 0 4px 8px 0 rgba(36,46,66,.06)!important;
             }
         }
 
@@ -317,17 +310,6 @@
         }
         .el-main::-webkit-scrollbar{
             width: 0px;
-        }
-        .main-view{
-            .main-view-tag{
-                margin: 0.4rem;
-                .el-card__body{
-                    padding: 0.3rem 0.4rem;
-                }
-            }
-            .main-view-content{
-                margin: 0.4rem;
-            }
         }
     }
 </style>

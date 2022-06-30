@@ -1,6 +1,9 @@
 <template>
-    <el-dialog class="icon-dialog" v-model="prop.iconVisible" title="菜单图标" :close-on-press-escape="false" :close-on-click-modal="false" :show-close="false" width="60%">
-        <el-button v-for="icon in iconList" :key="icon" :icon="icon" @click="$emit('onIcon', icon)" type="text"></el-button>
+    <el-dialog v-model="prop.iconVisible" title="图标" :close-on-press-escape="false" :close-on-click-modal="false" :show-close="false" width="70%">
+        <el-icon v-for="icon in iconList" :key="icon" @click="$emit('onIcon', icon)" :size="30" color="#242e42" 
+            style="border: 1px solid #e4e7ed;padding: 1rem;cursor: pointer;">
+            <component :is="icon"></component>
+        </el-icon>
     </el-dialog>
 </template>
 <script setup>
@@ -21,15 +24,8 @@
     })
     const {iconList} = toRefs(state)
 </script>
-<style lang="scss" scoped>
-    .icon-dialog{
-        .el-dialog__header{
-            padding: 0 !important;
-        }
-    } 
-    .el-icon{
-        font-size: 24px;
-        padding: 0.4rem;
-        color: #909399;
+<style lang="scss"> 
+    .el-dialog__header{
+        margin: 0 !important;
     }
 </style>
