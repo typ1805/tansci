@@ -51,7 +51,7 @@
             </div>
         </el-header>
         <el-container>
-            <el-aside :style="defaultHeight" :width="asideWidth" style="padding-bottom:4rem;">
+            <el-aside :style="{height: defaultHeight+'px'}" :width="asideWidth" style="padding-bottom:4rem;">
                 <el-card v-show="!isCollapse" shadow="always">
                     <div>
                         <el-icon :size="26" style="vertical-align: middle;"><OfficeBuilding/></el-icon>
@@ -66,8 +66,8 @@
                                 <component :is="item.icon"></component>
                             </el-icon>
                             <span v-if="item.type == 1" style="vertical-align: middle;">{{item.chineseName}}</span>
-                            <span v-else-if="item.type == 2" @click="onLink(item)" style="vertical-align: middle;">{{item.chineseName}}</span>
-                            <a v-else-if="item.type == 3" :href='item.url' target='_target' style="vertical-align: middle;text-decoration: none;color:#242e42;">{{item.chineseName}}</a>
+                            <span v-else-if="item.type == 2" @click="onNestedLink(item)" style="vertical-align: middle;">{{item.chineseName}}</span>
+                            <a v-else-if="item.type == 3" :href='item.url' target='_blank' style="vertical-align: middle;text-decoration: none;color:#242e42;">{{item.chineseName}}</a>
                         </el-menu-item>
                         <Submenu v-else :data="item"></Submenu>
                     </template>
@@ -81,13 +81,13 @@
                     </el-button>
                 </div>
             </el-aside>
-            <el-main :style="defaultHeight">
+            <el-main :style="{height: defaultHeight+'px'}">
                 <div class="main-view">
                     <el-card class="main-view-tag" shadow="always">
                         <MenuTag ref="menuTag" :size="'default'"></MenuTag>
                     </el-card>
-                    <router-view v-show="!isLink" class="main-view-content"/>
-                    <iframe v-show="isLink" :src="link" :style="{height:iframeHeight}" width="100%" frameborder="0"></iframe>
+                    <router-view v-show="!iframe.isIframe" class="main-view-content"/>
+                    <iframe v-show="iframe.isIframe" :src="iframe.src" :style="{height:(defaultHeight-110)+'px'}" width="100%" frameborder="0"></iframe>
                 </div>
             </el-main>
         </el-container>
@@ -95,7 +95,7 @@
     </el-container>
 </template>
 <script setup>
-    import {onBeforeMount, onMounted, reactive, ref, unref, toRefs} from 'vue'
+    import {onBeforeMount, onMounted, onDeactivated, reactive, ref, unref, toRefs} from 'vue'
     import {ElMessageBox} from 'element-plus'
     import {useRouter} from 'vue-router'
     import Submenu from "../components/Submenu.vue"
@@ -115,9 +115,7 @@
     const state = reactive({
         isCollapse: false,
         asideWidth: '240px',
-        defaultHeight: {
-            height: ''
-        },
+        defaultHeight: null,
         routers: [],
         dialogPass: false,
         passForm: {
@@ -125,42 +123,44 @@
             password: '',
             rePassword: ''
         },
-        iframeHeight: '',
-        isLink: false,
-        link:'',
+        iframe: {
+            isIframe: true,
+            src: '',
+        },
     })
 
     const {
-        logo,isCollapse,asideWidth,defaultHeight,routers,dialogPass,passForm,link,isLink,iframeHeight
+        logo,isCollapse,asideWidth,defaultHeight,routers,dialogPass,passForm,iframe
     } = toRefs(state)
 
     onBeforeMount(() => {
-        state.defaultHeight.height = (document.body.clientHeight || document.documentElement.clientHeight) + "px";
-        state.iframeHeight = document.body.clientHeight - 120 + 'px';
+        state.defaultHeight = (document.body.clientHeight || document.documentElement.clientHeight);
     })
 
     onMounted(()=>{
         // 获取菜单
         state.routers = menuStore.getMenu;
-
-        window.onresize = () => {
-                    return (() => {
-                state.defaultHeight.height = (document.body.clientHeight || document.documentElement.clientHeight) + "px";
-                state.iframeHeight = document.body.clientHeight - 120 + 'px';
-            })()
-        }
         onNowTimes();
+
+        window.addEventListener('resize', onDefaultHeight);
     })
 
-    const onLink = (val) =>{
-        state.isLink = true;
-        state.link = val.url;
+    onDeactivated(()=>{
+        window.removeEventListener('resize', onDefaultHeight, false)
+    })
+
+    const onDefaultHeight = () =>{
+        state.defaultHeight = window.innerHeight
+    }
+
+    const onNestedLink = (val) =>{
+        state.iframe.isIframe = true;
+        state.iframe.src = val.url;
     }
 
     const onSelect = (e) =>{
-        console.log(e)
         if(e){
-            state.isLink = false;
+            state.iframe.isIframe = false;
         }
         menuTag.value.onSelected(e)
     }
