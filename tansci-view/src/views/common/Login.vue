@@ -76,9 +76,9 @@
 		loginMode: true,
 		otherForm: {
 			modes:[
-				{id:1,name:'微信扫码登录',icon: new URL('../assets/image/icon/wechat.svg', import.meta.url).href},
-				{id:2,name:'微博扫码登录',icon: new URL('../assets/image/icon/weibo.svg', import.meta.url).href},
-				{id:3,name:'QQ扫码登录',icon: new URL('../assets/image/icon/qq.svg', import.meta.url).href},
+				{id:1,name:'微信扫码登录',icon: new URL('../../assets/image/icon/wechat.svg', import.meta.url).href},
+				{id:2,name:'微博扫码登录',icon: new URL('../../assets/image/icon/weibo.svg', import.meta.url).href},
+				{id:3,name:'QQ扫码登录',icon: new URL('../../assets/image/icon/qq.svg', import.meta.url).href},
 			],
 			qrcodeTitle: '',
 			qrcodeUrl: '',
