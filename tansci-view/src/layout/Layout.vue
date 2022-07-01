@@ -23,7 +23,7 @@
             </el-menu>
         </el-aside>
         <el-container>
-            <el-header height="60">
+            <el-header height="50">
                 <div class="header">
                     <div style="padding-left: 0.4rem;">
                         <el-icon @click="onCollapse" :size="20" style="vertical-align: middle; cursor: pointer;">
@@ -72,9 +72,7 @@
                         </el-dialog>
                     </div>
                 </div>
-                <div class="header-menu">
-                    <MenuTag ref="menuTag" :size="'default'"></MenuTag>
-                </div>
+                <TabsMenu></TabsMenu>
             </el-header>
             <el-main :style="{height: defaultHeight+'px'}">
                 <router-view v-show="!iframe.isIframe" style="margin: 0.4rem;"/>
@@ -89,7 +87,7 @@
     import {ElMessageBox} from 'element-plus'
     import {useRouter} from 'vue-router'
     import Submenu from "../components/Submenu.vue"
-    import MenuTag from "../components/MenuTag.vue"
+    import TabsMenu from "../components/TabsMenu.vue"
     import {useUserStore, useTokenStore, useMenuStore} from '../store/settings'
     import {timeFormate} from '../utils/utils.js'
     import {modifyPass,logout} from '../api/systemApi.js'
@@ -101,7 +99,6 @@
     const username = userStore.getUser.username == null ? '未登录':userStore.getUser.username;
     const nowTimes = ref('');
     const validateForm = ref(null)
-    const menuTag = ref(null)
     const state = reactive({
         isCollapse: false,
         asideWidth: '240px',
@@ -152,7 +149,6 @@
         if(e){
             state.iframe.isIframe = false;
         }
-        menuTag.value.onSelected(e)
     }
 
     const onCollapse = () => {
@@ -236,16 +232,17 @@
     .layout-container{
         .el-header{
             padding: 0;
+            background: var(--bg1);
 
             .header{
                 display: flex;
                 justify-content: space-between;
-                line-height: 60px;
+                line-height: 50px;
                 color: var(--theme);
-                background: var(--bg1);
-                border:1px transparent solid;
-                border-image:linear-gradient(to right,var(--bg1),#DCDFE6,var(--bg1)) 1 10;
-                box-shadow: 0 4px 8px 0 rgba(36,46,66,.06)!important;
+                // border:1px transparent solid;
+                // border-image:linear-gradient(to right,var(--bg1),#DCDFE6,var(--bg1)) 1 10;
+                // box-shadow: 0 4px 8px 0 rgba(36,46,66,.06)!important;
+                padding-right: 0.4rem;
                 
                 .el-dialog__header{
                     background: var(--theme);
@@ -254,13 +251,6 @@
                         color: var(--theme);
                     }
                 }
-            }
-
-            .header-menu{
-                padding: 0.2rem 0 0.4rem 0.4rem;
-                border: 1px transparent solid;
-                border-image: linear-gradient(to right, var(--bg1),#DCDFE6, var(--bg1)) 1 10;
-                box-shadow: 0 4px 8px 0 rgba(36,46,66,.06)!important;
             }
         }
 

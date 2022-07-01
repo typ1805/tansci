@@ -1,13 +1,10 @@
 <template>
-    <div class="container-500" :style="defaultHeight">
-        <h1>我们很快就回来！</h1>
-        <div class="text">很抱歉给您带来不便</div>
-        <div class="text">但我们现在正在进行一些维护。</div>
-        <div class="text">如果您需要，您可以随时与<a href="#">我们联系</a>，否则我们将很快恢复在线！</div>
+    <div class="container-404" :style="defaultHeight">
+        <el-image :src="image" style="width: 30%; height:50%"></el-image>
+        <div class="text">找不到您要查找的页面，请与<a href="#">我们联系</a>以报告此问题。</div>
         <div class="text team">—— Tansci</div>
         <div>
-            <el-button icon="Back" round @click="goBack">返回</el-button>
-            <el-button type="danger" icon="HomeFilled" round @click="goHome">首页</el-button>
+            <el-button type="danger" icon="Back" round @click="goBack">返回</el-button>
         </div>
     </div>
 </template>
@@ -16,12 +13,12 @@
     import {useRouter} from "vue-router"
 
     const router = useRouter()
+    const image = new URL('../../assets/image/404.png', import.meta.url).href
     const state = reactive({
         defaultHeight: {
             height: ''
         }
     })
-
     const {defaultHeight} = toRefs(state)
 
     onBeforeMount(() => {
@@ -40,35 +37,25 @@
         router.go(-1)
     }
 
-    const goHome = () => {
-        router.push({path: 'home'})
-    }
 </script>
 
-<style lang="scss">
-    .container-500 {
+<style lang="scss" scoped="scoped">
+    .container-404 {
         height: 100%;
         margin: 0 auto;
-        padding-top: 15%;
+        padding-top: 4%;
         text-align: center;
-        color: #494b52;
-        // background: #17191c;
-        font-weight: 400;
-        font-family: "Raleway", sans-serif;
-        font-size: 15px;
+        font-size: 14px;
         letter-spacing: 0.3px;
-
         .text {
             margin-bottom: 0.5em;
         }
-
         .team {
             margin: 1.2em 0;
+            font-weight: 700;
         }
-
         a {
             text-decoration: none;
-            color: #007bff;
         }
     }
 </style>

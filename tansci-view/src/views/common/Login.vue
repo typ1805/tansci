@@ -52,16 +52,16 @@
 	import {onBeforeMount,reactive,ref,toRefs,unref} from "vue"
 	import {ElMessage} from 'element-plus'
 	import {useRouter} from 'vue-router'
-	import {useUserStore, useTokenStore} from '../store/settings'
-	import {login,wxLogin,wxCallback} from '../api/systemApi'
-	import SlidingVerify from '../components/SlidingVerify.vue'
+	import {useUserStore, useTokenStore} from '@/store/settings'
+	import {login,wxLogin,wxCallback} from '@/api/systemApi'
+	import SlidingVerify from '@/components/SlidingVerify.vue'
 
 	const userStore = useUserStore();
 	const tokenStore = useTokenStore();
 	const router = useRouter()
 	let loginRuleForm = ref(null) 
 	let slidingVerify = ref()
-	const loginLogo = new URL('../assets/image/login-left.png', import.meta.url).href
+	const loginLogo = new URL('../../assets/image/login-left.png', import.meta.url).href
 
 	const state = reactive({
 		loginStyle: {
@@ -114,7 +114,7 @@
 				// 存储用户信息和token
 				userStore.setUser(res.result);
 				tokenStore.setToken(res.result.token);
-				router.push({path: 'home'});
+				router.push({path: 'main'});
 			}
 		}).catch(()=>{
 			state.loginForm.verifyStatus = null;
@@ -160,7 +160,7 @@
 					// 存储用户信息和token
 					userStore.setUser(resp);
 					tokenStore.setToken(resp.token);
-					router.push({path: 'home'});
+					router.push({path: 'main'});
 				} else {
 					state.otherForm.status = 2;
 				}
@@ -183,7 +183,7 @@
 </script>
 <style lang="scss" scoped="scoped">
 	.login {
-		background-image: url('../assets/image/login-bg.svg');
+		background-image: url('../../assets/image/login-bg.svg');
 		background-size: 100% 100%;
 		height: 100%;
 		width: 100%;
