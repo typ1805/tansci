@@ -10,6 +10,8 @@ TANSCI 基于 SpringBoot + Vue3.2 + Element Plus 的后台管理系统
 - Gitee: [https://gitee.com/typ1805/tansci-cloud](https://gitee.com/typ1805/tansci-cloud)
 - GitHub：[https://github.com/typ1805/tansci-cloud](https://github.com/typ1805/tansci-cloud)
 
+ [演示地址](http://tansci.top:18002/)
+
 ## 架构
 
 ### 技术栈
