@@ -1,6 +1,7 @@
 package com.tansci.domain.message;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -41,6 +42,10 @@ public class TemplateDetails extends Model<TemplateDetails> {
 
     @ApiModelProperty(value = "状态：0、成功，1：失败")
     private Integer state;
+
+    @ApiModelProperty(value = "状态")
+    @TableField(exist = false)
+    private String stateName;
 
     @ApiModelProperty(value = "发送时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "zh", timezone = "GMT+8")

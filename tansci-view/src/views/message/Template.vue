@@ -59,10 +59,10 @@
 <script setup>
     import {onMounted, reactive, nextTick, ref, unref, toRefs} from 'vue'
     import {ElMessage, ElMessageBox} from 'element-plus'
-    import Table from '../../components/Table.vue'
-    import MsgTemplate from '../../components/MsgTemplate.vue';
-    import {templatePage,templateSave,templateUpdate,templateDel} from '../../api/messageApi.js'
-    import {getGroupNameByList} from '../../api/systemApi.js'
+    import Table from '@/components/Table.vue'
+    import MsgTemplate from '@/components/MsgTemplate.vue';
+    import {templatePage,templateSave,templateUpdate,templateDel} from '@/api/messageApi.js'
+    import {getGroupNameByList} from '@/api/systemApi.js'
 
     const msgTemplateRef = ref(null)
     const addRuleForm = ref(null)

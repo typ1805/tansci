@@ -365,6 +365,21 @@ INSERT INTO `task_config` VALUES ('1', 'taskTest1Service', '自定义任务测�
 INSERT INTO `task_config` VALUES ('2', 'taskTest2Service', '自定义任务测试', 'T1000214524DFS', '*/10 * * * * ?', 0, 'admin', '2022-02-25 10:53:12', '2022-02-25 10:53:15', NULL);
 
 -- ----------------------------
+-- Table structure for task_config
+-- ----------------------------
+DROP TABLE IF EXISTS `task_log`;
+CREATE TABLE `task_log` (
+    `id` varchar(64) NOT NULL COMMENT '主键id',
+    `task_id` varchar(64) DEFAULT NULL COMMENT '调度id',
+    `server_name` varchar(100) DEFAULT NULL COMMENT '任务服务名称',
+    `status` int(1) DEFAULT NULL COMMENT '状态：0、成功，1、失败',
+    `execution_time` datetime DEFAULT NULL COMMENT '执行时间',
+    `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+    `remarks` varchar(255) DEFAULT NULL COMMENT '描述',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='调度执行日志';
+
+-- ----------------------------
 -- Table structure for template
 -- ----------------------------
 DROP TABLE IF EXISTS `template`;

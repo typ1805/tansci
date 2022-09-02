@@ -7,7 +7,9 @@ import com.tansci.common.Wrapper;
 import com.tansci.common.annotation.Log;
 import com.tansci.common.constant.Constants;
 import com.tansci.domain.message.Template;
+import com.tansci.domain.message.TemplateDetails;
 import com.tansci.domain.message.dto.TemplateDto;
+import com.tansci.service.message.TemplateDetailsService;
 import com.tansci.service.message.TemplateService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,12 +32,21 @@ public class TemplateController {
 
     @Autowired
     private TemplateService templateService;
+    @Autowired
+    private TemplateDetailsService templateDetailsService;
 
     @ApiOperation(value = "模板列表", notes = "模板列表")
     @Log(modul = "模板配置-模板列表", type = Constants.SELECT, desc = "模板列表")
     @GetMapping("/page")
     public Wrapper<IPage<Template>> page(Page page, TemplateDto dto) {
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, templateService.page(page, dto));
+    }
+
+    @ApiOperation(value = "消息发送日志", notes = "消息发送日志")
+    @Log(modul = "模板配置-消息发送日志", type = Constants.SELECT, desc = "消息发送日志")
+    @GetMapping("/logPage")
+    public Wrapper<IPage<TemplateDetails>> logPage(Page page, TemplateDetails details) {
+        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, templateDetailsService.page(page, details));
     }
 
     @ApiOperation(value = "添加模板", notes = "添加模板")

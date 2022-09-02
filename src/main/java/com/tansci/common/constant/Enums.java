@@ -57,6 +57,12 @@ public enum Enums {
     MESSAGE_PROCESSED(1, "message_status", "已处理"),
 
     /**
+     * 消息发送状态
+     */
+    MESSAGE_LOG_SUCCESS(0, "message_log_status", "成功"),
+    MESSAGE_LOG_FAIL(1, "message_log_status", "失败"),
+
+    /**
      * 菜单类型
      */
     MENU_TYPE_0(0, "menu_type", "按钮"),
@@ -69,6 +75,12 @@ public enum Enums {
      */
     STATUS_0(0, "status", "未启用"),
     STATUS_1(1, "status", "启用"),
+
+    /**
+     * 调度执行状态
+     */
+    TASK_LOG_SUCCESS(0, "task_log_status", "成功"),
+    TASK_LOG_FAIL(1, "task_log_status", "失败"),
 
     ;
 

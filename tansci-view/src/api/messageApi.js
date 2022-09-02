@@ -37,3 +37,13 @@ export function templateUpdate(params) {
 export function templateDel(params) {
     return axios.get('/tansci/template/delete', { params: params });
 }
+
+
+/**
+ * 日志分页
+ * @param {*} params 
+ * @returns 
+ */
+export function logPage(params) {
+    return axios.get('/tansci/template/logPage', { params: params });
+}

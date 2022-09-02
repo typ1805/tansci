@@ -371,3 +371,21 @@ export function saveTask(params) {
 export function updateTask(params) {
     return axios.post('/tansci/taskConfig/update', params);
 }
+
+/**
+ * 任务执行日志分页
+ * @param {*} params 
+ * @returns 
+ */
+export function taskLogPage(params) {
+    return axios.get('/tansci/taskLog/page', { params: params });
+}
+
+/**
+ * 清空日志
+ * @param {*} params 
+ * @returns 
+ */
+export function taskLogClear(params) {
+    return axios.get('/tansci/taskLog/clear', { params: params });
+}

@@ -57,10 +57,10 @@ public class TaskConfigServiceImpl extends ServiceImpl<TaskConfigMapper, TaskCon
         taskConfig.setCreater(SecurityUserUtils.getUser().getUsername());
         taskConfig.setTaskId("T" + UUIDUtils.getUUID(20).toUpperCase(Locale.ROOT));
         int row = this.baseMapper.insert(taskConfig);
-//        if (row > 0) {
-//            scheduledTask.refreshTask(this.list(Wrappers.<TaskConfig>lambdaQuery().eq(TaskConfig::getStatus, 1)));
-//            return true;
-//        }
+        if (row > 0) {
+            scheduledTask.refreshTask(this.list(Wrappers.<TaskConfig>lambdaQuery().eq(TaskConfig::getStatus, 1)));
+            return true;
+        }
         return true;
     }
 
