@@ -28,7 +28,7 @@ export default[
         component: () => import('@/layout/Layout.vue'),
         children: [{
             path: "/main",
-            name: "main",
+            name: "Main",
             meta: { title: "首页" },
             component: () => import('@/views/common/Main.vue')
         }]
