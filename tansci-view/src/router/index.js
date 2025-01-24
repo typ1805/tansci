@@ -82,7 +82,7 @@ export function routerFilter(data) {
             if(!item.children || item.children.length == 0){
                 item.children = [{
                     path: '/' + item.name,
-                    name: item.name,
+                    name: item.englishName,
                     icon: item.icon,
                     chineseName: item.chineseName,
                     englishName: item.englishName,
